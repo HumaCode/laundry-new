@@ -11,8 +11,8 @@ let selectedIds    = new Set();
 let currentView    = 'table';
 let activeOutlet   = null;
 let editMode       = false;
-let sortCol        = 'name';
-let sortDir        = 'asc';
+let sortCol        = 'joined';
+let sortDir        = 'desc';
 let pageData       = [];
 let totalItems     = 0;
 
@@ -153,7 +153,7 @@ function applyFilters() {
             }
         },
         error: function() {
-            showToast('error', 'Error', 'Gagal memuat data outlet dari server');
+            showToast('Gagal memuat data outlet dari server', 'error', 'Error');
         }
     });
 }
@@ -162,7 +162,7 @@ function resetFilters() {
     document.getElementById('searchInput').value = '';
     document.getElementById('filterStatus').value = '';
     document.getElementById('filterCity').value   = '';
-    document.getElementById('filterSort').value   = 'name-asc';
+    document.getElementById('filterSort').value   = 'recent';
     currentPage = 1;
     selectedIds.clear();
     updateBulkBar();
@@ -366,9 +366,9 @@ function bulkDelete() {
     Promise.all(promises).then(() => {
         selectedIds.clear();
         applyFilters();
-        showToast('success','Dihapus','Outlet berhasil dihapus');
+        showToast('Outlet berhasil dihapus', 'success', 'Dihapus');
     }).catch(() => {
-        showToast('error', 'Error', 'Beberapa outlet gagal dihapus');
+        showToast('Beberapa outlet gagal dihapus', 'error', 'Error');
     });
 }
 
@@ -465,7 +465,7 @@ function saveOutlet() {
     const name  = document.getElementById('f-name').value.trim();
     const phone = document.getElementById('f-phone').value.trim();
     const city  = document.getElementById('f-city').value.trim();
-    if (!name || !phone || !city) { showToast('error','Validasi','Nama, telepon, dan kota wajib diisi'); return; }
+    if (!name || !phone || !city) { showToast('Nama, telepon, dan kota wajib diisi', 'error', 'Validasi'); return; }
 
     const statusVal = document.getElementById('f-status').value;
 
@@ -479,6 +479,11 @@ function saveOutlet() {
         is_active: statusVal === 'Aktif' ? 1 : 0
     };
 
+    const btn = document.getElementById('saveOutletBtn');
+    const originalHtml = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sedang proses...';
+
     const url = editMode && activeOutlet ? '/outlets/' + activeOutlet.id : '/outlets';
     const method = editMode && activeOutlet ? 'PUT' : 'POST';
 
@@ -488,14 +493,18 @@ function saveOutlet() {
         data: payload,
         success: function(res) {
             if (res.success) {
-                showToast('success', editMode ? 'Diperbarui' : 'Ditambahkan', res.message);
+                showToast(res.message, 'success', editMode ? 'Diperbarui' : 'Ditambahkan');
                 closeModal('outletModal');
                 applyFilters();
             }
         },
         error: function(xhr) {
             const err = xhr.responseJSON;
-            showToast('error', 'Gagal', err && err.message ? err.message : 'Terjadi kesalahan sistem');
+            showToast(err && err.message ? err.message : 'Terjadi kesalahan sistem', 'error', 'Gagal');
+        },
+        complete: function() {
+            btn.disabled = false;
+            btn.innerHTML = originalHtml;
         }
     });
 }
@@ -508,11 +517,11 @@ function deleteById(id) {
         success: function(res) {
             if (res.success) {
                 applyFilters();
-                showToast('success','Dihapus','Outlet berhasil dihapus');
+                showToast('Outlet berhasil dihapus', 'success', 'Dihapus');
             }
         },
         error: function() {
-            showToast('error','Error','Gagal menghapus outlet');
+            showToast('Gagal menghapus outlet', 'error', 'Error');
         }
     });
 }
@@ -520,21 +529,7 @@ function deleteById(id) {
 function closeModal(id) { document.getElementById(id).classList.remove('show'); }
 function closeModalOutside(e, id) { if (e.target === e.currentTarget) closeModal(id); }
 
-function exportData() { showToast('info','Export','Mengekspor data outlet...'); }
-
-function showToast(type, title, msg) {
-    const wrap = document.getElementById('toastWrap');
-    if (!wrap) return;
-    const t    = document.createElement('div');
-    t.className = 'toast';
-    t.innerHTML = `
-        <div class="toast-icon ${type}"><i class="fas fa-${type==='success'?'check':type==='error'?'times':'info-circle'}"></i></div>
-        <div style="flex:1"><div class="toast-title">${title}</div><div class="toast-msg">${msg}</div></div>
-        <button class="toast-x" onclick="this.closest('.toast').remove()"><i class="fas fa-times"></i></button>`;
-    wrap.appendChild(t);
-    setTimeout(() => t.classList.add('show'), 10);
-    setTimeout(() => { t.classList.remove('show'); setTimeout(()=>t.remove(),400); }, 4000);
-}
+function exportData() { showToast('Mengekspor data outlet...', 'info', 'Export'); }
 
 document.addEventListener('DOMContentLoaded', () => {
     applyFilters();
@@ -570,4 +565,3 @@ window.deleteById = deleteById;
 window.closeModal = closeModal;
 window.closeModalOutside = closeModalOutside;
 window.exportData = exportData;
-window.showToast = showToast;

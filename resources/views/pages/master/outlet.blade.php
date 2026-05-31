@@ -92,11 +92,11 @@
         <div class="filter-group" style="min-width:130px">
             <label class="filter-label">Urutkan</label>
             <select class="filter-input" id="filterSort" onchange="applyFilters()">
+                <option value="recent" selected>Terbaru Dibuka</option>
                 <option value="name-asc">Nama A–Z</option>
                 <option value="name-desc">Nama Z–A</option>
                 <option value="staff-desc">Karyawan Terbanyak</option>
                 <option value="revenue-desc">Omset Terbesar</option>
-                <option value="recent">Terbaru Dibuka</option>
             </select>
         </div>
         <button class="filter-btn filter-btn-reset" onclick="resetFilters()"><i class="fas fa-undo"></i> Reset</button>
@@ -263,7 +263,7 @@
             </div>
             <div class="modal-footer">
                 <button class="modal-btn modal-btn-outline" onclick="closeModal('outletModal')"><i class="fas fa-times"></i> Batal</button>
-                <button class="modal-btn modal-btn-primary" onclick="saveOutlet()"><i class="fas fa-save"></i> Simpan</button>
+                <button class="modal-btn modal-btn-primary" id="saveOutletBtn" onclick="saveOutlet()"><i class="fas fa-save"></i> Simpan</button>
             </div>
         </div>
     </div>

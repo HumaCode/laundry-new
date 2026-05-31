@@ -49,11 +49,11 @@ class OutletRepository implements OutletRepositoryInterface
                     $query->orderBy('created_at', 'desc');
                     break;
                 default:
-                    $query->orderBy('name', 'asc');
+                    $query->orderBy('created_at', 'desc');
                     break;
             }
         } else {
-            $query->orderBy('name', 'asc');
+            $query->orderBy('created_at', 'desc');
         }
 
         return $query->paginate($perPage);
