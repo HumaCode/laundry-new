@@ -1,4 +1,11 @@
-<x-guest-layout>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - LaundryPro</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
             --primary: #6366F1;
@@ -17,7 +24,13 @@
             --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
 
-        .login-page-wrapper {
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
             font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
             min-height: 100vh;
             background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
@@ -465,130 +478,112 @@
             background: var(--secondary);
         }
     </style>
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="bg-decoration">
+        <div class="bg-shape"></div>
+        <div class="bg-shape"></div>
+        <div class="bg-shape"></div>
+    </div>
 
-    <div class="login-page-wrapper">
-        <!-- Animated Background -->
-        <div class="bg-decoration">
-            <div class="bg-shape"></div>
-            <div class="bg-shape"></div>
-            <div class="bg-shape"></div>
-        </div>
+    <!-- Login Container -->
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Logo Section -->
+            <div class="logo-section">
+                <div class="logo-icon">
+                    <i class="fas fa-tshirt"></i>
+                </div>
+                <h1 class="logo-title">LaundryPro</h1>
+                <p class="logo-subtitle">Sistem Manajemen Laundry Multi Outlet</p>
+            </div>
 
-        <!-- Login Container -->
-        <div class="login-container">
-            <div class="login-card">
-                <!-- Logo Section -->
-                <div class="logo-section">
-                    <div class="logo-icon">
-                        <i class="fas fa-tshirt"></i>
+            <!-- Error Message -->
+            <div class="error-message" id="errorMessage">
+                <i class="fas fa-exclamation-circle error-icon"></i>
+                <span id="errorText">Username atau password salah!</span>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <!-- Username -->
+                <div class="form-group">
+                    <label class="form-label" for="username">Username</label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="text" 
+                            id="username" 
+                            class="form-control" 
+                            placeholder="Masukkan username"
+                            autocomplete="username"
+                            required
+                        >
+                        <i class="fas fa-user input-icon"></i>
                     </div>
-                    <h1 class="logo-title">LaundryPro</h1>
-                    <p class="logo-subtitle">Sistem Manajemen Laundry Multi Outlet</p>
                 </div>
 
-                <!-- Laravel Session Status -->
-                @if (session('status'))
-                    <div class="alert alert-success mb-4">
-                        {{ session('status') }}
+                <!-- Password -->
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            class="form-control" 
+                            placeholder="Masukkan password"
+                            autocomplete="current-password"
+                            required
+                        >
+                        <i class="fas fa-lock input-icon"></i>
+                        <button 
+                            type="button" 
+                            class="password-toggle" 
+                            onclick="togglePassword()"
+                            aria-label="Toggle password visibility"
+                        >
+                            <i class="fas fa-eye" id="toggleIcon"></i>
+                        </button>
                     </div>
-                @endif
+                </div>
 
-                <!-- Validation Errors / Error Message -->
-                @if ($errors->any())
-                    <div class="error-message show" id="errorMessage">
-                        <i class="fas fa-exclamation-circle error-icon"></i>
-                        <span id="errorText">{{ $errors->first() }}</span>
+                <!-- Remember & Forgot -->
+                <div class="form-options">
+                    <div class="checkbox-wrapper">
+                        <input 
+                            type="checkbox" 
+                            id="rememberMe" 
+                            class="custom-checkbox"
+                        >
+                        <label class="checkbox-label" for="rememberMe">
+                            Ingat Saya
+                        </label>
                     </div>
-                @endif
+                    <a href="#" class="forgot-link" onclick="handleForgotPassword(event)">
+                        Lupa Password?
+                    </a>
+                </div>
 
-                <!-- Login Form -->
-                <form id="loginForm" method="POST" action="{{ route('login') }}">
-                    @csrf
+                <!-- Submit Button -->
+                <button type="submit" class="btn-submit" id="submitBtn">
+                    <span class="spinner"></span>
+                    <span class="btn-text">Masuk</span>
+                </button>
+            </form>
 
-                    <!-- Username / Email -->
-                    <div class="form-group">
-                        <label class="form-label" for="login">Username atau Email</label>
-                        <div class="input-wrapper">
-                            <input 
-                                type="text" 
-                                id="login" 
-                                name="login"
-                                class="form-control" 
-                                placeholder="Masukkan username atau email"
-                                autocomplete="username"
-                                value="{{ old('login') }}"
-                                required
-                                autofocus
-                            >
-                            <i class="fas fa-user input-icon"></i>
-                        </div>
-                    </div>
-
-                    <!-- Password -->
-                    <div class="form-group">
-                        <label class="form-label" for="password">Password</label>
-                        <div class="input-wrapper">
-                            <input 
-                                type="password" 
-                                id="password" 
-                                name="password"
-                                class="form-control" 
-                                placeholder="Masukkan password"
-                                autocomplete="current-password"
-                                required
-                            >
-                            <i class="fas fa-lock input-icon"></i>
-                            <button 
-                                type="button" 
-                                class="password-toggle" 
-                                onclick="togglePassword()"
-                                aria-label="Toggle password visibility"
-                            >
-                                <i class="fas fa-eye" id="toggleIcon"></i>
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Remember & Forgot -->
-                    <div class="form-options">
-                        <div class="checkbox-wrapper">
-                            <input 
-                                type="checkbox" 
-                                id="rememberMe" 
-                                name="remember"
-                                class="custom-checkbox"
-                            >
-                            <label class="checkbox-label" for="rememberMe">
-                                Ingat Saya
-                            </label>
-                        </div>
-                        @if (Route::has('password.request'))
-                            <a href="{{ route('password.request') }}" class="forgot-link">
-                                Lupa Password?
-                            </a>
-                        @endif
-                    </div>
-
-                    <!-- Submit Button -->
-                    <button type="submit" class="btn-submit" id="submitBtn">
-                        <span class="spinner"></span>
-                        <span class="btn-text">Masuk</span>
-                    </button>
-                </form>
-
-                <!-- Footer -->
-                <div class="login-footer">
-                    <p class="footer-text">© 2026 LaundryPro. All rights reserved.</p>
-                    <div class="footer-links">
-                        <a href="#" class="footer-link">Bantuan</a>
-                        <a href="#" class="footer-link">Privasi</a>
-                        <a href="#" class="footer-link">Syarat & Ketentuan</a>
-                    </div>
+            <!-- Footer -->
+            <div class="login-footer">
+                <p class="footer-text">© 2024 LaundryPro. All rights reserved.</p>
+                <div class="footer-links">
+                    <a href="#" class="footer-link">Bantuan</a>
+                    <a href="#" class="footer-link">Privasi</a>
+                    <a href="#" class="footer-link">Syarat & Ketentuan</a>
                 </div>
             </div>
         </div>
     </div>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     <script>
         // Toggle Password Visibility
         function togglePassword() {
@@ -618,11 +613,84 @@
             });
         });
 
-        // Show loading spinner on form submit
-        document.getElementById('loginForm').addEventListener('submit', function() {
+        // Handle Login
+        function handleLogin(event) {
+            event.preventDefault();
+            
             const submitBtn = document.getElementById('submitBtn');
+            const errorMessage = document.getElementById('errorMessage');
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+
+            // Hide error message
+            errorMessage.classList.remove('show');
+            
+            // Show loading state
             submitBtn.classList.add('loading');
             submitBtn.disabled = true;
+
+            // Simulate API call
+            setTimeout(() => {
+                // Demo validation
+                if (username === 'admin' && password === 'admin123') {
+                    // Success
+                    submitBtn.classList.remove('loading');
+                    submitBtn.classList.add('success');
+                    submitBtn.querySelector('.btn-text').textContent = 'Berhasil!';
+                    
+                    // Save remember me preference
+                    if (rememberMe) {
+                        localStorage.setItem('rememberMe', 'true');
+                        localStorage.setItem('username', username);
+                    }
+                    
+                    // Redirect after 1 second
+                    setTimeout(() => {
+                        // window.location.href = 'dashboard.html';
+                        alert('Login berhasil! Redirecting to dashboard...');
+                    }, 1000);
+                } else {
+                    // Error
+                    submitBtn.classList.remove('loading');
+                    submitBtn.disabled = false;
+                    errorMessage.classList.add('show');
+                    
+                    // Shake inputs
+                    document.querySelectorAll('.input-wrapper').forEach(wrapper => {
+                        wrapper.style.animation = 'none';
+                        setTimeout(() => {
+                            wrapper.style.animation = 'shake 0.5s';
+                        }, 10);
+                    });
+                }
+            }, 1500);
+        }
+
+        // Handle Forgot Password
+        function handleForgotPassword(event) {
+            event.preventDefault();
+            alert('Fitur reset password akan segera hadir!\n\nSilakan hubungi administrator untuk mereset password Anda.');
+        }
+
+        // Check Remember Me on page load
+        window.addEventListener('load', function() {
+            const rememberMe = localStorage.getItem('rememberMe');
+            const savedUsername = localStorage.getItem('username');
+            
+            if (rememberMe === 'true' && savedUsername) {
+                document.getElementById('username').value = savedUsername;
+                document.getElementById('rememberMe').checked = true;
+            }
+        });
+
+        // Add enter key support for form
+        document.getElementById('password').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+            }
         });
     </script>
-</x-guest-layout>
+</body>
+</html>
