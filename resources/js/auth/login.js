@@ -23,7 +23,34 @@ document.addEventListener('DOMContentLoaded', () => {
         input.addEventListener('blur',   function () { this.parentElement.classList.remove('focused'); });
     });
 
-    // ─── Lockout countdown helpers ────────────────────────────────────────────
+    // ─── Helpers ──────────────────────────────────────────────────────────────
+
+    function formatTime(seconds) {
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return `${m}:${String(s).padStart(2, '0')}`;
+    }
+
+    // Extract seconds from throttle message or default to 600 (10 min)
+    function extractSeconds(message) {
+        const detikMatch = String(message).match(/(\d+)\s*detik/);
+        if (detikMatch) return parseInt(detikMatch[1], 10);
+        const menitMatch = String(message).match(/(\d+)\s*menit/);
+        if (menitMatch) return parseInt(menitMatch[1], 10) * 60;
+        return 600;
+    }
+
+    function isThrottleMessage(msg) {
+        if (!msg) return false;
+        const lower = String(msg).toLowerCase();
+        return lower.includes('blokir')
+            || lower.includes('terlalu banyak')
+            || lower.includes('throttle')
+            || lower.includes('too many')
+            || lower.match(/\d+\s*(detik|menit)/) !== null;
+    }
+
+    // ─── Lockout countdown UI ─────────────────────────────────────────────────
     let lockoutInterval = null;
 
     function startLockoutUI(totalSeconds) {
@@ -32,19 +59,18 @@ document.addEventListener('DOMContentLoaded', () => {
         const errorCard = $('.field-error-box');
         const errorText = $('#errorText');
 
-        // Disable button immediately
         submitBtn.addClass('locked').prop('disabled', true);
+        btnText.text('Akun Terkunci 🔒');
 
-        // Show lockout card in amber/yellow warning style
-        const minutes     = Math.ceil(totalSeconds / 60);
-        const lockoutHtml = `
-            🔒 Terlalu banyak percobaan gagal. Akun diblokir sementara.<br>
-            <small style="font-weight:500;margin-top:2px;display:block;">Coba lagi dalam: <strong id="lockoutTimer">${formatTime(totalSeconds)}</strong></small>
-        `;
-        errorText.html(lockoutHtml);
+        const minutes = Math.ceil(totalSeconds / 60);
+        errorText.html(
+            `🔒 Terlalu banyak percobaan gagal. Akun diblokir sementara.<br>` +
+            `<small style="font-weight:500;margin-top:4px;display:block;">` +
+            `Coba lagi dalam: <strong id="lockoutTimer">${formatTime(totalSeconds)}</strong>` +
+            `</small>`
+        );
         errorCard.addClass('locked-out show').show();
 
-        // Show toast
         if (typeof window.showToast === 'function') {
             window.showToast(
                 `Akun diblokir ${minutes} menit karena terlalu banyak percobaan gagal.`,
@@ -53,42 +79,31 @@ document.addEventListener('DOMContentLoaded', () => {
             );
         }
 
-        // Countdown
         let remaining = totalSeconds;
         clearInterval(lockoutInterval);
 
         lockoutInterval = setInterval(() => {
             remaining--;
-            const timerEl = document.getElementById('lockoutTimer');
-            if (timerEl) timerEl.textContent = formatTime(remaining);
+            const el = document.getElementById('lockoutTimer');
+            if (el) el.textContent = formatTime(remaining);
 
             if (remaining <= 0) {
                 clearInterval(lockoutInterval);
                 submitBtn.removeClass('locked').prop('disabled', false);
                 btnText.text('Masuk');
-                // Reset UI
                 errorCard.hide().removeClass('show locked-out');
-                $('#errorText').html('');
+                errorText.html('');
                 if (typeof window.showToast === 'function') {
-                    window.showToast('Akun Anda sudah dapat digunakan kembali.', 'info', 'Blokir Dicabut');
+                    window.showToast('Akun Anda sudah dapat digunakan kembali.', 'success', '✅ Blokir Dicabut');
                 }
             }
         }, 1000);
     }
 
-    function formatTime(seconds) {
-        const m = Math.floor(seconds / 60);
-        const s = seconds % 60;
-        return `${m}:${String(s).padStart(2, '0')}`;
-    }
-
-    // Extract seconds from throttle error message (fallback: 600)
-    function extractSeconds(message) {
-        const match = message.match(/(\d+)\s*detik/);
-        if (match) return parseInt(match[1], 10);
-        const minMatch = message.match(/(\d+)\s*menit/);
-        if (minMatch) return parseInt(minMatch[1], 10) * 60;
-        return 600;
+    function showNormalError(errorCard, message) {
+        $('#errorText').text(message);
+        errorCard.removeClass('locked-out').addClass('show').show();
+        if (typeof window.showToast === 'function') window.showToast(message, 'error');
     }
 
     // ─── AJAX Login ───────────────────────────────────────────────────────────
@@ -103,7 +118,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const btnText   = submitBtn.find('.btn-text');
         const errorCard = $('.field-error-box');
 
-        // Don't submit if locked out
         if (submitBtn.hasClass('locked')) return;
 
         // Loading state
@@ -138,41 +152,47 @@ document.addEventListener('DOMContentLoaded', () => {
             error(xhr) {
                 if (typeof window.hideLoadingDialog === 'function') window.hideLoadingDialog();
 
-                // Reset button (unless we detect throttle below)
                 submitBtn.removeClass('loading').prop('disabled', false);
                 btnText.text('Masuk');
 
-                let errorMsgText = 'Terjadi kesalahan. Silakan coba lagi.';
-                let isThrottle   = false;
+                const json   = xhr.responseJSON || {};
+                const status = xhr.status;
 
-                if (xhr.status === 422 && xhr.responseJSON?.errors) {
-                    const firstKey = Object.keys(xhr.responseJSON.errors)[0];
-                    errorMsgText   = xhr.responseJSON.errors[firstKey][0];
+                // ── 429 Too Many Requests (route-level throttle) ──
+                if (status === 429) {
+                    const retryAfter = parseInt(xhr.getResponseHeader('Retry-After') || '600', 10);
+                    return startLockoutUI(retryAfter);
+                }
 
-                    // Detect throttle/lockout message from server
-                    if (errorMsgText.toLowerCase().includes('blokir') ||
-                        errorMsgText.toLowerCase().includes('terlalu banyak') ||
-                        errorMsgText.toLowerCase().includes('menit') ||
-                        firstKey === 'login' && errorMsgText.match(/\d+\s*(detik|menit)/)) {
-                        isThrottle = true;
+                // ── 419 Session expired ──
+                if (status === 419) {
+                    return showNormalError(errorCard, 'Sesi telah berakhir. Silakan muat ulang halaman.');
+                }
+
+                // ── 422 Validation / Auth failed ──
+                if (status === 422) {
+                    let msg = '';
+
+                    if (json.errors && Object.keys(json.errors).length > 0) {
+                        const firstKey = Object.keys(json.errors)[0];
+                        const firstArr = json.errors[firstKey];
+                        msg = Array.isArray(firstArr) ? firstArr[0] : firstArr;
+                    } else if (json.message) {
+                        msg = json.message;
                     }
-                } else if (xhr.status === 419) {
-                    errorMsgText = 'Sesi telah berakhir. Silakan muat ulang halaman.';
-                } else if (xhr.status === 429) {
-                    errorMsgText = 'Terlalu banyak percobaan. Akun diblokir sementara.';
-                    isThrottle   = true;
+
+                    if (!msg) msg = 'Terjadi kesalahan. Silakan coba lagi.';
+
+                    // Detect throttle message
+                    if (isThrottleMessage(msg)) {
+                        return startLockoutUI(extractSeconds(msg));
+                    }
+
+                    return showNormalError(errorCard, msg);
                 }
 
-                if (isThrottle) {
-                    // Parse remaining seconds from server message
-                    const lockSeconds = extractSeconds(errorMsgText);
-                    startLockoutUI(lockSeconds);
-                } else {
-                    // Normal error
-                    if (typeof window.showToast === 'function') window.showToast(errorMsgText, 'error');
-                    $('#errorText').text(errorMsgText);
-                    errorCard.removeClass('locked-out').addClass('show').show();
-                }
+                // ── Generic fallback ──
+                showNormalError(errorCard, 'Terjadi kesalahan server. Silakan coba lagi.');
             },
         });
     });
