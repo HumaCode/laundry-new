@@ -22,6 +22,10 @@ Route::middleware('auth')->group(function () {
 
     // Outlet
     Route::get('/outlets', [OutletController::class, 'index'])->name('outlets');
+    Route::post('/outlets', [OutletController::class, 'store'])->name('outlets.store');
+    Route::get('/outlets/{id}', [OutletController::class, 'show'])->name('outlets.show');
+    Route::put('/outlets/{id}', [OutletController::class, 'update'])->name('outlets.update');
+    Route::delete('/outlets/{id}', [OutletController::class, 'destroy'])->name('outlets.destroy');
 });
 
 require __DIR__.'/auth.php';

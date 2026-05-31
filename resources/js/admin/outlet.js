@@ -1,49 +1,10 @@
-const CITIES     = ['Jakarta Pusat','Bandung Kota','Surabaya Barat','Yogyakarta','Semarang Tengah'];
-const STATUSES   = ['Aktif','Tutup','Maintenance'];
-const MANAGERS   = ['Hendra Wijaya','Dewi Lestari','Nita Kusuma','Fajar Nugroho','Rini Susanti'];
-const ADDRESSES = [
-    'Jl. Sudirman No. 12, Jakarta Pusat',
-    'Jl. Merdeka No. 45, Bandung',
-    'Jl. Diponegoro No. 8, Surabaya',
-    'Jl. Malioboro No. 100, Yogyakarta',
-    'Jl. Pemuda No. 33, Semarang',
-];
-const GRADS     = ['grad-purple','grad-green','grad-orange','grad-pink','grad-blue','grad-teal'];
-const AV_COLORS = ['#6366F1','#10B981','#F59E0B','#EC4899','#3B82F6','#8B5CF6','#F97316','#06B6D4','#14B8A6','#EF4444'];
-const NAMES     = ['Outlet Pusat','Outlet Bandung','Outlet Surabaya','Outlet Yogyakarta','Outlet Semarang'];
-
-let allOutlets = NAMES.map((name, i) => {
-    const status      = i === 3 ? 'Maintenance' : (i === 4 ? 'Tutup' : 'Aktif');
-    const staffCount  = 8 + Math.floor(Math.abs(Math.sin(i * 3.7)) * 10);
-    const orders      = 120 + Math.floor(Math.abs(Math.cos(i * 1.5)) * 350);
-    const revenue     = orders * (45000 + Math.floor(Math.abs(Math.sin(i)) * 25000));
-    const day         = 10 + (i % 18);
-    const month       = 1 + (i % 12);
-    const year        = 2022 + (i % 2);
-    const recentEmployees = [
-        { name: `${MANAGERS[i]} (Manager)`, role: 'Kepala Outlet', status: 'Aktif' },
-        { name: 'Karyawan A', role: 'Kasir', status: 'Aktif' },
-        { name: 'Karyawan B', role: 'Kurir', status: 'Aktif' },
-        { name: 'Karyawan C', role: 'Operator', status: 'Aktif' }
-    ];
-    return {
-        id:      `OUT-${String(1000 + i).padStart(4,'0')}`,
-        name, status,
-        phone:   `02${String(10000000 + i * 23456789).slice(0,9)}`,
-        email:   name.toLowerCase().replace(/ /g,'') + '@laundrypro.com',
-        city:    CITIES[i % CITIES.length],
-        address: ADDRESSES[i % ADDRESSES.length],
-        manager: MANAGERS[i % MANAGERS.length],
-        staffCount, orders, revenue,
-        joined:  `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`,
-        color:   AV_COLORS[i % AV_COLORS.length],
-        grad:    GRADS[i % GRADS.length],
-        notes:   i % 3 === 0 ? 'Kapasitas cuci harian optimal.' : 'Memerlukan perawatan mesin cuci tambahan.',
-        recentEmployees,
-    };
+// Setup CSRF token for jQuery AJAX
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
 });
 
-let filtered       = [...allOutlets];
 let currentPage    = 1;
 let perPage        = 10;
 let selectedIds    = new Set();
@@ -52,6 +13,8 @@ let activeOutlet   = null;
 let editMode       = false;
 let sortCol        = 'name';
 let sortDir        = 'asc';
+let pageData       = [];
+let totalItems     = 0;
 
 function switchView(v) {
     currentView = v;
@@ -59,40 +22,50 @@ function switchView(v) {
     document.getElementById('viewBtnGrid').classList.toggle('active',  v === 'grid');
     document.getElementById('tableView').style.display = v === 'table' ? '' : 'none';
     document.getElementById('gridView').style.display  = v === 'grid'  ? '' : 'none';
-    render();
+    applyFilters();
 }
 
 function getInitials(name) { return name.split(' ').slice(0,2).map(w => w[0]).join('').toUpperCase(); }
 function formatRp(n)       { return 'Rp ' + n.toLocaleString('id-ID'); }
-function statusBadge(status) {
-    const map = {Aktif:'status-aktif',Tutup:'status-tutup',Maintenance:'status-maintenance'};
-    const icons = {Aktif:'🟢',Tutup:'🔴',Maintenance:'🛠️'};
-    return `<span class="status-badge ${map[status] || 'status-aktif'}">${icons[status] || ''} ${status}</span>`;
+function statusBadge(isActive) {
+    return isActive
+        ? `<span class="status-badge status-aktif">🟢 Aktif</span>`
+        : `<span class="status-badge status-tutup">🔴 Tutup</span>`;
 }
 
 function applyFilters() {
-    const q       = document.getElementById('searchInput').value.toLowerCase();
+    const q       = document.getElementById('searchInput').value;
     const status  = document.getElementById('filterStatus').value;
     const city    = document.getElementById('filterCity').value;
     const sortVal = document.getElementById('filterSort').value;
+    
+    const limit = currentView === 'table' ? perPage : 12;
 
-    filtered = allOutlets.filter(c => {
-        const mq = !q || c.name.toLowerCase().includes(q) || c.address.toLowerCase().includes(q) || c.id.toLowerCase().includes(q) || c.manager.toLowerCase().includes(q);
-        const mt = !status || c.status === status;
-        const mo = !city   || c.city === city;
-        return mq && mt && mo;
+    $.ajax({
+        url: '/outlets',
+        method: 'GET',
+        data: {
+            search: q,
+            status: status,
+            city: city,
+            sort: sortVal,
+            per_page: limit,
+            page: currentPage
+        },
+        success: function(res) {
+            if (res.success) {
+                pageData = res.data.data;
+                const meta = res.data.meta;
+                totalItems = meta.total;
+                currentPage = meta.current_page;
+                
+                render(meta);
+            }
+        },
+        error: function() {
+            showToast('error', 'Error', 'Gagal memuat data outlet dari server');
+        }
     });
-
-    if (sortVal === 'name-asc')     filtered.sort((a,b) => a.name.localeCompare(b.name));
-    else if (sortVal === 'name-desc')  filtered.sort((a,b) => b.name.localeCompare(a.name));
-    else if (sortVal === 'staff-desc') filtered.sort((a,b) => b.staffCount - a.staffCount);
-    else if (sortVal === 'revenue-desc') filtered.sort((a,b) => b.revenue - a.revenue);
-    else if (sortVal === 'recent')     filtered.sort((a,b) => new Date(b.joined) - new Date(a.joined));
-
-    currentPage = 1;
-    selectedIds.clear();
-    updateBulkBar();
-    render();
 }
 
 function resetFilters() {
@@ -100,11 +73,10 @@ function resetFilters() {
     document.getElementById('filterStatus').value = '';
     document.getElementById('filterCity').value   = '';
     document.getElementById('filterSort').value   = 'name-asc';
-    filtered = [...allOutlets];
     currentPage = 1;
     selectedIds.clear();
     updateBulkBar();
-    render();
+    applyFilters();
 }
 
 function sortBy(col) {
@@ -114,59 +86,58 @@ function sortBy(col) {
     const el = document.getElementById('si-' + col);
     if (el) el.classList.add('active');
 
-    filtered.sort((a, b) => {
-        let va = a[col], vb = b[col];
-        if (col === 'joined') { va = new Date(va); vb = new Date(vb); }
-        if (typeof va === 'string') return sortDir === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va);
-        return sortDir === 'asc' ? va - vb : vb - va;
-    });
-    currentPage = 1;
-    render();
+    const mapping = {
+        'name': sortDir === 'asc' ? 'name-asc' : 'name-desc',
+        'revenue': 'revenue-desc',
+        'staffCount': 'staff-desc',
+        'joined': 'recent'
+    };
+    
+    document.getElementById('filterSort').value = mapping[col] || 'name-asc';
+    applyFilters();
 }
 
-function render() {
-    if (currentView === 'table') renderTable();
-    else renderGrid();
+function render(meta) {
+    if (currentView === 'table') renderTable(meta);
+    else renderGrid(meta);
 }
 
-function renderTable() {
+function renderTable(meta) {
     const tbody = document.getElementById('outletTableBody');
     const empty = document.getElementById('emptyState');
     if (!tbody) return;
-    const start = (currentPage - 1) * perPage;
-    const page  = filtered.slice(start, start + perPage);
 
-    document.getElementById('totalCount').textContent = filtered.length.toLocaleString();
-    document.getElementById('showCount').textContent  = Math.min(perPage, filtered.length - start);
+    document.getElementById('totalCount').textContent = meta.total.toLocaleString();
+    document.getElementById('showCount').textContent  = pageData.length;
 
-    if (!filtered.length) { tbody.innerHTML = ''; empty.style.display = ''; return; }
+    if (!pageData.length) { tbody.innerHTML = ''; empty.style.display = ''; return; }
     empty.style.display = 'none';
 
-    tbody.innerHTML = page.map(c => `
+    tbody.innerHTML = pageData.map(c => `
         <tr>
             <td class="cb-cell"><input type="checkbox" class="custom-cb row-cb" data-id="${c.id}" ${selectedIds.has(c.id)?'checked':''} onchange="toggleRowCheck(this)"></td>
             <td>
                 <div style="display:flex;align-items:center;gap:.75rem">
-                    <div class="outlet-avatar" style="background:${c.color}">
+                    <div class="outlet-avatar" style="background:#6366F1">
                         ${getInitials(c.name)}
-                        <span class="outlet-avatar-status ${c.status==='Aktif'?'aktif':c.status==='Tutup'?'tutup':'maintenance'}"></span>
+                        <span class="outlet-avatar-status ${c.is_active?'aktif':'tutup'}"></span>
                     </div>
                     <div>
                         <div class="outlet-name">${c.name}</div>
-                        <div class="outlet-id">${c.id}</div>
+                        <div class="outlet-id">${c.code}</div>
                     </div>
                 </div>
             </td>
-            <td>${statusBadge(c.status)}</td>
+            <td>${statusBadge(c.is_active)}</td>
             <td>
                 <div style="font-size:.875rem;font-weight:600;color:var(--dark)">${c.phone}</div>
-                <div style="font-size:.72rem;color:var(--gray-light)">${c.email}</div>
+                <div style="font-size:.72rem;color:var(--gray-light)">${c.email || '-'}</div>
             </td>
             <td>
                 <div style="font-size:.875rem;font-weight:600;color:var(--dark)">${c.city}</div>
-                <div style="font-size:.72rem;color:var(--gray-light);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${c.address}">${c.address}</div>
+                <div style="font-size:.72rem;color:var(--gray-light);max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${c.address}">${c.address || '-'}</div>
             </td>
-            <td><span style="font-weight:600;color:var(--dark)">${c.manager}</span></td>
+            <td><span style="font-weight:600;color:var(--dark)">${c.manager || '-'}</span></td>
             <td><span class="staff-count-badge">${c.staffCount} orang</span></td>
             <td>
                 <div class="amount-total">${formatRp(c.revenue)}</div>
@@ -182,30 +153,30 @@ function renderTable() {
         </tr>`).join('');
 
     syncCheckAll();
-    renderPagination();
+    renderPagination(meta.last_page);
 }
 
-function renderGrid() {
+function renderGrid(meta) {
     const grid  = document.getElementById('outletGrid');
     const empty = document.getElementById('emptyStateGrid');
     if (!grid) return;
-    const start = (currentPage - 1) * 12;
-    const page  = filtered.slice(start, start + 12);
 
-    if (!filtered.length) { grid.innerHTML = ''; empty.style.display = ''; renderGridPagination(); return; }
+    if (!pageData.length) { grid.innerHTML = ''; empty.style.display = ''; renderGridPagination(1); return; }
     empty.style.display = 'none';
 
-    grid.innerHTML = page.map(c => `
-        <div class="outlet-grid-card ${c.grad}">
+    const grads = ['grad-purple', 'grad-green', 'grad-orange', 'grad-pink', 'grad-blue', 'grad-teal'];
+
+    grid.innerHTML = pageData.map((c, i) => `
+        <div class="outlet-grid-card ${grads[i % grads.length]}">
             <div class="outlet-grid-inner">
                 <div class="outlet-grid-top">
                     <input type="checkbox" class="custom-cb outlet-grid-cb row-cb" data-id="${c.id}" ${selectedIds.has(c.id)?'checked':''} onchange="toggleRowCheck(this)">
-                    ${statusBadge(c.status)}
+                    ${statusBadge(c.is_active)}
                 </div>
                 <div class="outlet-grid-avatar-wrap">
-                    <div class="outlet-grid-avatar" style="background:${c.color}">${getInitials(c.name)}</div>
+                    <div class="outlet-grid-avatar" style="background:#6366F1">${getInitials(c.name)}</div>
                     <div class="outlet-grid-name">${c.name}</div>
-                    <div class="outlet-grid-id">${c.id}</div>
+                    <div class="outlet-grid-id">${c.code}</div>
                 </div>
                 <div class="outlet-grid-stats">
                     <div class="outlet-grid-stat"><div class="outlet-grid-stat-val">${c.staffCount}</div><div class="outlet-grid-stat-lbl">Staff</div></div>
@@ -219,21 +190,19 @@ function renderGrid() {
             </div>
         </div>`).join('');
 
-    renderGridPagination();
+    renderGridPagination(meta.last_page);
 }
 
-function renderPagination() {
-    const total = Math.ceil(filtered.length / perPage) || 1;
+function renderPagination(lastPage) {
     document.getElementById('currentPage').textContent = currentPage;
-    document.getElementById('totalPages').textContent  = total;
-    buildPageControls('paginationControls', total, goPage);
+    document.getElementById('totalPages').textContent  = lastPage;
+    buildPageControls('paginationControls', lastPage, goPage);
 }
 
-function renderGridPagination() {
-    const total = Math.ceil(filtered.length / 12) || 1;
+function renderGridPagination(lastPage) {
     document.getElementById('gridCurPage').textContent   = currentPage;
-    document.getElementById('gridTotalPages').textContent = total;
-    buildPageControls('gridPaginationControls', total, goPage);
+    document.getElementById('gridTotalPages').textContent = lastPage;
+    buildPageControls('gridPaginationControls', lastPage, goPage);
 }
 
 function buildPageControls(containerId, total, fn) {
@@ -250,20 +219,17 @@ function buildPageControls(containerId, total, fn) {
 }
 
 function goPage(p) {
-    const total = Math.ceil(filtered.length / (currentView === 'table' ? perPage : 12)) || 1;
-    if (p < 1 || p > total) return;
     currentPage = p;
-    render();
+    applyFilters();
     window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
-function changePerPage(val) { perPage = parseInt(val); currentPage = 1; render(); }
+function changePerPage(val) { perPage = parseInt(val); currentPage = 1; applyFilters(); }
 
 function toggleAllCheck() {
     const checked = document.getElementById('checkAll').checked;
-    const start = (currentPage-1) * perPage;
-    filtered.slice(start, start+perPage).forEach(c => { checked ? selectedIds.add(c.id) : selectedIds.delete(c.id); });
-    render();
+    pageData.forEach(c => { checked ? selectedIds.add(c.id) : selectedIds.delete(c.id); });
+    renderTable({ total: totalItems, last_page: Math.ceil(totalItems/perPage) });
     updateBulkBar();
 }
 
@@ -274,15 +240,16 @@ function toggleRowCheck(cb) {
     updateBulkBar();
 }
 
+// Global exposure
+window.toggleRowCheck = toggleRowCheck;
+
 function syncCheckAll() {
-    const start = (currentPage-1)*perPage;
-    const page  = filtered.slice(start, start+perPage);
-    const all   = page.length > 0 && page.every(c => selectedIds.has(c.id));
+    const all   = pageData.length > 0 && pageData.every(c => selectedIds.has(c.id));
     const cb    = document.getElementById('checkAll');
     if (cb) cb.checked = all;
 }
 
-function clearSelection() { selectedIds.clear(); render(); updateBulkBar(); }
+function clearSelection() { selectedIds.clear(); applyFilters(); updateBulkBar(); }
 
 function updateBulkBar() {
     const n = selectedIds.size;
@@ -295,45 +262,71 @@ function updateBulkBar() {
 function bulkExport()  { showToast('info','Export',`Mengekspor ${selectedIds.size} data outlet`); }
 function bulkDelete() {
     if (!confirm(`Hapus ${selectedIds.size} outlet yang dipilih?`)) return;
-    selectedIds.forEach(id => { const i = allOutlets.findIndex(c => c.id === id); if(i>-1) allOutlets.splice(i,1); });
-    selectedIds.clear();
-    applyFilters();
-    showToast('success','Dihapus','Outlet berhasil dihapus');
+    
+    let promises = [];
+    selectedIds.forEach(id => {
+        promises.push(
+            $.ajax({
+                url: '/outlets/' + id,
+                method: 'DELETE'
+            })
+        );
+    });
+    
+    Promise.all(promises).then(() => {
+        selectedIds.clear();
+        applyFilters();
+        showToast('success','Dihapus','Outlet berhasil dihapus');
+    }).catch(() => {
+        showToast('error', 'Error', 'Beberapa outlet gagal dihapus');
+    });
 }
 
 function openDrawer(id) {
-    const c = allOutlets.find(x => x.id === id);
-    if (!c) return;
-    activeOutlet = c;
+    $.ajax({
+        url: '/outlets/' + id,
+        method: 'GET',
+        success: function(res) {
+            if (res.success) {
+                const c = res.data;
+                activeOutlet = c;
 
-    document.getElementById('d-avatar').textContent      = getInitials(c.name);
-    document.getElementById('d-avatar').style.background = c.color;
-    document.getElementById('d-name').textContent        = c.name;
-    document.getElementById('d-id').textContent          = c.id;
-    document.getElementById('d-status-wrap').innerHTML   = statusBadge(c.status);
-    document.getElementById('d-totalorders').textContent = c.orders;
-    document.getElementById('d-totalrevenue').textContent = (c.revenue/1000000).toFixed(1)+'jt';
-    document.getElementById('d-staffcount').textContent  = c.staffCount;
-    document.getElementById('d-phone').textContent       = c.phone;
-    document.getElementById('d-email').textContent       = c.email;
-    document.getElementById('d-joined').textContent      = c.joined;
-    document.getElementById('d-city').textContent        = c.city;
-    document.getElementById('d-address').textContent     = c.address;
-    document.getElementById('d-manager').textContent     = c.manager;
+                document.getElementById('d-avatar').textContent      = getInitials(c.name);
+                document.getElementById('d-name').textContent        = c.name;
+                document.getElementById('d-id').textContent          = c.code;
+                document.getElementById('d-status-wrap').innerHTML   = statusBadge(c.is_active);
+                document.getElementById('d-totalorders').textContent = c.orders;
+                document.getElementById('d-totalrevenue').textContent = formatRp(c.revenue);
+                document.getElementById('d-staffcount').textContent  = c.staffCount;
+                document.getElementById('d-phone').textContent       = c.phone;
+                document.getElementById('d-email').textContent       = c.email || '-';
+                document.getElementById('d-joined').textContent      = c.joined;
+                document.getElementById('d-city').textContent        = c.city;
+                document.getElementById('d-address').textContent     = c.address || '-';
+                document.getElementById('d-manager').textContent     = c.manager || '-';
 
-    document.getElementById('d-recent-employees').innerHTML = c.recentEmployees.map(o => `
-        <div class="drawer-employee-item">
-            <div class="drawer-employee-avatar">${getInitials(o.name)}</div>
-            <div class="drawer-employee-info">
-                <div class="drawer-employee-name">${o.name}</div>
-                <div class="drawer-employee-role">${o.role}</div>
-            </div>
-            <div>
-                <div class="drawer-employee-status">${o.status}</div>
-            </div>
-        </div>`).join('');
+                const mockEmployees = [
+                    { name: `${c.manager || 'PIC'} (Manager)`, role: 'Kepala Outlet', status: 'Aktif' },
+                    { name: 'Karyawan A', role: 'Kasir', status: 'Aktif' },
+                    { name: 'Karyawan B', role: 'Kurir', status: 'Aktif' }
+                ];
 
-    document.getElementById('drawerOverlay').classList.add('show');
+                document.getElementById('d-recent-employees').innerHTML = mockEmployees.map(o => `
+                    <div class="drawer-employee-item">
+                        <div class="drawer-employee-avatar">${getInitials(o.name)}</div>
+                        <div class="drawer-employee-info">
+                            <div class="drawer-employee-name">${o.name}</div>
+                            <div class="drawer-employee-role">${o.role}</div>
+                        </div>
+                        <div>
+                            <div class="drawer-employee-status">${o.status}</div>
+                        </div>
+                    </div>`).join('');
+
+                document.getElementById('drawerOverlay').classList.add('show');
+            }
+        }
+    });
 }
 
 function closeDrawer() { document.getElementById('drawerOverlay').classList.remove('show'); }
@@ -344,7 +337,7 @@ function editCurrentOutlet()   { if (!activeOutlet) return; openEditModal(active
 function openAddModal() {
     editMode = false;
     activeOutlet = null;
-    document.getElementById('modalIcon').innerHTML     = '<i class="fas fa-store-alt-slash"></i>';
+    document.getElementById('modalIcon').innerHTML     = '<i class="fas fa-store"></i>';
     document.getElementById('modalTitle').textContent  = 'Tambah Outlet';
     document.getElementById('modalSubtitle').textContent = 'Isi data outlet baru';
     ['f-name','f-phone','f-email','f-address','f-manager','f-notes'].forEach(id => document.getElementById(id).value = '');
@@ -354,21 +347,28 @@ function openAddModal() {
 }
 
 function openEditModal(id) {
-    const c = allOutlets.find(x => x.id === id);
-    if (!c) return;
-    editMode = true; activeOutlet = c;
-    document.getElementById('modalIcon').innerHTML       = '<i class="fas fa-pen"></i>';
-    document.getElementById('modalTitle').textContent    = 'Edit Outlet';
-    document.getElementById('modalSubtitle').textContent = 'Perbarui data outlet';
-    document.getElementById('f-name').value    = c.name;
-    document.getElementById('f-phone').value   = c.phone;
-    document.getElementById('f-email').value   = c.email;
-    document.getElementById('f-address').value = c.address;
-    document.getElementById('f-city').value    = c.city;
-    document.getElementById('f-manager').value = c.manager;
-    document.getElementById('f-status').value  = c.status;
-    document.getElementById('f-notes').value   = c.notes;
-    document.getElementById('outletModal').classList.add('show');
+    $.ajax({
+        url: '/outlets/' + id,
+        method: 'GET',
+        success: function(res) {
+            if (res.success) {
+                const c = res.data;
+                editMode = true; activeOutlet = c;
+                document.getElementById('modalIcon').innerHTML       = '<i class="fas fa-pen"></i>';
+                document.getElementById('modalTitle').textContent    = 'Edit Outlet';
+                document.getElementById('modalSubtitle').textContent = 'Perbarui data outlet';
+                document.getElementById('f-name').value    = c.name;
+                document.getElementById('f-phone').value   = c.phone;
+                document.getElementById('f-email').value   = c.email || '';
+                document.getElementById('f-address').value = c.address || '';
+                document.getElementById('f-city').value    = c.city;
+                document.getElementById('f-manager').value = c.manager || '';
+                document.getElementById('f-status').value  = c.is_active ? 'Aktif' : 'Tutup';
+                document.getElementById('f-notes').value   = '';
+                document.getElementById('outletModal').classList.add('show');
+            }
+        }
+    });
 }
 
 function saveOutlet() {
@@ -377,47 +377,54 @@ function saveOutlet() {
     const city  = document.getElementById('f-city').value.trim();
     if (!name || !phone || !city) { showToast('error','Validasi','Nama, telepon, dan kota wajib diisi'); return; }
 
-    if (editMode && activeOutlet) {
-        activeOutlet.name    = name;
-        activeOutlet.phone   = phone;
-        activeOutlet.email   = document.getElementById('f-email').value;
-        activeOutlet.address = document.getElementById('f-address').value;
-        activeOutlet.city    = city;
-        activeOutlet.manager = document.getElementById('f-manager').value;
-        activeOutlet.status  = document.getElementById('f-status').value;
-        activeOutlet.notes   = document.getElementById('f-notes').value;
-        showToast('success','Diperbarui','Data outlet berhasil diperbarui');
-    } else {
-        const newC = {
-            id: `OUT-${String(1000 + allOutlets.length).padStart(4,'0')}`,
-            name, phone,
-            email:   document.getElementById('f-email').value,
-            city,
-            address: document.getElementById('f-address').value,
-            manager: document.getElementById('f-manager').value || '-',
-            status:  document.getElementById('f-status').value,
-            notes:   document.getElementById('f-notes').value,
-            staffCount: 0, orders: 0, revenue: 0,
-            joined: new Date().toISOString().slice(0,10),
-            color: AV_COLORS[allOutlets.length % AV_COLORS.length],
-            grad:  GRADS[allOutlets.length % GRADS.length],
-            recentEmployees: [],
-        };
-        allOutlets.unshift(newC);
-        showToast('success','Ditambahkan','Outlet baru berhasil ditambahkan');
-    }
-    closeModal('outletModal');
-    applyFilters();
+    const statusVal = document.getElementById('f-status').value;
+
+    const payload = {
+        name: name,
+        phone: phone,
+        email: document.getElementById('f-email').value,
+        address: document.getElementById('f-address').value,
+        city: city,
+        manager: document.getElementById('f-manager').value,
+        is_active: statusVal === 'Aktif' ? 1 : 0
+    };
+
+    const url = editMode && activeOutlet ? '/outlets/' + activeOutlet.id : '/outlets';
+    const method = editMode && activeOutlet ? 'PUT' : 'POST';
+
+    $.ajax({
+        url: url,
+        method: method,
+        data: payload,
+        success: function(res) {
+            if (res.success) {
+                showToast('success', editMode ? 'Diperbarui' : 'Ditambahkan', res.message);
+                closeModal('outletModal');
+                applyFilters();
+            }
+        },
+        error: function(xhr) {
+            const err = xhr.responseJSON;
+            showToast('error', 'Gagal', err && err.message ? err.message : 'Terjadi kesalahan sistem');
+        }
+    });
 }
 
 function deleteById(id) {
-    const c = allOutlets.find(x => x.id === id);
-    if (!c) return;
-    if (!confirm(`Hapus outlet ${c.name}?`)) return;
-    const i = allOutlets.indexOf(c);
-    if (i > -1) allOutlets.splice(i, 1);
-    applyFilters();
-    showToast('success','Dihapus',`${c.name} berhasil dihapus`);
+    if (!confirm('Hapus outlet ini?')) return;
+    $.ajax({
+        url: '/outlets/' + id,
+        method: 'DELETE',
+        success: function(res) {
+            if (res.success) {
+                applyFilters();
+                showToast('success','Dihapus','Outlet berhasil dihapus');
+            }
+        },
+        error: function() {
+            showToast('error','Error','Gagal menghapus outlet');
+        }
+    });
 }
 
 function closeModal(id) { document.getElementById(id).classList.remove('show'); }
@@ -458,7 +465,6 @@ window.sortBy = sortBy;
 window.goPage = goPage;
 window.changePerPage = changePerPage;
 window.toggleAllCheck = toggleAllCheck;
-window.toggleRowCheck = toggleRowCheck;
 window.clearSelection = clearSelection;
 window.bulkExport = bulkExport;
 window.bulkDelete = bulkDelete;
