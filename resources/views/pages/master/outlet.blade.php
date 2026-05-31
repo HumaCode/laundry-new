@@ -82,11 +82,9 @@
             <label class="filter-label">Lokasi Kota</label>
             <select class="filter-input" id="filterCity" onchange="applyFilters()">
                 <option value="">Semua Lokasi</option>
-                <option>Jakarta Pusat</option>
-                <option>Bandung Kota</option>
-                <option>Surabaya Barat</option>
-                <option>Yogyakarta</option>
-                <option>Semarang Tengah</option>
+                @foreach($cities as $city)
+                    <option value="{{ $city }}">{{ $city }}</option>
+                @endforeach
             </select>
         </div>
         <div class="filter-group" style="min-width:130px">

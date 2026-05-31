@@ -8,6 +8,7 @@ use App\Http\Resources\OutletResource;
 use App\Http\Resources\PaginateResource;
 use App\Helpers\ResponseHelper;
 use App\Services\OutletService;
+use App\Models\Master\Outlet;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -35,9 +36,20 @@ class OutletController extends Controller
             return ResponseHelper::jsonResponse(true, 'Data outlet berhasil diambil', $paginated, 200);
         }
 
+        $cities = Outlet::whereNotNull('city')
+            ->where('city', '!=', '')
+            ->orderBy('city', 'asc')
+            ->pluck('city')
+            ->unique(function ($item) {
+                return strtolower(trim($item));
+            })
+            ->values()
+            ->toArray();
+
         return view('pages.master.outlet', [
             'topbarTitle' => 'Outlet',
-            'topbarIcon' => 'fa-store'
+            'topbarIcon' => 'fa-store',
+            'cities' => $cities
         ]);
     }
 
