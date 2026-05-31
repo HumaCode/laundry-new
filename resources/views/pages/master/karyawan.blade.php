@@ -1,11 +1,14 @@
 <x-app-layout>
     @push('styles')
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
         @vite(['resources/css/admin/karyawan.css'])
     @endpush
 
     @push('scripts')
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/id.js"></script>
         @vite(['resources/js/admin/karyawan.js'])
     @endpush
 
@@ -256,7 +259,15 @@
                     </div>
                     <div class="form-field">
                         <label>Tanggal Masuk Bekerja</label>
-                        <div class="input-icon-wrap"><input class="form-control" id="f-joined_at" type="date"><i class="fas fa-calendar-alt icon" style="pointer-events:none"></i></div>
+                        <div class="flatpickr-wrap">
+                            <span class="flatpickr-calendar-icon"><i class="fas fa-calendar-alt"></i></span>
+                            <input class="form-control flatpickr-input-custom" id="f-joined_at"
+                                type="text" placeholder="Pilih tanggal bergabung" readonly>
+                            <button type="button" class="flatpickr-clear-btn" id="f-joined_at-clear"
+                                onclick="clearDate()" title="Hapus tanggal">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
                     </div>
                     <div class="form-field full">
                         <label>Alamat Lengkap</label>

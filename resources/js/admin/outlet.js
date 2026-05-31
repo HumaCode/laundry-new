@@ -439,23 +439,28 @@ function openDrawer(id) {
                 document.getElementById('d-address').textContent     = c.address || '-';
                 document.getElementById('d-manager').textContent     = c.manager || '-';
 
-                const mockEmployees = [
-                    { name: `${c.manager || 'PIC'} (Manager)`, role: 'Kepala Outlet', status: 'Aktif' },
-                    { name: 'Karyawan A', role: 'Kasir', status: 'Aktif' },
-                    { name: 'Karyawan B', role: 'Kurir', status: 'Aktif' }
-                ];
+                let employeesHtml = '';
+                if (c.employees && c.employees.length > 0) {
+                    employeesHtml = c.employees.map(o => `
+                        <div class="drawer-employee-item">
+                            <div class="drawer-employee-avatar">${getInitials(o.name)}</div>
+                            <div class="drawer-employee-info">
+                                <div class="drawer-employee-name">${o.name}</div>
+                                <div class="drawer-employee-role">${o.role}</div>
+                            </div>
+                            <div>
+                                ${statusBadge(o.is_active)}
+                            </div>
+                        </div>`).join('');
+                } else {
+                    employeesHtml = `
+                        <div style="text-align: center; padding: 2rem 1rem; color: var(--gray-light); font-size: 0.875rem;">
+                            <i class="fas fa-users-slash" style="font-size: 1.5rem; margin-bottom: 0.5rem; display: block; opacity: 0.5;"></i>
+                            Belum ada karyawan terdaftar
+                        </div>`;
+                }
 
-                document.getElementById('d-recent-employees').innerHTML = mockEmployees.map(o => `
-                    <div class="drawer-employee-item">
-                        <div class="drawer-employee-avatar">${getInitials(o.name)}</div>
-                        <div class="drawer-employee-info">
-                            <div class="drawer-employee-name">${o.name}</div>
-                            <div class="drawer-employee-role">${o.role}</div>
-                        </div>
-                        <div>
-                            <div class="drawer-employee-status">${o.status}</div>
-                        </div>
-                    </div>`).join('');
+                document.getElementById('d-recent-employees').innerHTML = employeesHtml;
 
                 document.getElementById('drawerOverlay').classList.add('show');
             }

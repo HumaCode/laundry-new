@@ -56,7 +56,7 @@ class OutletRepository implements OutletRepositoryInterface
             $query->orderBy('created_at', 'desc');
         }
 
-        return $query->paginate($perPage);
+        return $query->withCount('employees')->paginate($perPage);
     }
 
     /**
@@ -64,7 +64,7 @@ class OutletRepository implements OutletRepositoryInterface
      */
     public function findById(string $id)
     {
-        return Outlet::findOrFail($id);
+        return Outlet::with('employees')->findOrFail($id);
     }
 
     /**
@@ -110,9 +110,7 @@ class OutletRepository implements OutletRepositoryInterface
             ->unique()
             ->count();
             
-        $totalEmployees = $allOutlets->sum(function ($outlet) {
-            return $outlet->code === 'OUT-0001' ? 15 : ($outlet->code === 'OUT-0002' ? 12 : 8);
-        });
+        $totalEmployees = \App\Models\Master\Employee::count();
         
         $activePercentage = $totalOutlets > 0 ? round(($activeOutlets / $totalOutlets) * 100) : 0;
 

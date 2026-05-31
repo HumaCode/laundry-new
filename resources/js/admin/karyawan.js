@@ -240,7 +240,7 @@ function renderTable(meta) {
                 <div style="font-size:.875rem;font-weight:600;color:var(--dark)">${c.outlet ? c.outlet.name : 'Belum Ditentukan'}</div>
             </td>
             <td><span style="font-weight:600;color:var(--dark)">${c.role}</span></td>
-            <td><span style="font-size:.85rem;color:var(--gray)">${c.joined_at || '-'}</span></td>
+            <td><span style="font-size:.85rem;color:var(--gray)">${c.joined_at_formatted || '-'}</span></td>
             <td>
                 <div class="action-cell">
                     <button class="act-btn act-btn-view"  title="Detail"   onclick="openDrawer('${c.id}')"><i class="fas fa-eye"></i></button>
@@ -395,7 +395,7 @@ function openDrawer(id) {
                 document.getElementById('d-status-wrap').innerHTML   = statusBadge(c.is_active);
                 document.getElementById('d-phone').textContent       = c.phone;
                 document.getElementById('d-email').textContent       = c.email || '-';
-                document.getElementById('d-joined').textContent      = c.joined_at || '-';
+                document.getElementById('d-joined').textContent      = c.joined_at_formatted || '-';
                 document.getElementById('d-outlet').textContent      = c.outlet ? c.outlet.name : 'Belum Ditentukan';
                 document.getElementById('d-role').textContent        = c.role;
                 document.getElementById('d-address').textContent     = c.address || '-';
@@ -417,11 +417,18 @@ function openAddModal() {
     document.getElementById('modalIcon').innerHTML       = '<i class="fas fa-user-check"></i>';
     document.getElementById('modalTitle').textContent    = 'Tambah Karyawan';
     document.getElementById('modalSubtitle').textContent = 'Isi data karyawan baru';
-    ['f-name','f-phone','f-email','f-address','f-joined_at'].forEach(id => document.getElementById(id).value = '');
+    ['f-name','f-phone','f-email','f-address'].forEach(id => document.getElementById(id).value = '');
     
     // Reset Select2 dropdowns
     $('#f-outlet').val('').trigger('change');
     $('#f-role').val('').trigger('change');
+
+    // Clear Flatpickr date
+    if (joinedAtPicker) {
+        joinedAtPicker.clear();
+        const clearBtn = document.getElementById('f-joined_at-clear');
+        if (clearBtn) clearBtn.classList.remove('visible');
+    }
     
     document.getElementById('f-status').value = 'Aktif';
     document.getElementById('employeeModal').classList.add('show');
@@ -457,9 +464,20 @@ function openEditModal(id) {
                 } else {
                     $('#f-role').val('').trigger('change');
                 }
+
+                // Set Flatpickr date
+                const clearBtn = document.getElementById('f-joined_at-clear');
+                if (joinedAtPicker) {
+                    if (c.joined_at) {
+                        joinedAtPicker.setDate(c.joined_at, false);
+                        if (clearBtn) clearBtn.classList.add('visible');
+                    } else {
+                        joinedAtPicker.clear();
+                        if (clearBtn) clearBtn.classList.remove('visible');
+                    }
+                }
                 
-                document.getElementById('f-joined_at').value = c.joined_at || '';
-                document.getElementById('f-status').value    = c.is_active ? 'Aktif' : 'Tutup';
+                document.getElementById('f-status').value = c.is_active ? 'Aktif' : 'Tutup';
                 document.getElementById('employeeModal').classList.add('show');
             }
         }
@@ -545,6 +563,8 @@ function closeModalOutside(e, id) { if (e.target === e.currentTarget) closeModal
 
 function exportData() { showToast('Mengekspor data karyawan...', 'info', 'Export'); }
 
+let joinedAtPicker = null;
+
 document.addEventListener('DOMContentLoaded', () => {
     applyFilters();
     
@@ -561,6 +581,36 @@ document.addEventListener('DOMContentLoaded', () => {
         allowClear: true,
         tags: true
     });
+
+    // Initialize Flatpickr for Tanggal Masuk Bekerja
+    joinedAtPicker = flatpickr('#f-joined_at', {
+        locale: 'id',
+        dateFormat: 'Y-m-d',
+        altInput: false,
+        allowInput: false,
+        disableMobile: true,
+        maxDate: 'today',
+        animate: false,
+        monthSelectorType: 'static',
+        showMonths: 1,
+        static: false,
+        appendTo: document.body,
+        onReady(selectedDates, dateStr, instance) {
+            instance.calendarContainer.style.zIndex = '99999';
+        },
+        onChange(selectedDates, dateStr) {
+            const clearBtn = document.getElementById('f-joined_at-clear');
+            if (clearBtn) {
+                clearBtn.classList.toggle('visible', selectedDates.length > 0);
+            }
+        },
+        onClose(selectedDates, dateStr, instance) {
+            instance.input.classList.remove('active');
+        },
+        onOpen(selectedDates, dateStr, instance) {
+            instance.input.classList.add('active');
+        }
+    });
     
     window.addEventListener('scroll', () => {
         const scrollTopBtn = document.getElementById('scrollTopBtn');
@@ -569,6 +619,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+function clearDate() {
+    if (joinedAtPicker) {
+        joinedAtPicker.clear();
+        const clearBtn = document.getElementById('f-joined_at-clear');
+        if (clearBtn) clearBtn.classList.remove('visible');
+    }
+}
+
 
 // Expose functions globally for Blade template onclick events
 window.switchView = switchView;
@@ -593,3 +652,5 @@ window.deleteById = deleteById;
 window.closeModal = closeModal;
 window.closeModalOutside = closeModalOutside;
 window.exportData = exportData;
+window.clearDate = clearDate;
+

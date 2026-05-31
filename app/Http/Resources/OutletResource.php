@@ -27,10 +27,17 @@ class OutletResource extends JsonResource
             'payment_type'  => $this->payment_type,
             'dp_percentage' => (int) $this->dp_percentage,
             'joined'        => $this->created_at ? $this->created_at->toDateString() : null,
-            // Optional UI styling and stats simulation
-            'staffCount'    => $this->code === 'OUT-0001' ? 15 : ($this->code === 'OUT-0002' ? 12 : 8),
+            'staffCount'    => $this->relationLoaded('employees') ? $this->employees->count() : (int) ($this->employees_count ?? 0),
             'orders'        => $this->code === 'OUT-0001' ? 450 : ($this->code === 'OUT-0002' ? 380 : 250),
             'revenue'       => $this->code === 'OUT-0001' ? 28400000 : ($this->code === 'OUT-0002' ? 22100000 : 15000000),
+            'employees'     => $this->relationLoaded('employees') ? $this->employees->map(function ($emp) {
+                return [
+                    'id'        => $emp->id,
+                    'name'      => $emp->name,
+                    'role'      => $emp->role,
+                    'is_active' => (bool) $emp->is_active,
+                ];
+            }) : [],
         ];
     }
 }
