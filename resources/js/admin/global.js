@@ -129,6 +129,25 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    // Submenu toggle logic
+    document.querySelectorAll('.nav-item.has-submenu').forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            const submenu = this.nextElementSibling;
+            if (submenu && submenu.classList.contains('nav-submenu')) {
+                submenu.classList.toggle('show');
+                const caret = this.querySelector('.submenu-caret');
+                if (caret) {
+                    if (submenu.classList.contains('show')) {
+                        caret.style.transform = 'rotate(180deg)';
+                    } else {
+                        caret.style.transform = 'rotate(0deg)';
+                    }
+                }
+            }
+        });
+    });
 });
 
 // Scroll to Top Smooth Animation with Bounce
