@@ -143,7 +143,8 @@
 
                     <!-- Footer -->
                     <div class="login-footer">
-                        <p class="footer-text">© 2026 LaundryPro. All rights reserved.</p>
+                        <p class="footer-text">Belum punya akun? <a href="{{ route('register') }}" class="forgot-link">Daftar sebagai Customer</a></p>
+                        <p class="footer-text mt-3">© 2026 LaundryPro. All rights reserved.</p>
                         <div class="footer-links">
                             <a href="#" class="footer-link">Bantuan</a>
                             <a href="#" class="footer-link">Privasi</a>

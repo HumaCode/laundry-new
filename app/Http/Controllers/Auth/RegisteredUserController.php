@@ -44,9 +44,22 @@ class RegisteredUserController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
+        $user->assignRole('customer');
+
         event(new Registered($user));
 
         Auth::login($user);
+
+        if ($request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Pendaftaran berhasil, selamat bergabung!',
+                'user' => [
+                    'name' => $user->name,
+                ],
+                'redirect' => route('dashboard', absolute: false),
+            ]);
+        }
 
         return redirect(route('dashboard', absolute: false));
     }
