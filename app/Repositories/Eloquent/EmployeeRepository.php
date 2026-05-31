@@ -2,25 +2,29 @@
 
 namespace App\Repositories\Eloquent;
 
-use App\Models\Master\Outlet;
-use App\Repositories\Contracts\OutletRepositoryInterface;
+use App\Models\Master\Employee;
+use App\Repositories\Contracts\EmployeeRepositoryInterface;
 
-class OutletRepository implements OutletRepositoryInterface
+class EmployeeRepository implements EmployeeRepositoryInterface
 {
     /**
-     * Get paginated outlets with filtering and sorting.
+     * Get paginated employees with filtering and sorting.
      */
     public function getPaginated(array $filters, int $perPage)
     {
-        $query = Outlet::query();
+        $query = Employee::with('outlet');
 
         if (!empty($filters['search'])) {
             $search = $filters['search'];
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
                   ->orWhere('code', 'like', "%{$search}%")
-                  ->orWhere('address', 'like', "%{$search}%")
-                  ->orWhere('manager', 'like', "%{$search}%");
+                  ->orWhere('phone', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('role', 'like', "%{$search}%")
+                  ->orWhereHas('outlet', function ($oq) use ($search) {
+                      $oq->where('name', 'like', "%{$search}%");
+                  });
             });
         }
 
@@ -30,11 +34,14 @@ class OutletRepository implements OutletRepositoryInterface
             } elseif ($filters['status'] === 'Tutup') {
                 $query->where('is_active', false);
             }
-            // Maintenance status can be simulated/added as needed
         }
 
-        if (!empty($filters['city'])) {
-            $query->where('city', $filters['city']);
+        if (!empty($filters['outlet_id'])) {
+            $query->where('outlet_id', $filters['outlet_id']);
+        }
+
+        if (!empty($filters['role'])) {
+            $query->where('role', $filters['role']);
         }
 
         if (!empty($filters['sort'])) {
@@ -60,63 +67,57 @@ class OutletRepository implements OutletRepositoryInterface
     }
 
     /**
-     * Find outlet by ID.
+     * Find employee by ID.
      */
     public function findById(string $id)
     {
-        return Outlet::findOrFail($id);
+        return Employee::with('outlet')->findOrFail($id);
     }
 
     /**
-     * Create a new outlet.
+     * Create a new employee.
      */
     public function create(array $data)
     {
-        return Outlet::create($data);
+        return Employee::create($data);
     }
 
     /**
-     * Update an existing outlet.
+     * Update an existing employee.
      */
     public function update(string $id, array $data)
     {
-        $outlet = $this->findById($id);
-        $outlet->update($data);
-        return $outlet;
+        $employee = $this->findById($id);
+        $employee->update($data);
+        return $employee;
     }
 
     /**
-     * Delete an outlet.
+     * Delete an employee.
      */
     public function delete(string $id)
     {
-        $outlet = $this->findById($id);
-        return $outlet->delete();
+        $employee = $this->findById($id);
+        return $employee->delete();
     }
 
     /**
-     * Get summary statistics of outlets.
+     * Get summary statistics of employees.
      */
     public function getSummaryStats()
     {
-        $allOutlets = Outlet::all();
-        $totalOutlets = $allOutlets->count();
-        $activeOutlets = $allOutlets->where('is_active', true)->count();
-        $maintenanceOutlets = $allOutlets->where('is_active', false)->count();
-        
-        $distinctCitiesCount = $allOutlets->pluck('city')
+        $allEmployees = Employee::all();
+        $totalEmployees = $allEmployees->count();
+        $activeEmployees = $allEmployees->where('is_active', true)->count();
+        $inactiveEmployees = $allEmployees->where('is_active', false)->count();
+
+        $rolesCount = $allEmployees->pluck('role')
             ->filter()
-            ->map(fn($c) => strtolower(trim($c)))
+            ->map(fn($r) => strtolower(trim($r)))
             ->unique()
             ->count();
-            
-        $totalEmployees = $allOutlets->sum(function ($outlet) {
-            return $outlet->code === 'OUT-0001' ? 15 : ($outlet->code === 'OUT-0002' ? 12 : 8);
-        });
-        
-        $activePercentage = $totalOutlets > 0 ? round(($activeOutlets / $totalOutlets) * 100) : 0;
 
-        $cities = $allOutlets->pluck('city')
+        $roles = $allEmployees->pluck('role')
             ->filter()
             ->unique(function ($item) {
                 return strtolower(trim($item));
@@ -124,22 +125,15 @@ class OutletRepository implements OutletRepositoryInterface
             ->values()
             ->toArray();
 
-        return [
-            'total_outlets' => $totalOutlets,
-            'active_outlets' => $activeOutlets,
-            'maintenance_outlets' => $maintenanceOutlets,
-            'cities_count' => $distinctCitiesCount,
-            'total_employees' => $totalEmployees,
-            'active_percentage' => $activePercentage,
-            'cities' => $cities
-        ];
-    }
+        $activePercentage = $totalEmployees > 0 ? round(($activeEmployees / $totalEmployees) * 100) : 0;
 
-    /**
-     * Get all outlets.
-     */
-    public function getAll()
-    {
-        return Outlet::orderBy('name', 'asc')->get();
+        return [
+            'total_employees' => $totalEmployees,
+            'active_employees' => $activeEmployees,
+            'inactive_employees' => $inactiveEmployees,
+            'roles_count' => $rolesCount,
+            'active_percentage' => $activePercentage,
+            'roles' => $roles
+        ];
     }
 }

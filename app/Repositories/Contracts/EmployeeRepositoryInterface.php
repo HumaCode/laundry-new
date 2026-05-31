@@ -2,40 +2,35 @@
 
 namespace App\Repositories\Contracts;
 
-interface OutletRepositoryInterface
+interface EmployeeRepositoryInterface
 {
     /**
-     * Get paginated outlets with filtering and sorting.
+     * Get paginated employees with filtering and sorting.
      */
     public function getPaginated(array $filters, int $perPage);
 
     /**
-     * Find outlet by ID.
+     * Find employee by ID.
      */
     public function findById(string $id);
 
     /**
-     * Create a new outlet.
+     * Create a new employee.
      */
     public function create(array $data);
 
     /**
-     * Update an existing outlet.
+     * Update an existing employee.
      */
     public function update(string $id, array $data);
 
     /**
-     * Delete an outlet.
+     * Delete an employee.
      */
     public function delete(string $id);
 
     /**
-     * Get summary statistics of outlets.
+     * Get summary statistics of employees.
      */
     public function getSummaryStats();
-
-    /**
-     * Get all outlets.
-     */
-    public function getAll();
 }

@@ -30,6 +30,12 @@ class MenuSeeder extends Seeder
                     'permissions' => ['menu', 'create', 'read', 'show', 'update', 'delete'],
                 ],
                 [
+                    'name' => 'Karyawan',
+                    'url' => 'employees',
+                    'icon' => 'user-check',
+                    'permissions' => ['menu', 'create', 'read', 'show', 'update', 'delete'],
+                ],
+                [
                     'name' => 'Outlet',
                     'url' => 'outlets',
                     'icon' => 'home',
@@ -47,12 +53,6 @@ class MenuSeeder extends Seeder
                     'name' => 'Antar Jemput',
                     'url' => 'shuttles',
                     'icon' => 'truck',
-                    'permissions' => ['menu', 'create', 'read', 'show', 'update', 'delete'],
-                ],
-                [
-                    'name' => 'Karyawan',
-                    'url' => 'employees',
-                    'icon' => 'user-check',
                     'permissions' => ['menu', 'create', 'read', 'show', 'update', 'delete'],
                 ],
                 [

@@ -63,4 +63,12 @@ class OutletService
     {
         return $this->outletRepository->getSummaryStats();
     }
+
+    /**
+     * Get all outlets.
+     */
+    public function getAllOutlets()
+    {
+        return $this->outletRepository->getAll();
+    }
 }
