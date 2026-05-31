@@ -10,7 +10,8 @@ export default defineConfig({
                 'resources/css/auth/login.css',
                 'resources/js/auth/login.js',
                 'resources/js/auth/register.js',
-                'resources/js/auth/forgot-password.js'
+                'resources/js/auth/forgot-password.js',
+                'resources/js/auth/reset-password.js'
             ],
             refresh: true,
         }),
