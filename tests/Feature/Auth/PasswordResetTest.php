@@ -58,3 +58,27 @@ test('password can be reset with valid token', function () {
         return true;
     });
 });
+
+test('forgot password link request fails if email does not exist', function () {
+    $response = $this->post('/forgot-password', [
+        'email' => 'nonexistent@example.com',
+    ]);
+
+    $response->assertSessionHasErrors(['email']);
+    expect(session()->get('errors')->first('email'))->toBe('Alamat email tidak terdaftar dalam sistem kami.');
+});
+
+test('forgot password requests are rate limited after 3 attempts', function () {
+    $user = User::factory()->create();
+
+    // 3 successful hits (to trigger rate limit limit)
+    for ($i = 0; $i < 3; $i++) {
+        $this->post('/forgot-password', ['email' => $user->email]);
+    }
+
+    // 4th hit should be blocked
+    $response = $this->post('/forgot-password', ['email' => $user->email]);
+
+    $response->assertSessionHasErrors(['email']);
+    expect(session()->get('errors')->first('email'))->toContain('Terlalu banyak permintaan reset password');
+});

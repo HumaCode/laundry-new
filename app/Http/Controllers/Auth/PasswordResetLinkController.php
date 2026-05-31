@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
@@ -26,9 +27,23 @@ class PasswordResetLinkController extends Controller
      */
     public function store(Request $request)
     {
+        $throttleKey = 'forgot-password|' . $request->ip();
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 3)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            $minutes = ceil($seconds / 60);
+            throw ValidationException::withMessages([
+                'email' => "Terlalu banyak permintaan reset password. Silakan coba lagi dalam {$minutes} menit.",
+            ]);
+        }
+
         $request->validate([
-            'email' => ['required', 'email'],
+            'email' => ['required', 'email', 'exists:users,email'],
+        ], [
+            'email.exists' => 'Alamat email tidak terdaftar dalam sistem kami.',
         ]);
+
+        RateLimiter::hit($throttleKey, 600); // Hit the rate limiter to prevent flooding
 
         // We will send the password reset link to this user. Once we have attempted
         // to send the link, we will examine the response then see the message we
