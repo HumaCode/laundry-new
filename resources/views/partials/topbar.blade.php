@@ -7,13 +7,13 @@
             <button class="btn btn-link p-0 me-2 d-md-none text-dark" onclick="toggleMobileSidebar(event)" style="font-size: 1.2rem; border: none; background: none; box-shadow: none;">
                 <i class="fas fa-bars"></i>
             </button>
-            <i class="fas fa-th-large d-none d-md-inline-block" style="color:var(--primary);font-size:1rem"></i>
-            <span>Dashboard</span>
+            <i class="fas {{ $topbarIcon ?? 'fa-th-large' }} d-none d-md-inline-block" style="color:var(--primary);font-size:1rem"></i>
+            <span>{{ $topbarTitle ?? 'Dashboard' }}</span>
         </h2>
         <div class="breadcrumb-custom d-none d-sm-flex">
             <a href="{{ route('dashboard') }}">Home</a>
             <i class="fas fa-chevron-right"></i>
-            <span>Dashboard</span>
+            <span>{{ $topbarTitle ?? 'Dashboard' }}</span>
         </div>
     </div>
 
