@@ -451,6 +451,26 @@
     opacity: 0.7;
 }
 
+/* Locked / throttled state */
+.btn-submit.locked {
+    background: linear-gradient(135deg, #64748B, #475569);
+    box-shadow: none;
+    cursor: not-allowed;
+    transform: none !important;
+    animation: lockedPulse 2s ease-in-out infinite;
+}
+
+@keyframes lockedPulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.7; }
+}
+
+.btn-submit.locked:hover {
+    background: linear-gradient(135deg, #64748B, #475569);
+    transform: none;
+    box-shadow: none;
+}
+
 /* Error Message */
 .error-message {
     background: rgba(239, 68, 68, 0.05);

@@ -1,115 +1,177 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Toggle Password Visibility
+
+    // ─── Toggle Password Visibility ───────────────────────────────────────────
     const toggleBtn = document.getElementById('passwordToggleBtn');
     if (toggleBtn) {
         toggleBtn.addEventListener('click', () => {
             const passwordInput = document.getElementById('password');
-            const toggleIcon = toggleBtn.querySelector('i');
-            
+            const toggleIcon    = toggleBtn.querySelector('i');
+
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
-                toggleIcon.classList.remove('fa-eye');
-                toggleIcon.classList.add('fa-eye-slash');
+                toggleIcon.classList.replace('fa-eye', 'fa-eye-slash');
             } else {
                 passwordInput.type = 'password';
-                toggleIcon.classList.remove('fa-eye-slash');
-                toggleIcon.classList.add('fa-eye');
+                toggleIcon.classList.replace('fa-eye-slash', 'fa-eye');
             }
         });
     }
 
-    // Input Focus Animation
-    const inputs = document.querySelectorAll('.form-control');
-    inputs.forEach(input => {
-        input.addEventListener('focus', function() {
-            this.parentElement.classList.add('focused');
-        });
-        
-        input.addEventListener('blur', function() {
-            this.parentElement.classList.remove('focused');
-        });
+    // ─── Input Focus Animation ────────────────────────────────────────────────
+    document.querySelectorAll('.form-control').forEach(input => {
+        input.addEventListener('focus',  function () { this.parentElement.classList.add('focused'); });
+        input.addEventListener('blur',   function () { this.parentElement.classList.remove('focused'); });
     });
 
-    // Handle AJAX Form Submission
-    const loginForm = document.getElementById('loginForm');
-    if (loginForm) {
-        loginForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const form = $(this);
-            const submitBtn = $('#submitBtn');
-            const submitBtnText = submitBtn.find('.btn-text');
-            const errorMessage = $('#errorMessage');
+    // ─── Lockout countdown helpers ────────────────────────────────────────────
+    let lockoutInterval = null;
 
-            // Set loading state on submit button
-            submitBtn.addClass('loading').prop('disabled', true);
-            submitBtnText.text('Sedang proses...');
+    function startLockoutUI(totalSeconds) {
+        const submitBtn = $('#submitBtn');
+        const btnText   = submitBtn.find('.btn-text');
+        const errorMsg  = $('#errorMessage');
+        const errorText = $('#errorText');
 
-            // Show loading dialog overlay
-            if (typeof window.showLoadingDialog === 'function') {
-                window.showLoadingDialog();
-            }
+        // Disable button immediately
+        submitBtn.addClass('locked').prop('disabled', true);
 
-            // Hide error message if any
-            errorMessage.removeClass('show');
+        // Show lockout card
+        const minutes       = Math.ceil(totalSeconds / 60);
+        const lockoutHtml   = `
+            <span id="lockoutIcon" style="margin-right:.5rem;">🔒</span>
+            Terlalu banyak percobaan gagal. Akun diblokir sementara.<br>
+            <small style="font-weight:500;">Coba lagi dalam: <strong id="lockoutTimer">${formatTime(totalSeconds)}</strong></small>
+        `;
+        errorText.html(lockoutHtml);
+        errorMsg.addClass('show');
 
-            $.ajax({
-                url: form.attr('action'),
-                method: form.attr('method'),
-                data: form.serialize(),
-                dataType: 'json',
-                headers: {
-                    'Accept': 'application/json'
-                },
-                success: function(response) {
-                    // Hide loading dialog
-                    if (typeof window.hideLoadingDialog === 'function') {
-                        window.hideLoadingDialog();
-                    }
+        // Show toast
+        if (typeof window.showToast === 'function') {
+            window.showToast(
+                `Akun diblokir ${minutes} menit karena terlalu banyak percobaan gagal.`,
+                'error',
+                '🔒 Akun Terkunci'
+            );
+        }
 
-                    // Show success toast
-                    if (typeof window.showToast === 'function') {
-                        window.showToast(`Login berhasil, selamat datang ${response.user.name}!`, 'success');
-                    }
+        // Countdown
+        let remaining = totalSeconds;
+        clearInterval(lockoutInterval);
 
-                    // Redirect after a short delay so user can see the toast
-                    setTimeout(() => {
-                        window.location.href = response.redirect;
-                    }, 1500);
-                },
-                error: function(xhr) {
-                    // Reset button loading state
-                    submitBtn.removeClass('loading').prop('disabled', false);
-                    submitBtnText.text('Masuk');
+        lockoutInterval = setInterval(() => {
+            remaining--;
+            const timerEl = document.getElementById('lockoutTimer');
+            if (timerEl) timerEl.textContent = formatTime(remaining);
 
-                    // Hide loading dialog
-                    if (typeof window.hideLoadingDialog === 'function') {
-                        window.hideLoadingDialog();
-                    }
-
-                    let errorMsgText = 'Terjadi kesalahan. Silakan coba lagi.';
-
-                    if (xhr.status === 422) {
-                        const response = xhr.responseJSON;
-                        if (response && response.errors) {
-                            // Get first error message
-                            const firstErrorKey = Object.keys(response.errors)[0];
-                            errorMsgText = response.errors[firstErrorKey][0];
-                        }
-                    } else if (xhr.status === 419) {
-                        errorMsgText = 'Sesi telah berakhir. Silakan muat ulang halaman.';
-                    }
-
-                    // Show error toast
-                    if (typeof window.showToast === 'function') {
-                        window.showToast(errorMsgText, 'error');
-                    }
-
-                    // Show error in login form
-                    errorMessage.find('#errorText').text(errorMsgText);
-                    errorMessage.addClass('show');
+            if (remaining <= 0) {
+                clearInterval(lockoutInterval);
+                submitBtn.removeClass('locked').prop('disabled', false);
+                btnText.text('Masuk');
+                errorMsg.removeClass('show');
+                if (typeof window.showToast === 'function') {
+                    window.showToast('Akun Anda sudah dapat digunakan kembali.', 'info', 'Blokir Dicabut');
                 }
-            });
-        });
+            }
+        }, 1000);
     }
+
+    function formatTime(seconds) {
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return `${m}:${String(s).padStart(2, '0')}`;
+    }
+
+    // Extract seconds from throttle error message (fallback: 600)
+    function extractSeconds(message) {
+        const match = message.match(/(\d+)\s*detik/);
+        if (match) return parseInt(match[1], 10);
+        const minMatch = message.match(/(\d+)\s*menit/);
+        if (minMatch) return parseInt(minMatch[1], 10) * 60;
+        return 600;
+    }
+
+    // ─── AJAX Login ───────────────────────────────────────────────────────────
+    const loginForm = document.getElementById('loginForm');
+    if (!loginForm) return;
+
+    loginForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const form      = $(this);
+        const submitBtn = $('#submitBtn');
+        const btnText   = submitBtn.find('.btn-text');
+        const errorMsg  = $('#errorMessage');
+
+        // Don't submit if locked out
+        if (submitBtn.hasClass('locked')) return;
+
+        // Loading state
+        submitBtn.addClass('loading').prop('disabled', true);
+        btnText.text('Sedang proses...');
+        errorMsg.removeClass('show');
+
+        if (typeof window.showLoadingDialog === 'function') window.showLoadingDialog();
+
+        $.ajax({
+            url     : form.attr('action'),
+            method  : form.attr('method'),
+            data    : form.serialize(),
+            dataType: 'json',
+            headers : { 'Accept': 'application/json' },
+
+            success(response) {
+                if (typeof window.hideLoadingDialog === 'function') window.hideLoadingDialog();
+
+                if (typeof window.showToast === 'function') {
+                    window.showToast(
+                        `Selamat datang kembali, ${response.user.name}! 👋`,
+                        'success',
+                        'Login Berhasil'
+                    );
+                }
+
+                setTimeout(() => { window.location.href = response.redirect; }, 1500);
+            },
+
+            error(xhr) {
+                if (typeof window.hideLoadingDialog === 'function') window.hideLoadingDialog();
+
+                // Reset button (unless we detect throttle below)
+                submitBtn.removeClass('loading').prop('disabled', false);
+                btnText.text('Masuk');
+
+                let errorMsgText = 'Terjadi kesalahan. Silakan coba lagi.';
+                let isThrottle   = false;
+
+                if (xhr.status === 422 && xhr.responseJSON?.errors) {
+                    const firstKey = Object.keys(xhr.responseJSON.errors)[0];
+                    errorMsgText   = xhr.responseJSON.errors[firstKey][0];
+
+                    // Detect throttle/lockout message from server
+                    if (errorMsgText.toLowerCase().includes('blokir') ||
+                        errorMsgText.toLowerCase().includes('terlalu banyak') ||
+                        errorMsgText.toLowerCase().includes('menit') ||
+                        firstKey === 'login' && errorMsgText.match(/\d+\s*(detik|menit)/)) {
+                        isThrottle = true;
+                    }
+                } else if (xhr.status === 419) {
+                    errorMsgText = 'Sesi telah berakhir. Silakan muat ulang halaman.';
+                } else if (xhr.status === 429) {
+                    errorMsgText = 'Terlalu banyak percobaan. Akun diblokir sementara.';
+                    isThrottle   = true;
+                }
+
+                if (isThrottle) {
+                    // Parse remaining seconds from server message
+                    const lockSeconds = extractSeconds(errorMsgText);
+                    startLockoutUI(lockSeconds);
+                } else {
+                    // Normal error
+                    if (typeof window.showToast === 'function') window.showToast(errorMsgText, 'error');
+                    $('#errorText').text(errorMsgText);
+                    errorMsg.addClass('show');
+                }
+            },
+        });
+    });
 });

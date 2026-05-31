@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'failed' => 'Kredensial yang dimasukkan tidak cocok dengan data kami.',
+    'failed'   => 'Email/username atau kata sandi yang Anda masukkan salah.',
     'password' => 'Kata sandi yang dimasukkan salah.',
-    'throttle' => 'Terlalu banyak percobaan masuk. Silakan coba lagi dalam :seconds detik.',
+    'throttle' => 'Terlalu banyak percobaan masuk. Akun diblokir sementara, coba lagi dalam :minutes menit.',
 ];
