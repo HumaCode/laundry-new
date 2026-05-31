@@ -76,6 +76,7 @@
         <!-- Global Reusable Components -->
         <x-loading-dialog />
         <x-toast />
+        <x-confirm-dialog />
 
         <!-- jQuery & Bootstrap Bundle CDN -->
         <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>

@@ -351,24 +351,25 @@ function updateBulkBar() {
 
 function bulkExport()  { showToast('info','Export',`Mengekspor ${selectedIds.size} data outlet`); }
 function bulkDelete() {
-    if (!confirm(`Hapus ${selectedIds.size} outlet yang dipilih?`)) return;
-    
-    let promises = [];
-    selectedIds.forEach(id => {
-        promises.push(
-            $.ajax({
-                url: '/outlets/' + id,
-                method: 'DELETE'
-            })
-        );
-    });
-    
-    Promise.all(promises).then(() => {
-        selectedIds.clear();
-        applyFilters();
-        showToast('Outlet berhasil dihapus', 'success', 'Dihapus');
-    }).catch(() => {
-        showToast('Beberapa outlet gagal dihapus', 'error', 'Error');
+    showConfirm('Konfirmasi Hapus', `Apakah Anda yakin ingin menghapus ${selectedIds.size} outlet yang dipilih?`, () => {
+        let promises = [];
+        selectedIds.forEach(id => {
+            promises.push(
+                $.ajax({
+                    url: '/outlets/' + id,
+                    method: 'DELETE'
+                })
+            );
+        });
+        
+        return Promise.all(promises).then(() => {
+            selectedIds.clear();
+            applyFilters();
+            showToast('Outlet berhasil dihapus', 'success', 'Dihapus');
+        }).catch(() => {
+            showToast('Beberapa outlet gagal dihapus', 'error', 'Error');
+            throw new Error();
+        });
     });
 }
 
@@ -510,19 +511,26 @@ function saveOutlet() {
 }
 
 function deleteById(id) {
-    if (!confirm('Hapus outlet ini?')) return;
-    $.ajax({
-        url: '/outlets/' + id,
-        method: 'DELETE',
-        success: function(res) {
-            if (res.success) {
-                applyFilters();
-                showToast('Outlet berhasil dihapus', 'success', 'Dihapus');
-            }
-        },
-        error: function() {
-            showToast('Gagal menghapus outlet', 'error', 'Error');
-        }
+    showConfirm('Konfirmasi Hapus', 'Apakah Anda yakin ingin menghapus outlet ini?', () => {
+        return new Promise((resolve, reject) => {
+            $.ajax({
+                url: '/outlets/' + id,
+                method: 'DELETE',
+                success: function(res) {
+                    if (res.success) {
+                        applyFilters();
+                        showToast('Outlet berhasil dihapus', 'success', 'Dihapus');
+                        resolve();
+                    } else {
+                        reject();
+                    }
+                },
+                error: function() {
+                    showToast('Gagal menghapus outlet', 'error', 'Error');
+                    reject();
+                }
+            });
+        });
     });
 }
 
