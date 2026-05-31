@@ -28,4 +28,9 @@ interface OutletRepositoryInterface
      * Delete an outlet.
      */
     public function delete(string $id);
+
+    /**
+     * Get summary statistics of outlets.
+     */
+    public function getSummaryStats();
 }

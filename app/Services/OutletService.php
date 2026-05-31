@@ -55,4 +55,12 @@ class OutletService
     {
         return $this->outletRepository->delete($id);
     }
+
+    /**
+     * Get summary statistics of outlets.
+     */
+    public function getSummaryStats()
+    {
+        return $this->outletRepository->getSummaryStats();
+    }
 }
