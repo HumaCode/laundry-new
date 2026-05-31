@@ -1,0 +1,333 @@
+/* ============================================================
+   STATS GRID
+============================================================ */
+/* Stats Grid styling handled by Bootstrap Row/Col */
+
+.stat-card {
+    background: white;
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.stat-card:hover::before { opacity: 1; }
+.stat-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-lg); }
+
+.stat-card.blue::before { background: linear-gradient(90deg, var(--info), var(--primary)); }
+.stat-card.green::before { background: linear-gradient(90deg, var(--secondary), var(--cyan)); }
+.stat-card.purple::before { background: linear-gradient(90deg, var(--purple), var(--pink)); }
+.stat-card.orange::before { background: linear-gradient(90deg, var(--orange), var(--warning)); }
+
+/* Stat card corner decoration */
+.stat-card::after {
+    content: '';
+    position: absolute;
+    top: -20px; right: -20px;
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    opacity: 0.05;
+    transition: all 0.4s ease;
+}
+
+.stat-card.blue::after { background: var(--info); }
+.stat-card.green::after { background: var(--secondary); }
+.stat-card.purple::after { background: var(--purple); }
+.stat-card.orange::after { background: var(--orange); }
+.stat-card:hover::after { transform: scale(3); opacity: 0.08; }
+
+.stat-header {
+    display: flex; justify-content: space-between; align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.stat-icon {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.25rem;
+}
+
+.stat-icon.blue { background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(99,102,241,0.12)); color: var(--info); }
+.stat-icon.green { background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(6,182,212,0.12)); color: var(--secondary); }
+.stat-icon.purple { background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(236,72,153,0.12)); color: var(--purple); }
+.stat-icon.orange { background: linear-gradient(135deg, rgba(249,115,22,0.12), rgba(245,158,11,0.12)); color: var(--orange); }
+
+.stat-trend {
+    display: flex; align-items: center; gap: 0.25rem;
+    font-size: 0.75rem; font-weight: 600;
+    padding: 0.25rem 0.5rem; border-radius: 6px;
+}
+
+.stat-trend.up { color: var(--secondary); background: rgba(16,185,129,0.1); }
+.stat-trend.down { color: var(--danger); background: rgba(239,68,68,0.1); }
+
+.stat-value {
+    font-size: 2rem; font-weight: 800;
+    color: var(--dark); margin-bottom: 0.25rem;
+    letter-spacing: -0.5px;
+}
+
+.stat-label { font-size: 0.875rem; color: var(--gray); font-weight: 500; }
+
+.stat-footer {
+    margin-top: 1rem; padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; gap: 0.5rem;
+    font-size: 0.8rem; color: var(--gray);
+}
+
+.stat-mini-bar {
+    flex: 1; height: 4px; background: var(--border); border-radius: 2px;
+    overflow: hidden;
+}
+
+.stat-mini-fill {
+    height: 100%; border-radius: 2px;
+    animation: fillBar 1s ease 0.3s both;
+}
+
+@keyframes fillBar {
+    from { width: 0; }
+}
+
+/* ============================================================
+   REVENUE CHART + OUTLET STATS
+============================================================ */
+/* Dashboard Grid styling handled by Bootstrap Row/Col */
+
+.card {
+    background: white;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    overflow: hidden;
+}
+
+.card-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; align-items: center;
+    background: linear-gradient(135deg, rgba(99,102,241,0.02), rgba(139,92,246,0.02));
+    position: relative;
+}
+
+.card-header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%236366f1' fill-opacity='0.025'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    pointer-events: none;
+}
+
+.card-title {
+    font-size: 1rem; font-weight: 700;
+    color: var(--dark);
+    display: flex; align-items: center; gap: 0.5rem;
+    position: relative; z-index: 1;
+}
+
+.card-title-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.875rem;
+}
+
+.card-body { padding: 1.5rem; }
+
+/* Period Tabs */
+.period-tabs {
+    display: flex; gap: 0.25rem;
+    background: #F3F4F6; padding: 0.25rem; border-radius: 10px;
+    position: relative; z-index: 1;
+}
+
+.period-tab {
+    padding: 0.4rem 0.875rem; border: none; background: transparent;
+    border-radius: 8px; font-size: 0.8rem; font-weight: 600;
+    color: var(--gray); cursor: pointer; transition: all 0.3s ease;
+}
+
+.period-tab.active {
+    background: white; color: var(--primary);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+/* Chart area */
+.chart-container { position: relative; height: 280px; }
+
+/* Chart Summary */
+.chart-summary {
+    display: grid; grid-template-columns: repeat(3,1fr);
+    gap: 1rem; margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--border);
+}
+
+.chart-summary-item { text-align: center; }
+.chart-summary-value { font-size: 1.25rem; font-weight: 700; color: var(--dark); }
+.chart-summary-label { font-size: 0.75rem; color: var(--gray); margin-top: 0.1rem; }
+.chart-summary-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    display: inline-block; margin-right: 0.35rem;
+}
+
+/* Outlet Performance */
+.outlet-list { display: flex; flex-direction: column; gap: 1rem; }
+
+.outlet-item {
+    display: flex; align-items: center; gap: 1rem;
+    padding: 1rem; border-radius: 12px;
+    background: linear-gradient(135deg, rgba(99,102,241,0.02), rgba(139,92,246,0.02));
+    border: 1px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.outlet-item:hover {
+    border-color: rgba(99,102,241,0.15);
+    background: linear-gradient(135deg, rgba(99,102,241,0.05), rgba(139,92,246,0.05));
+    transform: translateX(5px);
+}
+
+.outlet-rank {
+    width: 32px; height: 32px; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.8rem; font-weight: 800; flex-shrink: 0;
+}
+
+.outlet-rank.r1 { background: linear-gradient(135deg, #FFD700, #FFA500); color: white; }
+.outlet-rank.r2 { background: linear-gradient(135deg, #C0C0C0, #A0A0A0); color: white; }
+.outlet-rank.r3 { background: linear-gradient(135deg, #CD7F32, #A0522D); color: white; }
+.outlet-rank.r4, .outlet-rank.r5 { background: var(--border); color: var(--gray); }
+
+.outlet-info { flex: 1; }
+.outlet-name { font-size: 0.875rem; font-weight: 600; color: var(--dark); }
+.outlet-city { font-size: 0.75rem; color: var(--gray); }
+
+.outlet-perf { text-align: right; }
+.outlet-revenue { font-size: 0.9rem; font-weight: 700; color: var(--dark); }
+.outlet-growth {
+    font-size: 0.7rem; font-weight: 600;
+    display: inline-flex; align-items: center; gap: 0.2rem;
+}
+
+.outlet-progress { margin-top: 0.5rem; height: 4px; border-radius: 2px; background: var(--border); }
+.outlet-progress-fill {
+    height: 100%; border-radius: 2px;
+    background: linear-gradient(90deg, var(--primary), var(--purple));
+    animation: fillBar 1s ease 0.5s both;
+}
+
+/* ============================================================
+   BOTTOM GRID: Recent Orders + Quick Actions + Donut
+============================================================ */
+/* Bottom Grid styling handled by Bootstrap Row/Col */
+
+/* Orders Table */
+.order-table { width: 100%; border-collapse: collapse; }
+.order-table th {
+    font-size: 0.75rem; font-weight: 700; color: var(--gray);
+    text-transform: uppercase; letter-spacing: 0.5px;
+    padding: 0.75rem 1rem; text-align: left;
+    background: #F9FAFB; border-bottom: 1px solid var(--border);
+}
+
+.order-table td {
+    padding: 1rem; border-bottom: 1px solid #F3F4F6;
+    font-size: 0.875rem; transition: background 0.2s;
+}
+
+.order-table tr:last-child td { border-bottom: none; }
+.order-table tbody tr:hover td { background: rgba(99,102,241,0.02); }
+
+.order-id { font-weight: 700; color: var(--primary); }
+.order-customer { font-weight: 600; color: var(--dark); }
+.order-sub { font-size: 0.75rem; color: var(--gray); }
+
+.order-badge {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    padding: 0.3rem 0.65rem; border-radius: 6px;
+    font-size: 0.75rem; font-weight: 600;
+}
+
+.order-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
+.badge-diterima { background: rgba(59,130,246,0.1); color: var(--info); }
+.badge-diterima::before { background: var(--info); }
+.badge-proses { background: rgba(245,158,11,0.1); color: var(--warning); animation: badgePulse 1.5s infinite; }
+.badge-proses::before { background: var(--warning); animation: dotPulse 1.5s infinite; }
+.badge-siap { background: rgba(16,185,129,0.1); color: var(--secondary); }
+.badge-siap::before { background: var(--secondary); }
+.badge-selesai { background: rgba(107,114,128,0.1); color: var(--gray); }
+.badge-selesai::before { background: var(--gray); }
+
+@keyframes dotPulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.5);opacity:0.7} }
+
+.order-amount { font-weight: 700; color: var(--dark); }
+.order-outlet { font-size: 0.75rem; color: var(--gray); }
+
+/* Right Column */
+.right-column { display: flex; flex-direction: column; gap: 1.25rem; }
+
+/* Service Distribution Donut */
+.donut-container { position: relative; height: 200px; }
+.donut-center {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.donut-center-value { font-size: 1.5rem; font-weight: 800; color: var(--dark); }
+.donut-center-label { font-size: 0.7rem; color: var(--gray); }
+
+.donut-legend { display: flex; flex-direction: column; gap: 0.6rem; margin-top: 1rem; }
+.legend-item {
+    display: flex; align-items: center; gap: 0.75rem;
+    font-size: 0.8rem;
+}
+
+.legend-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+.legend-name { flex: 1; color: var(--dark); font-weight: 500; }
+.legend-pct { font-weight: 700; color: var(--gray); }
+
+/* Quick Actions */
+.quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; }
+
+.quick-action-btn {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 0.5rem; padding: 1rem 0.75rem;
+    border: 2px solid var(--border); border-radius: 14px;
+    background: white; cursor: pointer;
+    transition: all 0.3s ease; text-decoration: none;
+}
+
+.quick-action-btn:hover {
+    border-color: transparent;
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.quick-action-btn:nth-child(1):hover { background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.08)); border-color: rgba(99,102,241,0.2); }
+.quick-action-btn:nth-child(2):hover { background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(6,182,212,0.08)); border-color: rgba(16,185,129,0.2); }
+.quick-action-btn:nth-child(3):hover { background: linear-gradient(135deg, rgba(245,158,11,0.08), rgba(249,115,22,0.08)); border-color: rgba(245,158,11,0.2); }
+.quick-action-btn:nth-child(4):hover { background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(236,72,153,0.08)); border-color: rgba(139,92,246,0.2); }
+
+.quick-action-icon {
+    width: 44px; height: 44px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+}
+
+.quick-action-label { font-size: 0.75rem; font-weight: 600; color: var(--dark); text-align: center; }
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+/* Replaced by Bootstrap Grid columns classes */

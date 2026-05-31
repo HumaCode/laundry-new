@@ -1,0 +1,44 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: laundry-pro-app
+    container_name: laundry_app
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    environment:
+      - APP_ENV=local
+      - DB_CONNECTION=mysql
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_DATABASE=laundry_app
+      - DB_USERNAME=root
+      - DB_PASSWORD=
+    depends_on:
+      - db
+    networks:
+      - laundry-network
+
+  db:
+    image: mariadb:latest
+    container_name: laundry_db
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_DATABASE=laundry_app
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - laundry_db_data:/var/lib/mysql
+    restart: unless-stopped
+    networks:
+      - laundry-network
+
+networks:
+  laundry-network:
+    driver: bridge
+
+volumes:
+  laundry_db_data:
