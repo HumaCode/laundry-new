@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     // Reset button loading state
                     submitBtn.removeClass('loading').prop('disabled', false);
-                    submitBtnText.text('Kirim Link Reset');
+                    submitBtnText.text('Kirim Tautan Reset');
 
                     // Show success toast
                     if (typeof window.showToast === 'function') {
@@ -60,8 +60,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                     // Show success block in page
-                    successMessage.find('#successText').text(response.message);
-                    successMessage.show().addClass('show');
+                    $('#successText').text(response.message);
+                    successMessage.css('display', 'block').addClass('show');
                     
                     // Clear form input
                     form.find('input[type="email"]').val('');
@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 error: function(xhr) {
                     // Reset button loading state
                     submitBtn.removeClass('loading').prop('disabled', false);
-                    submitBtnText.text('Kirim Link Reset');
+                    submitBtnText.text('Kirim Tautan Reset');
 
                     // Hide loading dialog
                     if (typeof window.hideLoadingDialog === 'function') {
@@ -95,8 +95,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
 
                     // Show error in form
-                    errorMessage.find('#errorText').text(errorMsgText);
-                    errorMessage.show().addClass('show');
+                    $('#errorText').text(errorMsgText);
+                    errorMessage.css('display', 'flex').addClass('show');
                 }
             });
         });
