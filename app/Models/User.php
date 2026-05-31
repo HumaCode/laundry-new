@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use App\Notifications\Auth\ResetPasswordNotification;
 use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable(['name', 'username', 'email', 'password', 'avatar', 'phone', 'gender', 'is_active', 'last_seen'])]
@@ -31,5 +32,13 @@ class User extends Authenticatable
             'password' => 'hashed',
             'last_seen' => 'datetime',
         ];
+    }
+
+    /**
+     * Send the password reset notification using our custom Indonesian notification.
+     */
+    public function sendPasswordResetNotification(#[\SensitiveParameter] $token): void
+    {
+        $this->notify(new ResetPasswordNotification($token));
     }
 }
