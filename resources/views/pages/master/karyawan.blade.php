@@ -1,9 +1,11 @@
 <x-app-layout>
     @push('styles')
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
         @vite(['resources/css/admin/karyawan.css'])
     @endpush
 
     @push('scripts')
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
         @vite(['resources/js/admin/karyawan.js'])
     @endpush
 
@@ -235,7 +237,15 @@
                     </div>
                     <div class="form-field">
                         <label>Peran (Role) <span class="req">*</span></label>
-                        <div class="input-icon-wrap"><input class="form-control" id="f-role" type="text" placeholder="Contoh: Kepala Outlet, Kasir, Kurir"><i class="fas fa-user-tag icon"></i></div>
+                        <select class="form-control" id="f-role">
+                            <option value="">Pilih atau Ketik Peran</option>
+                            <option value="Kepala Outlet">Kepala Outlet</option>
+                            <option value="Kasir">Kasir</option>
+                            <option value="Kurir">Kurir</option>
+                            <option value="Pencuci">Pencuci</option>
+                            <option value="Penyetrika">Penyetrika</option>
+                            <option value="Staff Admin">Staff Admin</option>
+                        </select>
                     </div>
                     <div class="form-field">
                         <label>Status</label>

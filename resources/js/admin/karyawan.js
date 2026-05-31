@@ -417,8 +417,12 @@ function openAddModal() {
     document.getElementById('modalIcon').innerHTML       = '<i class="fas fa-user-check"></i>';
     document.getElementById('modalTitle').textContent    = 'Tambah Karyawan';
     document.getElementById('modalSubtitle').textContent = 'Isi data karyawan baru';
-    ['f-name','f-phone','f-email','f-address','f-role','f-joined_at'].forEach(id => document.getElementById(id).value = '');
-    document.getElementById('f-outlet').value = '';
+    ['f-name','f-phone','f-email','f-address','f-joined_at'].forEach(id => document.getElementById(id).value = '');
+    
+    // Reset Select2 dropdowns
+    $('#f-outlet').val('').trigger('change');
+    $('#f-role').val('').trigger('change');
+    
     document.getElementById('f-status').value = 'Aktif';
     document.getElementById('employeeModal').classList.add('show');
 }
@@ -438,8 +442,22 @@ function openEditModal(id) {
                 document.getElementById('f-phone').value     = c.phone;
                 document.getElementById('f-email').value     = c.email || '';
                 document.getElementById('f-address').value   = c.address || '';
-                document.getElementById('f-outlet').value    = c.outlet_id || '';
-                document.getElementById('f-role').value      = c.role;
+                
+                // Update Select2 outlet
+                $('#f-outlet').val(c.outlet_id || '').trigger('change');
+                
+                // Update Select2 role (dynamic tagging support)
+                if (c.role) {
+                    if ($('#f-role').find("option[value='" + c.role + "']").length === 0) {
+                        var newOption = new Option(c.role, c.role, true, true);
+                        $('#f-role').append(newOption).trigger('change');
+                    } else {
+                        $('#f-role').val(c.role).trigger('change');
+                    }
+                } else {
+                    $('#f-role').val('').trigger('change');
+                }
+                
                 document.getElementById('f-joined_at').value = c.joined_at || '';
                 document.getElementById('f-status').value    = c.is_active ? 'Aktif' : 'Tutup';
                 document.getElementById('employeeModal').classList.add('show');
@@ -529,6 +547,20 @@ function exportData() { showToast('Mengekspor data karyawan...', 'info', 'Export
 
 document.addEventListener('DOMContentLoaded', () => {
     applyFilters();
+    
+    // Initialize Select2 dropdowns
+    $('#f-outlet').select2({
+        dropdownParent: $('#employeeModal'),
+        placeholder: 'Pilih Cabang Outlet',
+        allowClear: true
+    });
+
+    $('#f-role').select2({
+        dropdownParent: $('#employeeModal'),
+        placeholder: 'Pilih atau Ketik Peran',
+        allowClear: true,
+        tags: true
+    });
     
     window.addEventListener('scroll', () => {
         const scrollTopBtn = document.getElementById('scrollTopBtn');
