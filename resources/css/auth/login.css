@@ -22,7 +22,7 @@
 }
 
 .login-page-wrapper {
-    font-family: 'Outfit', 'Inter', system-ui, -apple-system, sans-serif;
+    font-family: 'Poppins', system-ui, -apple-system, sans-serif;
     min-height: 100vh;
     display: flex;
     background-color: var(--light-bg);

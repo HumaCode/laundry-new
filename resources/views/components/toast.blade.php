@@ -84,7 +84,7 @@
 }
 
 .toast-title {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 0.95rem;
     font-weight: 700;
     color: #0F172A;
@@ -92,7 +92,7 @@
 }
 
 .toast-message {
-    font-family: 'Inter', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 0.825rem;
     color: #475569;
     margin: 0;

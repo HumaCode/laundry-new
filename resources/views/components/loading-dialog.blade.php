@@ -116,7 +116,7 @@
 }
 
 .loading-text {
-    font-family: 'Outfit', sans-serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 1.1rem;
     font-weight: 700;
     color: #0F172A;
