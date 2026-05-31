@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Master\PelangganController;
+use App\Http\Controllers\Master\OutletController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -18,6 +19,9 @@ Route::middleware('auth')->group(function () {
     
     // Pelanggan (Customers)
     Route::get('/customers', [PelangganController::class, 'index'])->name('customers');
+
+    // Outlet
+    Route::get('/outlets', [OutletController::class, 'index'])->name('outlets');
 });
 
 require __DIR__.'/auth.php';

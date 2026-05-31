@@ -17,7 +17,9 @@ export default defineConfig({
                 'resources/css/admin/global.css',
                 'resources/js/admin/global.js',
                 'resources/css/admin/pelanggan.css',
-                'resources/js/admin/pelanggan.js'
+                'resources/js/admin/pelanggan.js',
+                'resources/css/admin/outlet.css',
+                'resources/js/admin/outlet.js'
             ],
             refresh: true,
         }),
