@@ -13,6 +13,8 @@ use Illuminate\Validation\Rules;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
+use Illuminate\Support\Facades\RateLimiter;
+
 class RegisteredUserController extends Controller
 {
     /**
@@ -30,12 +32,27 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'username' => ['required', 'string', 'lowercase', 'alpha_dash', 'max:255', 'unique:'.User::class],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+        $throttleKey = 'register|' . $request->ip();
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 3)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+            $minutes = ceil($seconds / 60);
+            throw ValidationException::withMessages([
+                'name' => "Terlalu banyak percobaan pendaftaran. Akun diblokir sementara, coba lagi dalam {$minutes} menit.",
+            ]);
+        }
+
+        try {
+            $request->validate([
+                'name' => ['required', 'string', 'max:255'],
+                'username' => ['required', 'string', 'lowercase', 'alpha_dash', 'max:255', 'unique:'.User::class],
+                'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+                'password' => ['required', 'confirmed', Rules\Password::min(8)->letters()->numbers()],
+            ]);
+        } catch (ValidationException $e) {
+            RateLimiter::hit($throttleKey, 600); // 10-minute lockout on validation failures
+            throw $e;
+        }
 
         $user = User::create([
             'name' => $request->name,
@@ -49,6 +66,8 @@ class RegisteredUserController extends Controller
         event(new Registered($user));
 
         Auth::login($user);
+
+        RateLimiter::clear($throttleKey);
 
         if ($request->wantsJson()) {
             return response()->json([

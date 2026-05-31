@@ -70,15 +70,17 @@
                         <p class="form-subtitle">Lengkapi formulir untuk daftar sebagai Customer</p>
                     </div>
 
-                    <!-- Validation Errors / Error Message -->
-                    <div class="error-message" id="errorMessage">
-                        <i class="fas fa-exclamation-circle error-icon"></i>
-                        <span id="errorText"></span>
-                    </div>
-
                     <!-- Register Form -->
                     <form id="registerForm" method="POST" action="{{ route('register') }}">
                         @csrf
+
+                        <!-- Inline error message (shown above fields) -->
+                        <div class="field-error-box{{ $errors->any() ? ' show' : '' }}" id="errorMessage">
+                            <div class="field-error-inner">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span id="errorText">{{ $errors->first() }}</span>
+                            </div>
+                        </div>
 
                         <!-- Name -->
                         <x-form.input 
