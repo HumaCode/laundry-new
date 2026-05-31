@@ -30,15 +30,86 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Show loading spinner on form submit
+    // Handle AJAX Form Submission
     const loginForm = document.getElementById('loginForm');
     if (loginForm) {
-        loginForm.addEventListener('submit', function() {
-            const submitBtn = document.getElementById('submitBtn');
-            if (submitBtn) {
-                submitBtn.classList.add('loading');
-                submitBtn.disabled = true;
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const form = $(this);
+            const submitBtn = $('#submitBtn');
+            const submitBtnText = submitBtn.find('.btn-text');
+            const errorMessage = $('#errorMessage');
+
+            // Set loading state on submit button
+            submitBtn.addClass('loading').prop('disabled', true);
+            submitBtnText.text('Sedang proses...');
+
+            // Show loading dialog overlay
+            if (typeof window.showLoadingDialog === 'function') {
+                window.showLoadingDialog();
             }
+
+            // Hide error message if any
+            errorMessage.removeClass('show');
+
+            $.ajax({
+                url: form.attr('action'),
+                method: form.attr('method'),
+                data: form.serialize(),
+                dataType: 'json',
+                headers: {
+                    'Accept': 'application/json'
+                },
+                success: function(response) {
+                    // Hide loading dialog
+                    if (typeof window.hideLoadingDialog === 'function') {
+                        window.hideLoadingDialog();
+                    }
+
+                    // Show success toast
+                    if (typeof window.showToast === 'function') {
+                        window.showToast(`Login berhasil, selamat datang ${response.user.name}!`, 'success');
+                    }
+
+                    // Redirect after a short delay so user can see the toast
+                    setTimeout(() => {
+                        window.location.href = response.redirect;
+                    }, 1500);
+                },
+                error: function(xhr) {
+                    // Reset button loading state
+                    submitBtn.removeClass('loading').prop('disabled', false);
+                    submitBtnText.text('Masuk');
+
+                    // Hide loading dialog
+                    if (typeof window.hideLoadingDialog === 'function') {
+                        window.hideLoadingDialog();
+                    }
+
+                    let errorMsgText = 'Terjadi kesalahan. Silakan coba lagi.';
+
+                    if (xhr.status === 422) {
+                        const response = xhr.responseJSON;
+                        if (response && response.errors) {
+                            // Get first error message
+                            const firstErrorKey = Object.keys(response.errors)[0];
+                            errorMsgText = response.errors[firstErrorKey][0];
+                        }
+                    } else if (xhr.status === 419) {
+                        errorMsgText = 'Sesi telah berakhir. Silakan muat ulang halaman.';
+                    }
+
+                    // Show error toast
+                    if (typeof window.showToast === 'function') {
+                        window.showToast(errorMsgText, 'error');
+                    }
+
+                    // Show error in login form
+                    errorMessage.find('#errorText').text(errorMsgText);
+                    errorMessage.addClass('show');
+                }
+            });
         });
     }
 });

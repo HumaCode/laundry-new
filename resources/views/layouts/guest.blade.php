@@ -22,7 +22,12 @@
     <body class="font-sans text-gray-900 antialiased">
         {{ $slot }}
 
-        <!-- Bootstrap Bundle -->
+        <!-- Global Reusable Components -->
+        <x-loading-dialog />
+        <x-toast />
+
+        <!-- jQuery & Bootstrap Bundle -->
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>
