@@ -4,7 +4,7 @@
 namespace App\Traits;
 
 use App\Models\Konfigurasi\Menu;
-use App\Models\Shield\Permission;
+use App\Models\Permission;
 
 trait HasMenuPermission
 {

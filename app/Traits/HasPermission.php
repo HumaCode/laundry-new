@@ -23,7 +23,7 @@ trait HasPermission
         $action = $this->abilities[$method] ?? null;
 
         if (!$action) {
-            return parent::callAction($method, $parameters);
+            return $this->{$method}(...array_values($parameters));
         }
 
         // Ambil prefix static dari route (misal: 'users' dari 'users/{id}/edit')
@@ -42,6 +42,6 @@ trait HasPermission
             $this->authorize("$action $staticPath");
         }
 
-        return parent::callAction($method, $parameters);
+        return $this->{$method}(...array_values($parameters));
     }
 }
