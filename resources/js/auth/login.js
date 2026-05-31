@@ -169,6 +169,17 @@ document.addEventListener('DOMContentLoaded', () => {
                     return showNormalError(errorCard, 'Sesi telah berakhir. Silakan muat ulang halaman.');
                 }
 
+                // ── 200 OK Parser Error (Successful redirect / HTML response) ──
+                if (status === 200) {
+                    if (typeof window.showToast === 'function') {
+                        window.showToast('Login berhasil! Mengalihkan...', 'success');
+                    }
+                    setTimeout(() => {
+                        window.location.href = '/dashboard';
+                    }, 1000);
+                    return;
+                }
+
                 // ── 422 Validation / Auth failed ──
                 if (status === 422) {
                     let msg = '';
@@ -192,7 +203,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 // ── Generic fallback ──
-                showNormalError(errorCard, 'Terjadi kesalahan server. Silakan coba lagi.');
+                console.error('AJAX Login Error:', status, xhr.statusText, xhr.responseText);
+                let fallbackMsg = `Terjadi kesalahan server (${status}).`;
+                if (xhr.statusText) {
+                    fallbackMsg += ` Detail: ${xhr.statusText}`;
+                }
+                if (xhr.responseText && !xhr.responseText.includes('<html') && !xhr.responseText.includes('<!DOCTYPE')) {
+                    fallbackMsg += ` - ${xhr.responseText.substring(0, 80)}`;
+                }
+                showNormalError(errorCard, fallbackMsg);
             },
         });
     });
