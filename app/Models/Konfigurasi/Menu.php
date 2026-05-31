@@ -25,4 +25,9 @@ class Menu extends Model
     {
         return $query->where('is_active', '1');
     }
+
+    public function permissions()
+    {
+        return $this->belongsToMany(\App\Models\Permission::class, 'menu_permission');
+    }
 }
