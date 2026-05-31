@@ -77,17 +77,18 @@
                         </div>
                     @endif
 
-                    <!-- Validation Errors / Error Message -->
-                    @if ($errors->any())
-                        <div class="error-message show" id="errorMessage">
-                            <i class="fas fa-exclamation-circle error-icon"></i>
-                            <span id="errorText">{{ $errors->first() }}</span>
-                        </div>
-                    @endif
 
                     <!-- Login Form -->
                     <form id="loginForm" method="POST" action="{{ route('login') }}">
                         @csrf
+
+                        <!-- Inline error message (shown above login field) -->
+                        <div class="field-error-box{{ $errors->any() ? ' show' : '' }}" id="errorMessage">
+                            <div class="field-error-inner">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                <span id="errorText">{{ $errors->first() }}</span>
+                            </div>
+                        </div>
 
                         <!-- Username / Email -->
                         <x-form.input 

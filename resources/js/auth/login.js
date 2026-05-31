@@ -29,21 +29,20 @@ document.addEventListener('DOMContentLoaded', () => {
     function startLockoutUI(totalSeconds) {
         const submitBtn = $('#submitBtn');
         const btnText   = submitBtn.find('.btn-text');
-        const errorMsg  = $('#errorMessage');
+        const errorCard = $('.field-error-box');
         const errorText = $('#errorText');
 
         // Disable button immediately
         submitBtn.addClass('locked').prop('disabled', true);
 
-        // Show lockout card
-        const minutes       = Math.ceil(totalSeconds / 60);
-        const lockoutHtml   = `
-            <span id="lockoutIcon" style="margin-right:.5rem;">🔒</span>
-            Terlalu banyak percobaan gagal. Akun diblokir sementara.<br>
-            <small style="font-weight:500;">Coba lagi dalam: <strong id="lockoutTimer">${formatTime(totalSeconds)}</strong></small>
+        // Show lockout card in amber/yellow warning style
+        const minutes     = Math.ceil(totalSeconds / 60);
+        const lockoutHtml = `
+            🔒 Terlalu banyak percobaan gagal. Akun diblokir sementara.<br>
+            <small style="font-weight:500;margin-top:2px;display:block;">Coba lagi dalam: <strong id="lockoutTimer">${formatTime(totalSeconds)}</strong></small>
         `;
         errorText.html(lockoutHtml);
-        errorMsg.addClass('show');
+        errorCard.addClass('locked-out show').show();
 
         // Show toast
         if (typeof window.showToast === 'function') {
@@ -67,7 +66,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 clearInterval(lockoutInterval);
                 submitBtn.removeClass('locked').prop('disabled', false);
                 btnText.text('Masuk');
-                errorMsg.removeClass('show');
+                // Reset UI
+                errorCard.hide().removeClass('show locked-out');
+                $('#errorText').html('');
                 if (typeof window.showToast === 'function') {
                     window.showToast('Akun Anda sudah dapat digunakan kembali.', 'info', 'Blokir Dicabut');
                 }
@@ -100,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const form      = $(this);
         const submitBtn = $('#submitBtn');
         const btnText   = submitBtn.find('.btn-text');
-        const errorMsg  = $('#errorMessage');
+        const errorCard = $('.field-error-box');
 
         // Don't submit if locked out
         if (submitBtn.hasClass('locked')) return;
@@ -108,7 +109,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Loading state
         submitBtn.addClass('loading').prop('disabled', true);
         btnText.text('Sedang proses...');
-        errorMsg.removeClass('show');
+        errorCard.hide().removeClass('show locked-out');
+        $('#errorText').html('');
 
         if (typeof window.showLoadingDialog === 'function') window.showLoadingDialog();
 
@@ -169,7 +171,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Normal error
                     if (typeof window.showToast === 'function') window.showToast(errorMsgText, 'error');
                     $('#errorText').text(errorMsgText);
-                    errorMsg.addClass('show');
+                    errorCard.removeClass('locked-out').addClass('show').show();
                 }
             },
         });
