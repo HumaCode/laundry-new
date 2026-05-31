@@ -75,7 +75,6 @@
                 <option value="">Semua Status</option>
                 <option value="Aktif">Aktif</option>
                 <option value="Tutup">Tutup</option>
-                <option value="Maintenance">Maintenance</option>
             </select>
         </div>
         <div class="filter-group" style="min-width:140px">
@@ -246,7 +245,6 @@
                         <select class="form-control" id="f-status">
                             <option value="Aktif">Aktif</option>
                             <option value="Tutup">Tutup</option>
-                            <option value="Maintenance">Maintenance</option>
                         </select>
                     </div>
                     <div class="form-field full">
