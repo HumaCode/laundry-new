@@ -33,6 +33,93 @@ function statusBadge(isActive) {
         : `<span class="status-badge status-tutup">🔴 Tutup</span>`;
 }
 
+function showSkeletonTable() {
+    const tbody = document.getElementById('outletTableBody');
+    if (!tbody) return;
+    
+    let html = '';
+    for (let i = 0; i < perPage; i++) {
+        html += `
+        <tr>
+            <td class="cb-cell"><div class="skeleton" style="width:18px;height:18px;border-radius:5px"></div></td>
+            <td>
+                <div style="display:flex;align-items:center;gap:.75rem">
+                    <div class="skeleton skeleton-circle"></div>
+                    <div style="flex:1">
+                        <div class="skeleton skeleton-text medium" style="height:14px;width:120px"></div>
+                        <div class="skeleton skeleton-text short" style="height:8px;width:60px;margin:0"></div>
+                    </div>
+                </div>
+            </td>
+            <td><div class="skeleton skeleton-badge" style="width:70px;height:24px"></div></td>
+            <td>
+                <div class="skeleton skeleton-text medium" style="height:14px;width:100px"></div>
+                <div class="skeleton skeleton-text short" style="height:8px;width:120px;margin:0"></div>
+            </td>
+            <td>
+                <div class="skeleton skeleton-text long" style="height:14px;width:80px"></div>
+                <div class="skeleton skeleton-text medium" style="height:8px;width:140px;margin-top:4px"></div>
+            </td>
+            <td><div class="skeleton skeleton-text medium" style="width:80px;height:14px"></div></td>
+            <td><div class="skeleton skeleton-badge" style="width:60px;height:24px"></div></td>
+            <td>
+                <div class="skeleton skeleton-text medium" style="width:90px;height:14px"></div>
+                <div class="skeleton skeleton-text short" style="height:8px;width:60px;margin:0"></div>
+            </td>
+            <td>
+                <div class="action-cell">
+                    <div class="skeleton skeleton-btn"></div>
+                    <div class="skeleton skeleton-btn"></div>
+                    <div class="skeleton skeleton-btn"></div>
+                </div>
+            </td>
+        </tr>`;
+    }
+    tbody.innerHTML = html;
+}
+
+function showSkeletonGrid() {
+    const grid = document.getElementById('outletGrid');
+    if (!grid) return;
+    
+    let html = '';
+    for (let i = 0; i < 12; i++) {
+        html += `
+        <div class="outlet-grid-card grad-purple" style="pointer-events:none;opacity:0.7">
+            <div class="outlet-grid-inner">
+                <div class="outlet-grid-top" style="margin-bottom:2.5rem">
+                    <div class="skeleton" style="width:18px;height:18px;border-radius:5px"></div>
+                    <div class="skeleton skeleton-badge" style="width:70px;height:24px"></div>
+                </div>
+                <div class="outlet-grid-avatar-wrap">
+                    <div class="skeleton skeleton-circle" style="width:72px;height:72px;border-radius:18px;margin:0 auto 0.5rem"></div>
+                    <div class="skeleton skeleton-text long" style="height:16px;width:120px;display:block;margin:0 auto"></div>
+                    <div class="skeleton skeleton-text short" style="height:8px;width:60px;display:block;margin:6px auto 0"></div>
+                </div>
+                <div class="outlet-grid-stats" style="margin-top:1.5rem">
+                    <div class="outlet-grid-stat">
+                        <div class="skeleton skeleton-text" style="width:30px;height:14px;margin:0 auto"></div>
+                        <div class="skeleton skeleton-text" style="width:25px;height:8px;margin:4px auto 0"></div>
+                    </div>
+                    <div class="outlet-grid-stat">
+                        <div class="skeleton skeleton-text" style="width:40px;height:14px;margin:0 auto"></div>
+                        <div class="skeleton skeleton-text" style="width:25px;height:8px;margin:4px auto 0"></div>
+                    </div>
+                    <div class="outlet-grid-stat">
+                        <div class="skeleton skeleton-text" style="width:30px;height:14px;margin:0 auto"></div>
+                        <div class="skeleton skeleton-text" style="width:25px;height:8px;margin:4px auto 0"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="outlet-grid-actions">
+                <div class="skeleton" style="flex:1;height:32px;border-radius:10px"></div>
+                <div class="skeleton" style="flex:1;height:32px;border-radius:10px"></div>
+            </div>
+        </div>`;
+    }
+    grid.innerHTML = html;
+}
+
 function applyFilters() {
     const q       = document.getElementById('searchInput').value;
     const status  = document.getElementById('filterStatus').value;
@@ -40,6 +127,9 @@ function applyFilters() {
     const sortVal = document.getElementById('filterSort').value;
     
     const limit = currentView === 'table' ? perPage : 12;
+
+    if (currentView === 'table') showSkeletonTable();
+    else showSkeletonGrid();
 
     $.ajax({
         url: '/outlets',
