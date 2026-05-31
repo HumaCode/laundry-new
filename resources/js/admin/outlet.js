@@ -149,6 +149,49 @@ function applyFilters() {
                 totalItems = meta.total;
                 currentPage = meta.current_page;
                 
+                // Update dynamic stat cards
+                if (res.data.stats) {
+                    const stats = res.data.stats;
+                    
+                    const totalOutletsEl = document.getElementById('statTotalOutlets');
+                    if (totalOutletsEl) totalOutletsEl.textContent = stats.total_outlets;
+                    
+                    const trendCitiesEl = document.getElementById('statTrendCities');
+                    if (trendCitiesEl) trendCitiesEl.innerHTML = `<i class="fas fa-city"></i> ${stats.cities_count} Kota`;
+                    
+                    const footerCitiesEl = document.getElementById('statFooterCities');
+                    if (footerCitiesEl) footerCitiesEl.textContent = `Tersebar di ${stats.cities_count} kota besar`;
+                    
+                    const activeOutletsEl = document.getElementById('statActiveOutlets');
+                    if (activeOutletsEl) activeOutletsEl.textContent = stats.active_outlets;
+                    
+                    const trendActiveEl = document.getElementById('statTrendActive');
+                    if (trendActiveEl) trendActiveEl.innerHTML = `<i class="fas fa-arrow-up"></i> ${stats.active_percentage}%`;
+                    
+                    const maintenanceOutletsEl = document.getElementById('statMaintenanceOutlets');
+                    if (maintenanceOutletsEl) maintenanceOutletsEl.textContent = stats.maintenance_outlets;
+                    
+                    const trendMaintenanceEl = document.getElementById('statTrendMaintenance');
+                    if (trendMaintenanceEl) trendMaintenanceEl.innerHTML = `<i class="fas fa-exclamation-triangle"></i> ${stats.maintenance_outlets} Unit`;
+                    
+                    const totalEmployeesEl = document.getElementById('statTotalEmployees');
+                    if (totalEmployeesEl) totalEmployeesEl.textContent = stats.total_employees;
+                    
+                    const trendEmployeesEl = document.getElementById('statTrendEmployees');
+                    if (trendEmployeesEl) trendEmployeesEl.innerHTML = `<i class="fas fa-users"></i> ${stats.total_outlets > 0 ? 'Aktif' : '0%'}`;
+
+                    // Rebuild cities dropdown options
+                    const filterCity = document.getElementById('filterCity');
+                    if (filterCity && stats.cities) {
+                        const currentVal = filterCity.value;
+                        let optionsHtml = '<option value="">Semua Lokasi</option>';
+                        stats.cities.forEach(c => {
+                            optionsHtml += `<option value="${c}" ${c === currentVal ? 'selected' : ''}>${c}</option>`;
+                        });
+                        filterCity.innerHTML = optionsHtml;
+                    }
+                }
+                
                 render(meta);
             }
         },
