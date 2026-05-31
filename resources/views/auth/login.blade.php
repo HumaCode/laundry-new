@@ -41,48 +41,29 @@
                     @csrf
 
                     <!-- Username / Email -->
-                    <div class="form-group">
-                        <label class="form-label" for="login">Username atau Email</label>
-                        <div class="input-wrapper">
-                            <input 
-                                type="text" 
-                                id="login" 
-                                name="login"
-                                class="form-control" 
-                                placeholder="Masukkan username atau email"
-                                autocomplete="username"
-                                value="{{ old('login') }}"
-                                required
-                                autofocus
-                            >
-                            <i class="fas fa-user input-icon"></i>
-                        </div>
-                    </div>
+                    <x-form.input 
+                        label="Username atau Email"
+                        type="text"
+                        name="login"
+                        placeholder="Masukkan username atau email"
+                        autocomplete="username"
+                        value="{{ old('login') }}"
+                        required
+                        autofocus
+                        icon="fas fa-user"
+                    />
 
                     <!-- Password -->
-                    <div class="form-group">
-                        <label class="form-label" for="password">Password</label>
-                        <div class="input-wrapper">
-                            <input 
-                                type="password" 
-                                id="password" 
-                                name="password"
-                                class="form-control" 
-                                placeholder="Masukkan password"
-                                autocomplete="current-password"
-                                required
-                            >
-                            <i class="fas fa-lock input-icon"></i>
-                            <button 
-                                type="button" 
-                                class="password-toggle" 
-                                id="passwordToggleBtn"
-                                aria-label="Toggle password visibility"
-                            >
-                                <i class="fas fa-eye" id="toggleIcon"></i>
-                            </button>
-                        </div>
-                    </div>
+                    <x-form.input 
+                        label="Password"
+                        type="password"
+                        name="password"
+                        placeholder="Masukkan password"
+                        autocomplete="current-password"
+                        required
+                        icon="fas fa-lock"
+                        is-password="true"
+                    />
 
                     <!-- Remember & Forgot -->
                     <div class="form-options">

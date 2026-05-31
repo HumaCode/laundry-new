@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (toggleBtn) {
         toggleBtn.addEventListener('click', () => {
             const passwordInput = document.getElementById('password');
-            const toggleIcon = document.getElementById('toggleIcon');
+            const toggleIcon = toggleBtn.querySelector('i');
             
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
