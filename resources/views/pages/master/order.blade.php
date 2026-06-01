@@ -257,7 +257,7 @@
             </div>
             <form id="orderForm">
                 <input type="hidden" id="orderId" name="id">
-                <div class="modal-body" style="max-height: 480px; overflow-y: auto;">
+                <div class="modal-body">
                     <div class="form-group">
                         <label for="orderCustomer">Pelanggan <span class="text-danger">*</span></label>
                         <select class="form-control" id="orderCustomer" name="customer_id" required>

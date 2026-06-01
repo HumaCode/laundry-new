@@ -528,6 +528,13 @@
 .modal-overlay.show .modal-box {
     transform: translateY(0);
 }
+.modal-box form {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+}
 .modal-header {
     padding: 1.25rem 1.5rem;
     border-bottom: 1px solid var(--border);
