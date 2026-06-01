@@ -128,7 +128,7 @@
                         <th onclick="sortBy('phone')">Kontak <i class="fas fa-sort sort-icon" id="si-phone"></i></th>
                         <th onclick="sortBy('outlet')">Outlet Favorit <i class="fas fa-sort sort-icon" id="si-outlet"></i></th>
                         <th onclick="sortBy('orders')">Order <i class="fas fa-sort sort-icon" id="si-orders"></i></th>
-                        <th onclick="sortBy('total')">Total Belanja <i class="fas fa-sort sort-icon" id="si-total"></i></th>
+                        <th onclick="sortBy('total')">Total Transaksi <i class="fas fa-sort sort-icon" id="si-total"></i></th>
                         <th onclick="sortBy('rating')">Rating <i class="fas fa-sort sort-icon" id="si-rating"></i></th>
                         <th onclick="sortBy('lastOrder')">Order Terakhir <i class="fas fa-sort sort-icon" id="si-lastOrder"></i></th>
                         <th>Aksi</th>
@@ -185,7 +185,7 @@
                 <!-- Stats -->
                 <div class="drawer-profile-stats">
                     <div class="drawer-stat"><div class="drawer-stat-val" id="d-totalorders">—</div><div class="drawer-stat-lbl">Total Order</div></div>
-                    <div class="drawer-stat"><div class="drawer-stat-val" id="d-totalspend">—</div><div class="drawer-stat-lbl">Total Belanja</div></div>
+                    <div class="drawer-stat"><div class="drawer-stat-val" id="d-totalspend">—</div><div class="drawer-stat-lbl">Total Transaksi</div></div>
                     <div class="drawer-stat"><div class="drawer-stat-val" id="d-rating">—</div><div class="drawer-stat-lbl">Avg Rating</div></div>
                 </div>
                 <!-- Info -->

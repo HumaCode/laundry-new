@@ -301,7 +301,7 @@ function renderGrid(meta) {
                 </div>
                 <div class="cust-grid-stats" style="margin-top:1.5rem">
                     <div class="cust-grid-stat"><div class="cust-grid-stat-val">${c.orders}</div><div class="cust-grid-stat-lbl">Order</div></div>
-                    <div class="cust-grid-stat"><div class="cust-grid-stat-val">${(c.total/1000000).toFixed(1)}jt</div><div class="cust-grid-stat-lbl">Belanja</div></div>
+                    <div class="cust-grid-stat"><div class="cust-grid-stat-val">${(c.total/1000000).toFixed(1)}jt</div><div class="cust-grid-stat-lbl">Transaksi</div></div>
                     <div class="cust-grid-stat"><div class="cust-grid-stat-val">★ ${c.rating}</div><div class="cust-grid-stat-lbl">Rating</div></div>
                 </div>
             </div>
