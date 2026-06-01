@@ -220,7 +220,8 @@ function updateSummaryStats(stats) {
 
 // Pagination setup
 function updatePagination(meta) {
-    $('#showCount').text(meta.to - meta.from + 1 || 0);
+    const showCount = meta.total > 0 ? (meta.to - meta.from + 1) : 0;
+    $('#showCount').text(showCount);
     $('#totalCount').text(meta.total);
     $('#currentPage').text(meta.current_page);
     $('#totalPages').text(meta.last_page);
