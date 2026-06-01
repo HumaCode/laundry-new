@@ -87,7 +87,7 @@ function showSkeletonGrid() {
         html += `
         <div class="outlet-grid-card grad-purple" style="pointer-events:none;opacity:0.7">
             <div class="outlet-grid-inner">
-                <div class="outlet-grid-top" style="margin-bottom:2.5rem">
+                <div class="outlet-grid-top">
                     <div class="skeleton" style="width:18px;height:18px;border-radius:5px"></div>
                     <div class="skeleton skeleton-badge" style="width:70px;height:24px"></div>
                 </div>
@@ -96,7 +96,7 @@ function showSkeletonGrid() {
                     <div class="skeleton skeleton-text long" style="height:16px;width:120px;display:block;margin:0 auto"></div>
                     <div class="skeleton skeleton-text short" style="height:8px;width:60px;display:block;margin:6px auto 0"></div>
                 </div>
-                <div class="outlet-grid-stats" style="margin-top:1.5rem">
+                <div class="outlet-grid-stats">
                     <div class="outlet-grid-stat">
                         <div class="skeleton skeleton-text" style="width:30px;height:14px;margin:0 auto"></div>
                         <div class="skeleton skeleton-text" style="width:25px;height:8px;margin:4px auto 0"></div>
