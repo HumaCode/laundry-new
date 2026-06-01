@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="id">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="YDaYG6Tu2A9TpSSF7KEVP7Qrg99jUAkZTzIHID5b">
+
+        <title>Laravel - Dashboard</title>
+
+        <!-- Fonts -->
+        <link rel="preconnect" href="https://fonts.bunny.net">
+        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+        <!-- Bootstrap 5.3.2 & FontAwesome 6.4.0 CDN -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+        
+        <!-- Chart.js CDN -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+
+        <!-- Scripts -->
+        <link rel="preload" as="style" href="http://:/build/assets/app-uODhcD9a.css" /><link rel="preload" as="style" href="http://:/build/assets/global-dWuruDLc.css" /><link rel="modulepreload" as="script" href="http://:/build/assets/app-DO2nEFzp.js" /><link rel="modulepreload" as="script" href="http://:/build/assets/global-Df8PeN_A.js" /><link rel="stylesheet" href="http://:/build/assets/app-uODhcD9a.css" /><link rel="stylesheet" href="http://:/build/assets/global-dWuruDLc.css" /><script type="module" src="http://:/build/assets/app-DO2nEFzp.js"></script><script type="module" src="http://:/build/assets/global-Df8PeN_A.js"></script>
+        <!-- Page Specific Styles -->
+                <link rel="preload" as="style" href="http://:/build/assets/bisnis-B0VQygmP.css" /><link rel="stylesheet" href="http://:/build/assets/bisnis-B0VQygmP.css" />        </head>
+    <body class="font-sans antialiased">
+        <!-- Sidebar -->
+        <!-- ===========================
+     SIDEBAR
+============================ -->
+<aside class="sidebar" id="sidebar">
+    <!-- Toggle button -->
+    <div class="sidebar-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-chevron-left"></i>
+    </div>
+
+    <!-- Brand -->
+    <div class="sidebar-brand">
+        <div class="brand-icon"><i class="fas fa-tshirt"></i></div>
+        <div class="brand-text">
+            <span class="brand-name">LaundryPro</span>
+            <span class="brand-sub">Admin Panel</span>
+        </div>
+    </div>
+
+    <!-- Nav -->
+    <nav class="sidebar-nav">
+        <div class="nav-section-label">UTAMA</div>
+
+        <a href="http://:/dashboard#" class="nav-item ">
+            <div class="nav-icon"><i class="fas fa-th-large"></i></div>
+            <span class="nav-label">Dashboard</span>
+        </a>
+
+        <!-- Dynamic Menus from Database -->
+                    <div class="nav-section-label" title="MASTER">MASTER</div>
+
+                            
+                <div class="nav-item-wrapper">
+                                            <a href="http://:/orders" 
+                           class="nav-item " 
+                           data-bs-toggle="tooltip" data-bs-placement="right" title="Semua Order">
+                            <div class="nav-icon"><i class="fas fa-shopping-cart"></i></div>
+                            <span class="nav-label">Semua Order</span>
+                                                                                </a>
+                                    </div>
+                            
+                <div class="nav-item-wrapper">
+                                            <a href="http://:/customers" 
+                           class="nav-item " 
+                           data-bs-toggle="tooltip" data-bs-placement="right" title="Pelanggan">
+                            <div class="nav-icon"><i class="fas fa-users"></i></div>
+                            <span class="nav-label">Pelanggan</span>
+                                                                                </a>
+                                    </div>
+                            
+                <div class="nav-item-wrapper">
+                                            <a href="http://:/employees" 
+                           class="nav-item " 
+                           data-bs-toggle="tooltip" data-bs-placement="right" title="Karyawan">
+                            <div class="nav-icon"><i class="fas fa-user-check"></i></div>
+                            <span class="nav-label">Karyawan</span>
+                                                                                </a>
+                                    </div>
+                            
+                <div class="nav-item-wrapper">
+                                            <a href="http://:/businesses" 
+                           class="nav-item " 
+                           data-bs-toggle="tooltip" data-bs-placement="right" title="Bisnis">
+                            <div class="nav-icon"><i class="fas fa-building"></i></div>
+                            <span class="nav-label">Bisnis</span>
+                                                                                </a>
+                                    </div>
+                            
+                <div class="nav-item-wrapper">
+                                            <a href="http://:/outlets" 
+                           class="nav-item " 
+                           data-bs-toggle="tooltip" data-bs-placement="right" title="Outlet">
+                            <div class="nav-icon"><i class="fas fa-home"></i></div>
+                            <span class="nav-label">Outlet</span>
+                                                                                </a>
+                                    </div>
+                                <div class="nav-section-label" title="OPERASIONAL">OPERASIONAL</div>
+
+                            
+                <div class="nav-item-wrapper">
+                                            <a href="http://:/services" 
+                           class="nav-item " 
+                           data-bs-toggle="tooltip" data-bs-placement="right" title="Layanan Dan Harga">
+                            <div class="nav-icon"><i class="fas fa-tag"></i></div>
+                            <span class="nav-label">Layanan Dan Harga</span>
+                                                                                </a>
+                                    </div>
+                            
+                <div class="nav-item-wrapper">
+                                            <a href="http://:/shuttles" 
+                           class="nav-item " 
+                           data-bs-toggle="tooltip" data-bs-placement="right" title="Antar Jemput">
+                            <div class="nav-icon"><i class="fas fa-truck"></i></div>
+                            <span class="nav-label">Antar Jemput</span>
+                                                                                </a>
+                                    </div>
+                            
+                <div class="nav-item-wrapper">
+                                            <a href="http://:/inventories" 
+                           class="nav-item " 
+                           data-bs-toggle="tooltip" data-bs-placement="right" title="Inventaris">
+                            <div class="nav-icon"><i class="fas fa-archive"></i></div>
+                            <span class="nav-label">Inventaris</span>
+                                                                                </a>
+                                    </div>
+                                <div class="nav-section-label" title="KEUANGAN">KEUANGAN</div>
+
+                            
+                <div class="nav-item-wrapper">
+                                            <a href="http://:/reports" 
+                           class="nav-item " 
+                           data-bs-toggle="tooltip" data-bs-placement="right" title="Laporan">
+                            <div class="nav-icon"><i class="fas fa-file-alt"></i></div>
+                            <span class="nav-label">Laporan</span>
+                                                                                </a>
+                                    </div>
+                            
+                <div class="nav-item-wrapper">
+                                            <a href="http://:/payments" 
+                           class="nav-item " 
+                           data-bs-toggle="tooltip" data-bs-placement="right" title="Pembayaran">
+                            <div class="nav-icon"><i class="fas fa-credit-card"></i></div>
+                            <span class="nav-label">Pembayaran</span>
+                                                                                </a>
+                                    </div>
+                            
+                <div class="nav-item-wrapper">
+                                            <a href="http://:/promos" 
+                           class="nav-item " 
+                           data-bs-toggle="tooltip" data-bs-placement="right" title="Promo &amp; Diskon">
+                            <div class="nav-icon"><i class="fas fa-gift"></i></div>
+                            <span class="nav-label">Promo &amp; Diskon</span>
+                                                                                </a>
+                                    </div>
+                                <div class="nav-section-label" title="ROLE PERMISSION">ROLE PERMISSION</div>
+
+                            
+                <div class="nav-item-wrapper">
+                                            <a href="http://:/roles" 
+                           class="nav-item " 
+                           data-bs-toggle="tooltip" data-bs-placement="right" title="Role">
+                            <div class="nav-icon"><i class="fas fa-shield-alt"></i></div>
+                            <span class="nav-label">Role</span>
+                                                                                </a>
+                                    </div>
+                            
+                <div class="nav-item-wrapper">
+                                            <a href="http://:/permissions" 
+                           class="nav-item " 
+                           data-bs-toggle="tooltip" data-bs-placement="right" title="Permission">
+                            <div class="nav-icon"><i class="fas fa-key"></i></div>
+                            <span class="nav-label">Permission</span>
+                                                                                </a>
+                                    </div>
+                            
+                <div class="nav-item-wrapper">
+                                            <a href="http://:/menus" 
+                           class="nav-item " 
+                           data-bs-toggle="tooltip" data-bs-placement="right" title="Menu">
+                            <div class="nav-icon"><i class="fas fa-bars"></i></div>
+                            <span class="nav-label">Menu</span>
+                                                                                </a>
+                                    </div>
+                                <div class="nav-section-label" title="SISTEM">SISTEM</div>
+
+                            
+                <div class="nav-item-wrapper">
+                                            <a href="http://:/profile" 
+                           class="nav-item " 
+                           data-bs-toggle="tooltip" data-bs-placement="right" title="Profil">
+                            <div class="nav-icon"><i class="fas fa-user"></i></div>
+                            <span class="nav-label">Profil</span>
+                                                                                </a>
+                                    </div>
+                            
+                <div class="nav-item-wrapper">
+                                            <a href="http://:/settings" 
+                           class="nav-item " 
+                           data-bs-toggle="tooltip" data-bs-placement="right" title="Pengaturan">
+                            <div class="nav-icon"><i class="fas fa-cog"></i></div>
+                            <span class="nav-label">Pengaturan</span>
+                                                                                </a>
+                                    </div>
+                        </nav>
+
+    <!-- Sidebar User -->
+    <div class="sidebar-user">
+        <div class="sidebar-user-avatar">
+            AD
+        </div>
+        <div class="sidebar-user-info">
+            <div class="sidebar-user-name">Administrator</div>
+            <div class="sidebar-user-role">
+                Admin
+            </div>
+        </div>
+        <button class="sidebar-user-btn" onclick="handleLogout()">
+            <i class="fas fa-sign-out-alt"></i>
+        </button>
+    </div>
+</aside>
+
+        <!-- Topbar -->
+        <!-- ===========================
+     TOPBAR
+============================ -->
+<header class="topbar" id="topbar">
+    <div class="topbar-title">
+        <h2>
+            <button class="btn btn-link p-0 me-2 d-md-none text-dark" onclick="toggleMobileSidebar(event)" style="font-size: 1.2rem; border: none; background: none; box-shadow: none;">
+                <i class="fas fa-bars"></i>
+            </button>
+            <i class="fas fa-th-large d-none d-md-inline-block" style="color:var(--primary);font-size:1rem"></i>
+            <span>Dashboard</span>
+        </h2>
+        <div class="breadcrumb-custom d-none d-sm-flex">
+            <a href="http://:/dashboard#">Home</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>Dashboard</span>
+        </div>
+    </div>
+
+    <div class="topbar-actions">
+        <div class="topbar-search">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Cari order, pelanggan...">
+        </div>
+
+        <button class="topbar-btn" title="Notifikasi">
+            <i class="fas fa-bell"></i>
+            <span class="topbar-badge">5</span>
+        </button>
+
+        <button class="topbar-btn d-none d-sm-flex" title="Pesan">
+            <i class="fas fa-comment-alt"></i>
+            <span class="topbar-badge">2</span>
+        </button>
+
+        <div class="topbar-outlet d-none d-md-flex">
+            <i class="fas fa-store"></i>
+            <span class="d-none d-sm-inline">Semua Outlet</span>
+            <i class="fas fa-chevron-down" style="font-size:0.65rem;opacity:0.6"></i>
+        </div>
+
+        <div class="topbar-user" id="topbarUserDropdownToggle">
+            <div class="topbar-avatar">
+                AD
+            </div>
+            <div class="me-1 d-none d-md-block">
+                <div class="topbar-user-name">Administrator</div>
+                <div class="topbar-user-role">
+                    Admin
+                </div>
+            </div>
+            <i class="fas fa-chevron-down" style="font-size:0.65rem;opacity:0.6"></i>
+
+            <!-- Dropdown Menu -->
+            <div class="dropdown-menu-custom" id="topbarUserDropdown">
+                <a href="http://:/profile#" class="dropdown-item-custom">
+                    <i class="fas fa-user-circle"></i> Profil
+                </a>
+                <a href="#" class="dropdown-item-custom">
+                    <i class="fas fa-cog"></i> Pengaturan
+                </a>
+                <div class="dropdown-divider-custom"></div>
+                <button type="button" class="dropdown-item-custom logout-btn-trigger" onclick="confirmLogout(event)">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </div>
+</header>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <!-- Page Header -->
+    <div class="page-header-bar fade-in">
+        <div class="page-header-left">
+            <h2>Data Bisnis</h2>
+            <p>Kelola dan pantau seluruh unit bisnis LaundryPro beserta outlet di dalamnya</p>
+        </div>
+        <div class="page-header-actions">
+            <div class="view-toggle">
+                <button class="view-btn active" id="viewBtnTable" onclick="switchView('table')" title="Tampilan Tabel"><i class="fas fa-list"></i></button>
+                <button class="view-btn" id="viewBtnGrid"  onclick="switchView('grid')"  title="Tampilan Grid"><i class="fas fa-th-large"></i></button>
+            </div>
+            <button class="btn-page btn-page-outline" onclick="exportData()"><i class="fas fa-file-export"></i> Export</button>
+            <button class="btn-page btn-page-primary" onclick="openAddModal()"><i class="fas fa-plus"></i> Tambah Bisnis</button>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="summary-grid fade-in">
+        <div class="stat-card c1">
+            <div class="stat-header">
+                <div class="stat-icon c1"><i class="fas fa-building"></i></div>
+                <div class="stat-trend up" id="statTrendCities"><i class="fas fa-city"></i> 2 Kota</div>
+            </div>
+            <div class="stat-value" id="statTotalBusinesses">5</div>
+            <div class="stat-label">Total Bisnis</div>
+            <div class="stat-footer">Terdaftar di 2 kota</div>
+        </div>
+        <div class="stat-card c2">
+            <div class="stat-header">
+                <div class="stat-icon c2"><i class="fas fa-check-circle"></i></div>
+                <div class="stat-trend up" id="statTrendActive"><i class="fas fa-arrow-up"></i> 80%</div>
+            </div>
+            <div class="stat-value" id="statActiveBusinesses">4</div>
+            <div class="stat-label">Bisnis Aktif</div>
+            <div class="stat-footer">Beroperasi normal saat ini</div>
+        </div>
+        <div class="stat-card c3">
+            <div class="stat-header">
+                <div class="stat-icon c3"><i class="fas fa-store"></i></div>
+            </div>
+            <div class="stat-value" id="statTotalOutlets">12</div>
+            <div class="stat-label">Total Outlet</div>
+            <div class="stat-footer">Dari seluruh unit bisnis</div>
+        </div>
+        <div class="stat-card c4">
+            <div class="stat-header">
+                <div class="stat-icon c4"><i class="fas fa-user-slash"></i></div>
+            </div>
+            <div class="stat-value" id="statInactiveBusinesses">1</div>
+            <div class="stat-label">Bisnis Tidak Aktif</div>
+            <div class="stat-footer">Sedang tidak beroperasi</div>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar fade-in">
+        <div class="filter-search">
+            <span class="filter-search-icon"><i class="fas fa-search"></i></span>
+            <input class="filter-input" type="text" id="searchInput" placeholder="Cari nama, pemilik, kota, kode bisnis..." oninput="applyFilters()">
+        </div>
+        <div class="filter-group" style="min-width:130px">
+            <label class="filter-label">Status</label>
+            <select class="filter-input" id="filterStatus" onchange="applyFilters()">
+                <option value="">Semua Status</option>
+                <option value="Aktif">Aktif</option>
+                <option value="Tidak Aktif">Tidak Aktif</option>
+            </select>
+        </div>
+        <div class="filter-group" style="min-width:130px">
+            <label class="filter-label">Urutkan</label>
+            <select class="filter-input" id="filterSort" onchange="applyFilters()">
+                <option value="recent" selected>Terbaru Dibuat</option>
+                <option value="name-asc">Nama A–Z</option>
+                <option value="name-desc">Nama Z–A</option>
+                <option value="outlets-desc">Outlet Terbanyak</option>
+            </select>
+        </div>
+        <button class="filter-btn filter-btn-reset" onclick="resetFilters()"><i class="fas fa-undo"></i> Reset</button>
+        <button class="filter-btn filter-btn-primary" onclick="applyFilters()"><i class="fas fa-filter"></i> Filter</button>
+    </div>
+
+    <!-- TABLE VIEW -->
+    <div id="tableView" class="table-card fade-in">
+        <div class="table-card-header">
+            <div class="table-card-title">
+                <div class="table-card-icon"><i class="fas fa-building"></i></div>
+                Daftar Bisnis
+            </div>
+            <div class="table-meta">
+                <span>Menampilkan <strong id="showCount">10</strong> dari <strong id="totalCount">0</strong></span>
+                <select class="per-page-select" id="perPageSelect" onchange="changePerPage(this.value)">
+                    <option value="10">10 / hal</option>
+                    <option value="25">25 / hal</option>
+                    <option value="50">50 / hal</option>
+                </select>
+            </div>
+        </div>
+        <div style="overflow-x:auto">
+            <table class="businesses-table">
+                <thead>
+                    <tr>
+                        <th class="cb-cell"><input type="checkbox" class="custom-cb" id="checkAll" onchange="toggleAllCheck()"></th>
+                        <th onclick="sortBy('name')">Bisnis <i class="fas fa-sort sort-icon active" id="si-name"></i></th>
+                        <th onclick="sortBy('status')">Status <i class="fas fa-sort sort-icon" id="si-status"></i></th>
+                        <th>Pemilik</th>
+                        <th>Kontak</th>
+                        <th onclick="sortBy('outlets')">Jumlah Outlet <i class="fas fa-sort sort-icon" id="si-outlets"></i></th>
+                        <th>Kota</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="businessTableBody"></tbody>
+            </table>
+        </div>
+        <div class="empty-state" id="emptyState" style="display:none">
+            <div class="empty-icon"><i class="fas fa-building"></i></div>
+            <div class="empty-title">Tidak ada bisnis ditemukan</div>
+            <div class="empty-desc">Coba ubah kata kunci atau filter pencarian Anda</div>
+        </div>
+        <div class="bulk-bar" id="bulkBar">
+            <span class="bulk-count"><i class="fas fa-check-square"></i> <span id="bulkCountText">0</span> dipilih</span>
+            <button class="bulk-btn bulk-btn-white" onclick="bulkExport()"><i class="fas fa-file-export"></i> Export</button>
+            <button class="bulk-btn bulk-btn-danger" onclick="bulkDelete()"><i class="fas fa-trash-alt"></i> Hapus</button>
+            <button class="bulk-close" onclick="clearSelection()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="pagination-bar" id="paginationBar">
+            <div class="pagination-info">Halaman <strong id="currentPage">1</strong> dari <strong id="totalPages">1</strong></div>
+            <div class="pagination-controls" id="paginationControls"></div>
+        </div>
+    </div>
+
+    <!-- GRID VIEW -->
+    <div id="gridView" style="display:none">
+        <div id="businessGrid" class="businesses-grid fade-in"></div>
+        <div class="empty-state" id="emptyStateGrid" style="display:none">
+            <div class="empty-icon"><i class="fas fa-building"></i></div>
+            <div class="empty-title">Tidak ada bisnis ditemukan</div>
+            <div class="empty-desc">Coba ubah kata kunci atau filter pencarian Anda</div>
+        </div>
+        <div class="pagination-bar" style="background:white;border-radius:var(--radius);margin-top:1.25rem;border:1px solid var(--border)" id="gridPagBar">
+            <div class="pagination-info">Halaman <strong id="gridCurPage">1</strong> dari <strong id="gridTotalPages">1</strong></div>
+            <div class="pagination-controls" id="gridPaginationControls"></div>
+        </div>
+    </div>
+
+    <!-- DETAIL DRAWER -->
+    <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawerOutside(event)">
+        <div class="drawer" id="drawer">
+            <div class="drawer-header">
+                <div class="drawer-header-avatar" id="d-avatar">BS</div>
+                <div class="drawer-header-info">
+                    <div class="drawer-header-name" id="d-name">—</div>
+                    <div class="drawer-header-id" id="d-id">—</div>
+                    <div style="margin-top:.35rem" id="d-status-wrap"></div>
+                </div>
+                <button class="drawer-close" onclick="closeDrawer()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="drawer-body">
+                <!-- Stats -->
+                <div class="drawer-profile-stats">
+                    <div class="drawer-stat"><div class="drawer-stat-val" id="d-outletcount">—</div><div class="drawer-stat-lbl">Total Outlet</div></div>
+                    <div class="drawer-stat"><div class="drawer-stat-val" id="d-activeoutlets">—</div><div class="drawer-stat-lbl">Outlet Aktif</div></div>
+                    <div class="drawer-stat"><div class="drawer-stat-val" id="d-employees">—</div><div class="drawer-stat-lbl">Total Karyawan</div></div>
+                </div>
+                <!-- Info -->
+                <div class="drawer-section">
+                    <div class="drawer-section-title"><i class="fas fa-info-circle"></i> Informasi Bisnis</div>
+                    <div class="drawer-info-grid">
+                        <div class="drawer-field"><label>Pemilik</label><div class="val" id="d-owner">—</div></div>
+                        <div class="drawer-field"><label>No. Telepon</label><div class="val" id="d-phone">—</div></div>
+                        <div class="drawer-field"><label>Email</label><div class="val" id="d-email">—</div></div>
+                        <div class="drawer-field"><label>Kota</label><div class="val" id="d-city">—</div></div>
+                        <div class="drawer-field" style="grid-column:span 2"><label>Deskripsi</label><div class="val" id="d-description">—</div></div>
+                        <div class="drawer-field" style="grid-column:span 2"><label>Alamat</label><div class="val" id="d-address">—</div></div>
+                    </div>
+                </div>
+                <!-- Outlet List -->
+                <div class="drawer-section">
+                    <div class="drawer-section-title"><i class="fas fa-store"></i> Daftar Outlet</div>
+                    <div id="d-outlet-list"></div>
+                </div>
+            </div>
+            <div class="drawer-footer">
+                <button class="drawer-btn drawer-btn-danger" onclick="deleteCurrentBusiness()"><i class="fas fa-trash-alt"></i></button>
+                <button class="drawer-btn drawer-btn-outline" onclick="closeDrawer()"><i class="fas fa-times"></i> Tutup</button>
+                <button class="drawer-btn drawer-btn-primary" onclick="editCurrentBusiness()"><i class="fas fa-pen"></i> Edit Bisnis</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD/EDIT MODAL -->
+    <div class="modal-overlay" id="businessModal" onclick="closeModalOutside(event,'businessModal')">
+        <div class="modal-box">
+            <div class="modal-header">
+                <div class="modal-header-icon" id="modalIcon"><i class="fas fa-building"></i></div>
+                <div class="modal-title"><h3 id="modalTitle">Tambah Bisnis</h3><p id="modalSubtitle">Isi data bisnis baru</p></div>
+                <button class="modal-close" onclick="closeModal('businessModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label>Nama Bisnis <span class="req">*</span></label>
+                        <div class="input-icon-wrap"><input class="form-control" id="f-name" type="text" placeholder="Masukkan nama bisnis"><i class="fas fa-building icon"></i></div>
+                    </div>
+                    <div class="form-field">
+                        <label>Pemilik (Owner)</label>
+                        <div class="input-icon-wrap"><input class="form-control" id="f-owner" type="text" placeholder="Nama pemilik bisnis"><i class="fas fa-user-tie icon"></i></div>
+                    </div>
+                    <div class="form-field">
+                        <label>No. Telepon</label>
+                        <div class="input-icon-wrap"><input class="form-control" id="f-phone" type="tel" placeholder="08xxxxxxxxxx atau 021-xxxxxx"><i class="fas fa-phone icon"></i></div>
+                    </div>
+                    <div class="form-field">
+                        <label>Email</label>
+                        <div class="input-icon-wrap"><input class="form-control" id="f-email" type="email" placeholder="bisnis@laundrypro.com"><i class="fas fa-envelope icon"></i></div>
+                    </div>
+                    <div class="form-field">
+                        <label>Kota</label>
+                        <div class="input-icon-wrap"><input class="form-control" id="f-city" type="text" placeholder="Contoh: Jakarta Selatan"><i class="fas fa-city icon"></i></div>
+                    </div>
+                    <div class="form-field">
+                        <label>Status</label>
+                        <select class="form-control" id="f-status">
+                            <option value="Aktif">Aktif</option>
+                            <option value="Tidak Aktif">Tidak Aktif</option>
+                        </select>
+                    </div>
+                    <div class="form-field full">
+                        <label>Deskripsi Singkat</label>
+                        <div class="input-icon-wrap"><textarea class="form-control" id="f-description" rows="2" placeholder="Deskripsi singkat tentang bisnis ini" style="padding-left:2.75rem;resize:vertical"></textarea><i class="fas fa-align-left icon" style="top:1rem;transform:none"></i></div>
+                    </div>
+                    <div class="form-field full">
+                        <label>Alamat Lengkap</label>
+                        <div class="input-icon-wrap"><textarea class="form-control" id="f-address" rows="2" placeholder="Alamat kantor pusat bisnis" style="padding-left:2.75rem;resize:vertical"></textarea><i class="fas fa-map-marker-alt icon" style="top:1rem;transform:none"></i></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-outline" onclick="closeModal('businessModal')"><i class="fas fa-times"></i> Batal</button>
+                <button class="modal-btn modal-btn-primary" id="saveBusinessBtn" onclick="saveBusiness()"><i class="fas fa-save"></i> Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Wrap -->
+    <div class="toast-wrap" id="toastWrap"></div>
+
+    <!-- Float Button -->
+    <div class="float-btn-container">
+        <button class="float-btn" id="scrollTopBtn" onclick="scrollToTop(event)">
+            <div class="float-btn-ring"></div>
+            <i class="fas fa-arrow-up"></i>
+            <span class="float-btn-tooltip">Kembali ke Atas</span>
+        </button>
+    </div>
+        </main>
+
+        <!-- Footer -->
+        <!-- Float Button -->
+<div class="float-btn-container">
+    <button class="float-btn" id="scrollTopBtn" onclick="scrollToTop(event)">
+        <div class="float-btn-ring"></div>
+        <i class="fas fa-arrow-up"></i>
+        <span class="float-btn-tooltip">Kembali ke Atas</span>
+    </button>
+</div>
+
+        <!-- Logout Confirmation Modal -->
+        <div class="modal-overlay-custom" id="logoutModal">
+            <div class="modal-container-custom">
+                <!-- Pulse Wave Icon -->
+                <div class="pulse-wave-wrapper">
+                    <div class="pulse-wave-ring"></div>
+                    <div class="pulse-wave-ring"></div>
+                    <div class="pulse-wave-ring"></div>
+                    <div class="pulse-wave-icon">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </div>
+                </div>
+
+                <h3 class="modal-title-custom">Konfirmasi Keluar</h3>
+                <p class="modal-desc-custom">Apakah Anda yakin ingin keluar dari akun Anda? Seluruh sesi aktif Anda saat ini akan diakhiri.</p>
+
+                <div class="modal-btn-group">
+                    <button type="button" class="modal-btn-custom modal-btn-cancel" onclick="closeLogoutModal()">
+                        Batal
+                    </button>
+                    <button type="button" class="modal-btn-custom modal-btn-confirm" id="btnConfirmLogout" onclick="executeLogout()">
+                        <div class="spinner"></div>
+                        <span class="btn-text">Ya, Logout</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Global Reusable Components -->
+        <div id="globalLoadingOverlay" class="global-loading-overlay" style="display: none;">
+    <div class="loading-card-content">
+        <div class="laundry-spinner">
+            <div class="outer-ring"></div>
+            <div class="inner-drum">
+                <i class="fas fa-soap bubble-1"></i>
+                <i class="fas fa-soap bubble-2"></i>
+                <i class="fas fa-soap bubble-3"></i>
+            </div>
+        </div>
+        <p class="loading-text">Mohon Tunggu...</p>
+    </div>
+</div>
+
+<style>
+.global-loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease-in-out;
+}
+
+.loading-card-content {
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border-radius: 24px;
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    max-width: 320px;
+    width: 90%;
+    transform: scale(0.9);
+    animation: loadingScaleIn 0.3s forwards cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes loadingScaleIn {
+    to { transform: scale(1); }
+}
+
+.laundry-spinner {
+    position: relative;
+    width: 80px;
+    height: 80px;
+}
+
+.outer-ring {
+    position: absolute;
+    inset: 0;
+    border: 4px solid #E2E8F0;
+    border-top-color: #4F46E5;
+    border-bottom-color: #EC4899;
+    border-radius: 50%;
+    animation: loadingSpin 1.2s infinite linear;
+}
+
+.inner-drum {
+    position: absolute;
+    inset: 12px;
+    background: linear-gradient(135deg, #EEF2F6 0%, #E2E8F0 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.inner-drum::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 80%);
+}
+
+.bubble-1, .bubble-2, .bubble-3 {
+    position: absolute;
+    color: #38BDF8;
+    opacity: 0.7;
+    font-size: 0.75rem;
+}
+
+.bubble-1 {
+    top: 20%;
+    left: 25%;
+    animation: floatBubble 2s infinite ease-in-out;
+}
+
+.bubble-2 {
+    top: 50%;
+    right: 20%;
+    animation: floatBubble 2.5s infinite ease-in-out 0.5s;
+}
+
+.bubble-3 {
+    bottom: 25%;
+    left: 45%;
+    animation: floatBubble 1.8s infinite ease-in-out 0.2s;
+}
+
+@keyframes loadingSpin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes floatBubble {
+    0%, 100% { transform: translateY(0) scale(1); opacity: 0.4; }
+    50% { transform: translateY(-8px) scale(1.2); opacity: 0.8; }
+}
+
+.loading-text {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0F172A;
+    margin: 0;
+    animation: pulseText 1.5s infinite alternate ease-in-out;
+}
+
+@keyframes pulseText {
+    from { opacity: 0.6; }
+    to { opacity: 1; }
+}
+</style>
+
+<script>
+window.showLoadingDialog = function() {
+    const overlay = document.getElementById('globalLoadingOverlay');
+    if (overlay) {
+        overlay.style.display = 'flex';
+    }
+}
+
+window.hideLoadingDialog = function() {
+    const overlay = document.getElementById('globalLoadingOverlay');
+    if (overlay) {
+        overlay.style.display = 'none';
+    }
+}
+</script>
+        <div id="globalToastContainer" class="global-toast-container"></div>
+
+<style>
+.global-toast-container {
+    position: fixed;
+    bottom: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 90%;
+    max-width: 420px;
+    pointer-events: none;
+}
+
+.interactive-toast {
+    pointer-events: auto;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 16px;
+    padding: 1rem 1.25rem;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    position: relative;
+    overflow: hidden;
+    transform: translateY(100px) scale(0.9);
+    opacity: 0;
+    animation: toastBounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    transition: all 0.3s ease-in-out;
+}
+
+@keyframes toastBounceIn {
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+.interactive-toast.hide {
+    animation: toastFadeOut 0.3s ease-in-out forwards;
+}
+
+@keyframes toastFadeOut {
+    to {
+        transform: translateY(20px) scale(0.9);
+        opacity: 0;
+    }
+}
+
+.toast-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.toast-success .toast-icon {
+    background: rgba(16, 185, 129, 0.15);
+    color: #10B981;
+}
+
+.toast-error .toast-icon {
+    background: rgba(239, 68, 68, 0.15);
+    color: #EF4444;
+}
+
+.toast-info .toast-icon {
+    background: rgba(59, 130, 246, 0.15);
+    color: #3B82F6;
+}
+
+.toast-body {
+    flex-grow: 1;
+}
+
+.toast-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #0F172A;
+    margin-bottom: 0.15rem;
+}
+
+.toast-message {
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.825rem;
+    color: #475569;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    color: #94A3B8;
+    cursor: pointer;
+    padding: 0.25rem;
+    transition: color 0.2s;
+    font-size: 0.95rem;
+}
+
+.toast-close:hover {
+    color: #475569;
+}
+
+.toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: #4F46E5;
+    width: 100%;
+}
+
+.toast-success .toast-progress {
+    background: #10B981;
+}
+
+.toast-error .toast-progress {
+    background: #EF4444;
+}
+
+.toast-info .toast-progress {
+    background: #3B82F6;
+}
+</style>
+
+<script>
+window.showToast = function(message, type = 'success', title = null) {
+    const container = document.getElementById('globalToastContainer');
+    if (!container) return;
+
+    if (!title) {
+        title = type === 'success' ? 'Sukses' : (type === 'error' ? 'Error' : 'Informasi');
+    }
+
+    const icons = {
+        success: 'fas fa-check-circle',
+        error: 'fas fa-exclamation-circle',
+        info: 'fas fa-info-circle'
+    };
+
+    const toast = document.createElement('div');
+    toast.className = `interactive-toast toast-${type}`;
+    
+    toast.innerHTML = `
+        <div class="toast-icon">
+            <i class="${icons[type]}"></i>
+        </div>
+        <div class="toast-body">
+            <div class="toast-title">${title}</div>
+            <p class="toast-message">${message}</p>
+        </div>
+        <button class="toast-close">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="toast-progress"></div>
+    `;
+
+    container.appendChild(toast);
+
+    // Close button event
+    const closeBtn = toast.querySelector('.toast-close');
+    closeBtn.addEventListener('click', () => {
+        closeToast(toast);
+    });
+
+    // Animate progress bar
+    const progress = toast.querySelector('.toast-progress');
+    const duration = 4000; // 4 seconds
+    let start = null;
+
+    function step(timestamp) {
+        if (!start) start = timestamp;
+        const progressTime = timestamp - start;
+        const width = 100 - (progressTime / duration) * 100;
+        
+        if (width >= 0) {
+            progress.style.width = width + '%';
+            requestAnimationFrame(step);
+        } else {
+            closeToast(toast);
+        }
+    }
+    
+    requestAnimationFrame(step);
+}
+
+function closeToast(toast) {
+    if (toast.classList.contains('hide')) return;
+    toast.classList.add('hide');
+    toast.addEventListener('animationend', () => {
+        toast.remove();
+    });
+}
+</script>
+        <div id="dynamicConfirmOverlay" class="confirm-overlay" onclick="closeConfirmOutside(event)">
+    <div id="dynamicConfirmBox" class="confirm-island">
+        <!-- Island Icon/Header -->
+        <div class="confirm-island-icon">
+            <i class="fas fa-exclamation-triangle"></i>
+        </div>
+        
+        <!-- Content -->
+        <div class="confirm-island-content">
+            <h4 id="confirmTitle" class="confirm-island-title">Konfirmasi Tindakan</h4>
+            <p id="confirmMessage" class="confirm-island-message">Apakah Anda yakin ingin melakukan tindakan ini?</p>
+        </div>
+        
+        <!-- Actions -->
+        <div class="confirm-island-actions">
+            <button type="button" class="confirm-island-btn btn-cancel" onclick="closeConfirmDialog()">Batal</button>
+            <button type="button" class="confirm-island-btn btn-confirm" id="confirmYesBtn">
+                <i class="fas fa-trash-alt"></i> Hapus
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+.confirm-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.45); /* Slate 900 tint */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 99999;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 5rem;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.35s ease, visibility 0.35s ease;
+}
+
+.confirm-overlay.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Dynamic Island modal container starting as small status pill */
+.confirm-island {
+    background: #1E293B; /* Slate 800 premium dark theme */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    width: 380px;
+    max-width: 90%;
+    border-radius: 40px;
+    padding: 1.5rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 30px rgba(99, 102, 241, 0.15);
+    text-align: center;
+    
+    /* Dynamic Island spring scale transition */
+    transform: translateY(-80px) scaleX(0.2) scaleY(0.08);
+    opacity: 0;
+    transition: transform 0.65s cubic-bezier(0.19, 1, 0.22, 1), 
+                opacity 0.45s ease,
+                border-radius 0.5s ease;
+}
+
+.confirm-overlay.show .confirm-island {
+    transform: translateY(0) scaleX(1) scaleY(1);
+    opacity: 1;
+    border-radius: 28px;
+}
+
+/* Icon */
+.confirm-island-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(236, 72, 153, 0.2));
+    color: #F43F5E;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin: 0 auto 1.125rem;
+    animation: pulseConfirmGlow 2s infinite;
+}
+
+@keyframes pulseConfirmGlow {
+    0%, 100% { box-shadow: 0 0 10px rgba(239, 68, 68, 0.2); }
+    50% { box-shadow: 0 0 20px rgba(239, 68, 68, 0.5); }
+}
+
+.confirm-island-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 1.15rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    color: white;
+    letter-spacing: -0.5px;
+}
+
+.confirm-island-message {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 0.85rem;
+    color: #94A3B8;
+    line-height: 1.5;
+    margin-bottom: 1.5rem;
+}
+
+.confirm-island-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.confirm-island-btn {
+    flex: 1;
+    padding: 0.75rem;
+    border-radius: 16px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.confirm-island-btn.btn-cancel {
+    background: rgba(255, 255, 255, 0.08);
+    color: #CBD5E1;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.confirm-island-btn.btn-cancel:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+}
+
+.confirm-island-btn.btn-confirm {
+    background: linear-gradient(135deg, #EF4444, #EC4899);
+    color: white;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+}
+
+.confirm-island-btn.btn-confirm:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
+}
+
+.confirm-island-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none !important;
+}
+</style>
+
+<script>
+window.showConfirm = function(title, message, onConfirm) {
+    const overlay = document.getElementById('dynamicConfirmOverlay');
+    const titleEl = document.getElementById('confirmTitle');
+    const msgEl = document.getElementById('confirmMessage');
+    const confirmBtn = document.getElementById('confirmYesBtn');
+    
+    if (!overlay) return;
+    
+    titleEl.textContent = title;
+    msgEl.textContent = message;
+    
+    // Clear and clone confirm button to remove previous event listeners
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+    
+    overlay.classList.add('show');
+    
+    newConfirmBtn.addEventListener('click', function() {
+        const originalHtml = newConfirmBtn.innerHTML;
+        newConfirmBtn.disabled = true;
+        newConfirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sedang proses...';
+        
+        // Execute dynamic callback
+        Promise.resolve(onConfirm()).then(() => {
+            overlay.classList.remove('show');
+        }).catch((err) => {
+            console.error(err);
+        }).finally(() => {
+            newConfirmBtn.disabled = false;
+            newConfirmBtn.innerHTML = originalHtml;
+        });
+    });
+};
+
+window.closeConfirmDialog = function() {
+    const overlay = document.getElementById('dynamicConfirmOverlay');
+    if (overlay) overlay.classList.remove('show');
+};
+
+window.closeConfirmOutside = function(e) {
+    if (e.target === e.currentTarget) {
+        closeConfirmDialog();
+    }
+};
+</script>
+
+        <!-- jQuery & Bootstrap Bundle CDN -->
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+
+        <!-- Page Specific Scripts -->
+                <link rel="modulepreload" as="script" href="http://:/build/assets/bisnis-BQx6I4oB.js" /><script type="module" src="http://:/build/assets/bisnis-BQx6I4oB.js"></script>        </body>
+</html>

@@ -48,7 +48,7 @@ class OrderController extends Controller
         $outlets = $this->outletService->getAllOutlets();
         $customers = User::role('customer')->orderBy('name')->get();
 
-        return view('pages.master.order', [
+        return view('pages.master.order.index', [
             'topbarTitle' => 'Order',
             'topbarIcon' => 'fa-receipt',
             'outlets' => $outlets,

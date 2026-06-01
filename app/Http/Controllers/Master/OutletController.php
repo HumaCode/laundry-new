@@ -42,7 +42,7 @@ class OutletController extends Controller
             return ResponseHelper::jsonResponse(true, 'Data outlet berhasil diambil', $responseData, 200);
         }
 
-        return view('pages.master.outlet', [
+        return view('pages.master.outlet.index', [
             'topbarTitle' => 'Outlet',
             'topbarIcon' => 'fa-store',
             'cities' => $stats['cities'],

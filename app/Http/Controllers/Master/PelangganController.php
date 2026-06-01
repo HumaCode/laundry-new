@@ -46,7 +46,7 @@ class PelangganController extends Controller
 
         $outlets = $this->outletService->getAllOutlets();
 
-        return view('pages.master.pelanggan', [
+        return view('pages.master.pelanggan.index', [
             'topbarTitle' => 'Pelanggan',
             'topbarIcon' => 'fa-users',
             'outlets' => $outlets,

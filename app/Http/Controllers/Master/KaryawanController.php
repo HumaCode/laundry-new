@@ -46,7 +46,7 @@ class KaryawanController extends Controller
 
         $outlets = $this->outletService->getAllOutlets();
 
-        return view('pages.master.karyawan', [
+        return view('pages.master.karyawan.index', [
             'topbarTitle' => 'Karyawan',
             'topbarIcon' => 'fa-user-check',
             'outlets' => $outlets,

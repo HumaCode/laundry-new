@@ -41,7 +41,7 @@ class BisnisController extends Controller
             return ResponseHelper::jsonResponse(true, 'Data bisnis berhasil diambil', $responseData, 200);
         }
 
-        return view('pages.master.bisnis', [
+        return view('pages.master.bisnis.index', [
             'topbarTitle' => 'Bisnis',
             'topbarIcon'  => 'fa-building',
             'stats'       => $stats,
