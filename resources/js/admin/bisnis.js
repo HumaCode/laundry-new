@@ -1,13 +1,15 @@
 $.ajaxSetup({ headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') } });
 
-let currentPage   = 1;
-let perPage       = 10;
-let selectedIds   = new Set();
-let currentView   = 'table';
+let currentPage    = 1;
+let perPage        = 10;
+let selectedIds    = new Set();
+let currentView    = 'table';
 let activeBusiness = null;
-let editMode      = false;
-let pageData      = [];
-let totalItems    = 0;
+let editMode       = false;
+let sortCol        = 'recent';
+let sortDir        = 'desc';
+let pageData       = [];
+let totalItems     = 0;
 
 function switchView(v) {
     currentView = v;
@@ -25,11 +27,97 @@ function statusBadge(isActive) {
         : `<span class="status-badge status-nonaktif">🔴 Tidak Aktif</span>`;
 }
 
+function showSkeletonTable() {
+    const tbody = document.getElementById('businessTableBody');
+    if (!tbody) return;
+    
+    let html = '';
+    for (let i = 0; i < perPage; i++) {
+        html += `
+        <tr>
+            <td class="cb-cell"><div class="skeleton" style="width:18px;height:18px;border-radius:5px"></div></td>
+            <td>
+                <div style="display:flex;align-items:center;gap:.75rem">
+                    <div class="skeleton skeleton-circle"></div>
+                    <div style="flex:1">
+                        <div class="skeleton skeleton-text medium" style="height:14px;width:120px"></div>
+                        <div class="skeleton skeleton-text short" style="height:8px;width:60px;margin:0"></div>
+                    </div>
+                </div>
+            </td>
+            <td><div class="skeleton skeleton-badge" style="width:70px;height:24px"></div></td>
+            <td><div class="skeleton skeleton-text medium" style="height:14px;width:100px"></div></td>
+            <td>
+                <div class="skeleton skeleton-text medium" style="height:14px;width:100px"></div>
+                <div class="skeleton skeleton-text short" style="height:8px;width:120px;margin:0"></div>
+            </td>
+            <td><div class="skeleton skeleton-badge" style="width:60px;height:24px"></div></td>
+            <td><div class="skeleton skeleton-text medium" style="width:80px;height:14px"></div></td>
+            <td>
+                <div class="action-cell">
+                    <div class="skeleton skeleton-btn"></div>
+                    <div class="skeleton skeleton-btn"></div>
+                    <div class="skeleton skeleton-btn"></div>
+                </div>
+            </td>
+        </tr>`;
+    }
+    tbody.innerHTML = html;
+}
+
+function showSkeletonGrid() {
+    const grid = document.getElementById('businessGrid');
+    if (!grid) return;
+    
+    let html = '';
+    for (let i = 0; i < 12; i++) {
+        html += `
+        <div class="business-grid-card grad-purple" style="pointer-events:none;opacity:0.7">
+            <div class="business-grid-inner">
+                <div class="business-grid-top" style="margin-bottom:2.5rem">
+                    <div class="skeleton" style="width:18px;height:18px;border-radius:5px"></div>
+                    <div class="skeleton skeleton-badge" style="width:70px;height:24px"></div>
+                </div>
+                <div class="business-grid-avatar-wrap">
+                    <div class="skeleton skeleton-circle" style="width:72px;height:72px;border-radius:18px;margin:0 auto 0.5rem"></div>
+                    <div class="skeleton skeleton-text long" style="height:16px;width:120px;display:block;margin:0 auto"></div>
+                    <div class="skeleton skeleton-text short" style="height:8px;width:60px;display:block;margin:6px auto 0"></div>
+                </div>
+                <div class="business-grid-stats" style="margin-top:1.5rem">
+                    <div class="business-grid-stat">
+                        <div class="skeleton skeleton-text short" style="height:14px;width:30px;margin:0 auto"></div>
+                        <div class="skeleton skeleton-text short" style="height:8px;width:40px;margin:4px auto 0"></div>
+                    </div>
+                    <div class="business-grid-stat">
+                        <div class="skeleton skeleton-text short" style="height:14px;width:30px;margin:0 auto"></div>
+                        <div class="skeleton skeleton-text short" style="height:8px;width:40px;margin:4px auto 0"></div>
+                    </div>
+                    <div class="business-grid-stat">
+                        <div class="skeleton skeleton-text short" style="height:14px;width:30px;margin:0 auto"></div>
+                        <div class="skeleton skeleton-text short" style="height:8px;width:40px;margin:4px auto 0"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="business-grid-actions">
+                <div class="skeleton skeleton-btn" style="flex:1;height:32px"></div>
+                <div class="skeleton skeleton-btn" style="flex:1;height:32px"></div>
+            </div>
+        </div>`;
+    }
+    grid.innerHTML = html;
+}
+
 function applyFilters() {
     const q       = document.getElementById('searchInput').value;
     const status  = document.getElementById('filterStatus').value;
     const sortVal = document.getElementById('filterSort').value;
     const limit   = currentView === 'table' ? perPage : 12;
+
+    if (currentView === 'table') {
+        showSkeletonTable();
+    } else {
+        showSkeletonGrid();
+    }
 
     $.ajax({
         url: '/businesses',
@@ -85,13 +173,13 @@ function renderTable(meta) {
             <td class="cb-cell"><input type="checkbox" class="custom-cb row-cb" data-id="${c.id}" ${selectedIds.has(c.id)?'checked':''} onchange="toggleRowCheck(this)"></td>
             <td>
                 <div style="display:flex;align-items:center;gap:.75rem">
-                    <div class="business-avatar" style="background:${grads[i%grads.length]};width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:700;color:white;flex-shrink:0;position:relative">
+                    <div class="business-avatar" style="background:${grads[i%grads.length]}">
                         ${getInitials(c.name)}
-                        <span style="position:absolute;bottom:-2px;right:-2px;width:12px;height:12px;border-radius:50%;border:2px solid white;background:${c.is_active?'var(--secondary)':'var(--danger)'}"></span>
+                        <span class="business-avatar-status ${c.is_active?'aktif':'nonaktif'}"></span>
                     </div>
                     <div>
-                        <div style="font-weight:700;color:var(--dark);font-size:.875rem">${c.name}</div>
-                        <div style="font-size:.72rem;color:var(--gray-light);font-family:monospace">${c.code}</div>
+                        <div class="business-name">${c.name}</div>
+                        <div class="business-id">${c.code}</div>
                     </div>
                 </div>
             </td>
@@ -125,26 +213,35 @@ function renderGrid(meta) {
 
     const grads = ['grad-purple','grad-green','grad-orange','grad-pink','grad-blue','grad-teal'];
     grid.innerHTML = pageData.map((c, i) => `
-        <div class="business-grid-card ${grads[i%grads.length]}" style="background:white;border-radius:20px;border:1px solid var(--border);overflow:hidden;transition:all .35s cubic-bezier(.4,0,.2,1);position:relative;cursor:pointer">
-            <div style="position:absolute;top:0;left:0;right:0;height:80px;opacity:.85;background:${i%6===0?'linear-gradient(135deg,#6366F1,#8B5CF6)':i%6===1?'linear-gradient(135deg,#10B981,#06B6D4)':i%6===2?'linear-gradient(135deg,#F59E0B,#F97316)':i%6===3?'linear-gradient(135deg,#EC4899,#8B5CF6)':i%6===4?'linear-gradient(135deg,#3B82F6,#6366F1)':'linear-gradient(135deg,#14B8A6,#10B981)'}"></div>
-            <div style="padding:1.25rem;position:relative;z-index:1">
-                <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:3.5rem">
-                    <input type="checkbox" class="custom-cb row-cb" data-id="${c.id}" ${selectedIds.has(c.id)?'checked':''} onchange="toggleRowCheck(this)" style="background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.5)">
+        <div class="business-grid-card ${grads[i%grads.length]}">
+            <div class="business-grid-inner">
+                <div class="business-grid-top">
+                    <input type="checkbox" class="custom-cb business-grid-cb row-cb" data-id="${c.id}" ${selectedIds.has(c.id)?'checked':''} onchange="toggleRowCheck(this)">
                     ${statusBadge(c.is_active)}
                 </div>
-                <div style="position:absolute;top:2.5rem;left:50%;transform:translateX(-50%);text-align:center">
-                    <div style="width:72px;height:72px;border-radius:18px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;font-weight:800;color:white;border:4px solid white;box-shadow:0 8px 20px rgba(0,0,0,.15);margin:0 auto .5rem;background:#6366F1">${getInitials(c.name)}</div>
-                    <div style="font-size:1rem;font-weight:700;color:var(--dark);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px">${c.name}</div>
-                    <div style="font-size:.72rem;color:var(--gray-light);text-align:center;font-family:monospace">${c.code}</div>
+                <div class="business-grid-avatar-wrap">
+                    <div class="business-grid-avatar" style="background:#6366F1">${getInitials(c.name)}</div>
+                    <div class="business-grid-name">${c.name}</div>
+                    <div class="business-grid-id">${c.code}</div>
                 </div>
-                <div style="display:flex;flex-direction:column;gap:.25rem;align-items:center;margin-top:1rem;border-top:1px solid var(--border);padding-top:.75rem">
-                    <div style="font-size:.8rem;color:var(--gray)"><i class="fas fa-store"></i> ${c.outlets_count} Outlet</div>
-                    <div style="font-size:.8rem;font-weight:700;color:var(--dark)"><i class="fas fa-map-marker-alt"></i> ${c.city || '-'}</div>
+                <div class="business-grid-stats">
+                    <div class="business-grid-stat">
+                        <div class="business-grid-stat-val">${c.outlets_count}</div>
+                        <div class="business-grid-stat-lbl">Outlet</div>
+                    </div>
+                    <div class="business-grid-stat">
+                        <div class="business-grid-stat-val" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px" title="${c.owner || '-'}">${c.owner || '-'}</div>
+                        <div class="business-grid-stat-lbl">Pemilik</div>
+                    </div>
+                    <div class="business-grid-stat">
+                        <div class="business-grid-stat-val" style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:80px" title="${c.city || '-'}">${c.city || '-'}</div>
+                        <div class="business-grid-stat-lbl">Kota</div>
+                    </div>
                 </div>
             </div>
-            <div style="display:flex;gap:.5rem;padding:1rem 1.25rem;border-top:1px solid var(--border);background:#FAFAFA">
-                <button onclick="openEditModal('${c.id}')" style="flex:1;padding:.6rem;border-radius:10px;border:2px solid var(--border);background:white;color:var(--gray);font-size:.78rem;font-weight:600;cursor:pointer"><i class="fas fa-pen"></i> Edit</button>
-                <button onclick="openDrawer('${c.id}')"    style="flex:1;padding:.6rem;border-radius:10px;border:none;background:linear-gradient(135deg,var(--primary),var(--purple));color:white;font-size:.78rem;font-weight:600;cursor:pointer"><i class="fas fa-eye"></i> Detail</button>
+            <div class="business-grid-actions">
+                <button class="business-grid-btn business-grid-btn-outline" onclick="openEditModal('${c.id}')"><i class="fas fa-pen"></i> Edit</button>
+                <button class="business-grid-btn business-grid-btn-primary" onclick="openDrawer('${c.id}')"><i class="fas fa-eye"></i> Detail</button>
             </div>
         </div>`).join('');
 
@@ -353,9 +450,29 @@ window.deleteById = deleteById; window.closeModal = closeModal; window.closeModa
 window.exportData = exportData;
 
 function sortBy(col) {
+    if (sortCol === col) {
+        sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+    } else {
+        sortCol = col;
+        sortDir = 'asc';
+    }
+
     document.querySelectorAll('.sort-icon').forEach(i => i.classList.remove('active'));
-    const el = document.getElementById('si-' + col); if (el) el.classList.add('active');
-    const mapping = { 'name': 'name-asc', 'outlets': 'outlets-desc' };
-    document.getElementById('filterSort').value = mapping[col] || 'recent';
+    const el = document.getElementById('si-' + col);
+    if (el) el.classList.add('active');
+
+    let sortVal = 'recent';
+    if (col === 'name') {
+        sortVal = sortDir === 'asc' ? 'name-asc' : 'name-desc';
+    } else if (col === 'outlets') {
+        sortVal = sortDir === 'asc' ? 'outlets-asc' : 'outlets-desc';
+    } else if (col === 'status') {
+        sortVal = sortDir === 'asc' ? 'status-asc' : 'status-desc';
+    }
+
+    const selectEl = document.getElementById('filterSort');
+    if (selectEl) {
+        selectEl.value = sortVal;
+    }
     applyFilters();
 }
