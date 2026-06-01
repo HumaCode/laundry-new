@@ -317,25 +317,25 @@ function renderGrid(meta) {
 function renderPagination(meta) {
     document.getElementById('currentPage').textContent = meta.current_page;
     document.getElementById('totalPages').textContent  = meta.last_page;
-    buildPageControls('paginationControls', meta.last_page, goPage);
+    buildPageControls('paginationControls', meta.last_page, 'goPage');
 }
 
 function renderGridPagination(meta) {
     document.getElementById('gridCurPage').textContent   = meta.current_page;
     document.getElementById('gridTotalPages').textContent = meta.last_page;
-    buildPageControls('gridPaginationControls', meta.last_page, goPage);
+    buildPageControls('gridPaginationControls', meta.last_page, 'goPage');
 }
 
-function buildPageControls(containerId, total, fn) {
+function buildPageControls(containerId, total, fnName) {
     const el = document.getElementById(containerId);
     if (!el) return;
-    let html = `<button class="page-btn" onclick="${fn.name}(${currentPage-1})" ${currentPage<=1?'disabled':''}><i class="fas fa-chevron-left"></i></button>`;
+    let html = `<button class="page-btn" onclick="${fnName}(${currentPage-1})" ${currentPage<=1?'disabled':''}><i class="fas fa-chevron-left"></i></button>`;
     let s = Math.max(1, currentPage-2), e = Math.min(total, s+4);
     if (e-s<4) s = Math.max(1, e-4);
-    if (s>1) { html += `<button class="page-btn" onclick="${fn.name}(1)">1</button>`; if(s>2) html += `<span style="padding:0 .2rem;color:var(--gray-light)">…</span>`; }
-    for (let i=s; i<=e; i++) html += `<button class="page-btn ${i===currentPage?'active':''}" onclick="${fn.name}(${i})">${i}</button>`;
-    if (e<total) { if(e<total-1) html += `<span style="padding:0 .2rem;color:var(--gray-light)">…</span>`; html += `<button class="page-btn" onclick="${fn.name}(${total})">${total}</button>`; }
-    html += `<button class="page-btn" onclick="${fn.name}(${currentPage+1})" ${currentPage>=total?'disabled':''}><i class="fas fa-chevron-right"></i></button>`;
+    if (s>1) { html += `<button class="page-btn" onclick="${fnName}(1)">1</button>`; if(s>2) html += `<span style="padding:0 .2rem;color:var(--gray-light)">…</span>`; }
+    for (let i=s; i<=e; i++) html += `<button class="page-btn ${i===currentPage?'active':''}" onclick="${fnName}(${i})">${i}</button>`;
+    if (e<total) { if(e<total-1) html += `<span style="padding:0 .2rem;color:var(--gray-light)">…</span>`; html += `<button class="page-btn" onclick="${fnName}(${total})">${total}</button>`; }
+    html += `<button class="page-btn" onclick="${fnName}(${currentPage+1})" ${currentPage>=total?'disabled':''}><i class="fas fa-chevron-right"></i></button>`;
     el.innerHTML = html;
 }
 

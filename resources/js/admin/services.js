@@ -291,19 +291,19 @@ function renderPagination(meta) {
     document.getElementById('showCount').textContent   = servicesData.length;
     document.getElementById('totalCount').textContent  = meta.total;
 
-    buildPageControls('paginationControls', meta.last_page, goPage);
+    buildPageControls('paginationControls', meta.last_page, 'goPage');
 }
 
-function buildPageControls(containerId, total, fn) {
+function buildPageControls(containerId, total, fnName) {
     const el = document.getElementById(containerId);
     if (!el) return;
-    let html = `<button class="page-btn" onclick="${fn.name}(${currentPage-1})" ${currentPage<=1?'disabled':''}><i class="fas fa-chevron-left"></i></button>`;
+    let html = `<button class="page-btn" onclick="${fnName}(${currentPage-1})" ${currentPage<=1?'disabled':''}><i class="fas fa-chevron-left"></i></button>`;
     let s = Math.max(1, currentPage-2), e = Math.min(total, s+4);
     if (e-s<4) s = Math.max(1, e-4);
-    if (s>1) { html += `<button class="page-btn" onclick="${fn.name}(1)">1</button>`; if(s>2) html += `<span style="padding:0 .2rem;color:var(--gray-light)">…</span>`; }
-    for (let i=s; i<=e; i++) html += `<button class="page-btn ${i===currentPage?'active':''}" onclick="${fn.name}(${i})">${i}</button>`;
-    if (e<total) { if(e<total-1) html += `<span style="padding:0 .2rem;color:var(--gray-light)">…</span>`; html += `<button class="page-btn" onclick="${fn.name}(${total})">${total}</button>`; }
-    html += `<button class="page-btn" onclick="${fn.name}(${currentPage+1})" ${currentPage>=total?'disabled':''}><i class="fas fa-chevron-right"></i></button>`;
+    if (s>1) { html += `<button class="page-btn" onclick="${fnName}(1)">1</button>`; if(s>2) html += `<span style="padding:0 .2rem;color:var(--gray-light)">…</span>`; }
+    for (let i=s; i<=e; i++) html += `<button class="page-btn ${i===currentPage?'active':''}" onclick="${fnName}(${i})">${i}</button>`;
+    if (e<total) { if(e<total-1) html += `<span style="padding:0 .2rem;color:var(--gray-light)">…</span>`; html += `<button class="page-btn" onclick="${fnName}(${total})">${total}</button>`; }
+    html += `<button class="page-btn" onclick="${fnName}(${currentPage+1})" ${currentPage>=total?'disabled':''}><i class="fas fa-chevron-right"></i></button>`;
     el.innerHTML = html;
 }
 
@@ -439,8 +439,8 @@ function renderTiersEditor() {
 
     el.innerHTML = priceTiers.map((t, i) => `
         <div class="price-tier-row">
-            <input class="form-control" type="text" placeholder="cth. 1-5 kg" value="${t.label}" oninput="priceTiers[${i}].label=this.value" style="font-size:.875rem;padding:.6rem .875rem" required>
-            <input class="form-control" type="number" placeholder="Harga" value="${t.price || ''}" oninput="priceTiers[${i}].price=parseInt(this.value)||0" style="font-size:.875rem;padding:.6rem .875rem" required>
+            <input class="form-control" type="text" placeholder="cth. 1-5 kg" value="${t.label}" oninput="updatePriceTierLabel(${i}, this.value)" style="font-size:.875rem;padding:.6rem .875rem" required>
+            <input class="form-control" type="number" placeholder="Harga" value="${t.price || ''}" oninput="updatePriceTierPrice(${i}, this.value)" style="font-size:.875rem;padding:.6rem .875rem" required>
             <button type="button" class="btn-rm-tier" onclick="removeTier(${i})"><i class="fas fa-times"></i></button>
         </div>
     `).join('');
@@ -463,7 +463,7 @@ function renderFeaturesEditor() {
 
     el.innerHTML = featuresList.map((f, i) => `
         <div style="display:flex;gap:.5rem;align-items:center;margin-bottom:0.5rem">
-            <input class="form-control" type="text" placeholder="cth. Deterjen premium" value="${f}" oninput="featuresList[${i}]=this.value" style="font-size:.875rem;padding:.6rem .875rem" required>
+            <input class="form-control" type="text" placeholder="cth. Deterjen premium" value="${f}" oninput="updateFeature(${i}, this.value)" style="font-size:.875rem;padding:.6rem .875rem" required>
             <button type="button" class="btn-rm-tier" onclick="removeFeature(${i})"><i class="fas fa-times"></i></button>
         </div>
     `).join('');
@@ -505,9 +505,9 @@ function saveService() {
         color: document.getElementById('f-color').value,
         target: parseInt(document.getElementById('f-target').value) || 100,
         min_qty: document.getElementById('f-min').value || '1',
-        status: document.getElementById('f-aktif').checked,
-        express: document.getElementById('f-express').checked,
-        pickup: document.getElementById('f-pickup').checked,
+        status: document.getElementById('f-aktif').checked ? 1 : 0,
+        express: document.getElementById('f-express').checked ? 1 : 0,
+        pickup: document.getElementById('f-pickup').checked ? 1 : 0,
         tiers: priceTiers.filter(t => t.label.trim() !== ''),
         features: featuresList.filter(f => f.trim() !== '')
     };
@@ -653,6 +653,16 @@ function selectEmoji(emoji, btnEl) {
     }
 }
 
+function updatePriceTierLabel(i, val) {
+    if (priceTiers[i]) priceTiers[i].label = val;
+}
+function updatePriceTierPrice(i, val) {
+    if (priceTiers[i]) priceTiers[i].price = parseInt(val) || 0;
+}
+function updateFeature(i, val) {
+    featuresList[i] = val;
+}
+
 // Global functions exports
 window.openAddModal = openAddModal;
 window.openEditModal = openEditModal;
@@ -663,6 +673,9 @@ window.removeFeature = removeFeature;
 window.saveService = saveService;
 window.deleteService = deleteService;
 window.toggleStatus = toggleStatus;
+window.updatePriceTierLabel = updatePriceTierLabel;
+window.updatePriceTierPrice = updatePriceTierPrice;
+window.updateFeature = updateFeature;
 window.switchTab = switchTab;
 window.scrollToTop = scrollToTop;
 window.closeModal = closeModal;
