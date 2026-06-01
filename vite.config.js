@@ -25,7 +25,9 @@ export default defineConfig({
                 'resources/css/admin/bisnis.css',
                 'resources/js/admin/bisnis.js',
                 'resources/css/admin/order.css',
-                'resources/js/admin/order.js'
+                'resources/js/admin/order.js',
+                'resources/css/admin/services.css',
+                'resources/js/admin/services.js'
             ],
             refresh: true,
         }),

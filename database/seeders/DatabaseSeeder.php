@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             OutletSeeder::class,
             BusinessSeeder::class,
             EmployeeSeeder::class,
+            ServiceSeeder::class,
         ]);
 
         // User::factory(10)->create();

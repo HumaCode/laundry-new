@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LaundryPro Admin - Layanan & Harga</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* ============================================================
+           ROOT & BASE
+        ============================================================ */
+        :root{
+            --primary:#6366F1;--primary-dark:#4F46E5;--secondary:#10B981;--success:#059669;
+            --warning:#F59E0B;--danger:#EF4444;--info:#3B82F6;--dark:#1F2937;--gray:#6B7280;
+            --gray-light:#9CA3AF;--border:#E5E7EB;--purple:#8B5CF6;--pink:#EC4899;
+            --cyan:#06B6D4;--orange:#F97316;--sidebar-w:260px;--sidebar-collapsed:72px;
+            --topbar-h:64px;--shadow:0 1px 3px 0 rgba(0,0,0,.1);
+            --shadow-lg:0 10px 15px -3px rgba(0,0,0,.1);--radius:16px
+        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        html{scroll-behavior:smooth}
+        body{font-family:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;background:#F3F4F6;color:var(--dark);min-height:100vh;overflow-x:hidden}
+
+        /* ============================================================
+           SIDEBAR
+        ============================================================ */
+        .sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sidebar-w);background:linear-gradient(180deg,#1E1B4B 0%,#2D1B69 40%,#1E1B4B 100%);z-index:1000;display:flex;flex-direction:column;transition:width .35s cubic-bezier(.4,0,.2,1);overflow:hidden}
+        .sidebar.collapsed{width:var(--sidebar-collapsed)}
+        .sidebar::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 20% 20%,rgba(99,102,241,.25) 0%,transparent 50%),radial-gradient(circle at 80% 80%,rgba(139,92,246,.2) 0%,transparent 50%);pointer-events:none}
+        .sidebar::after{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);background-size:24px 24px;pointer-events:none}
+        .sidebar-brand{padding:1.25rem 1rem;display:flex;align-items:center;gap:.875rem;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0;position:relative;z-index:1}
+        .brand-icon{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--purple));display:flex;align-items:center;justify-content:center;color:white;font-size:1.25rem;flex-shrink:0;box-shadow:0 4px 12px rgba(99,102,241,.4)}
+        .brand-text{overflow:hidden;white-space:nowrap}
+        .brand-name{font-size:1.125rem;font-weight:800;background:linear-gradient(135deg,#fff,#C4B5FD);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block}
+        .brand-sub{font-size:.7rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px}
+        .sidebar-toggle{position:absolute;right:-14px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:var(--primary);border:3px solid #F3F4F6;color:white;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.65rem;transition:all .3s;z-index:10;box-shadow:0 2px 8px rgba(99,102,241,.4)}
+        .sidebar-toggle:hover{background:var(--primary-dark);transform:translateY(-50%) scale(1.1)}
+        .sidebar.collapsed .sidebar-toggle i{transform:rotate(180deg)}
+        .sidebar-nav{flex:1;padding:1rem .75rem;overflow-y:auto;overflow-x:hidden;position:relative;z-index:1}
+        .sidebar-nav::-webkit-scrollbar{width:4px}
+        .sidebar-nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:4px}
+        .nav-section-label{font-size:.65rem;font-weight:700;color:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:1.5px;padding:.5rem .75rem;white-space:nowrap;overflow:hidden;margin-top:.5rem}
+        .sidebar.collapsed .nav-section-label{opacity:0}
+        .nav-item{display:flex;align-items:center;gap:.875rem;padding:.75rem;border-radius:12px;color:rgba(255,255,255,.55);text-decoration:none;transition:all .3s;cursor:pointer;position:relative;overflow:hidden;white-space:nowrap;margin-bottom:.25rem}
+        .nav-item::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(99,102,241,.15),rgba(139,92,246,.1));opacity:0;transition:opacity .3s;border-radius:12px}
+        .nav-item:hover::before{opacity:1}
+        .nav-item:hover{color:white;transform:translateX(4px)}
+        .nav-item.active{background:linear-gradient(135deg,rgba(99,102,241,.3),rgba(139,92,246,.2));color:white;box-shadow:0 4px 12px rgba(99,102,241,.2)}
+        .nav-item.active::after{content:'';position:absolute;right:0;top:20%;bottom:20%;width:3px;background:linear-gradient(180deg,var(--primary),var(--purple));border-radius:3px}
+        .nav-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;background:rgba(255,255,255,.05);transition:all .3s}
+        .nav-item.active .nav-icon{background:linear-gradient(135deg,var(--primary),var(--purple));box-shadow:0 4px 10px rgba(99,102,241,.4)}
+        .nav-item:hover .nav-icon{background:rgba(255,255,255,.1)}
+        .nav-label{font-size:.875rem;font-weight:500;transition:opacity .3s}
+        .sidebar.collapsed .nav-label{opacity:0;width:0;overflow:hidden}
+        .nav-badge{margin-left:auto;background:var(--danger);color:white;font-size:.65rem;font-weight:700;padding:.15rem .45rem;border-radius:20px;flex-shrink:0}
+        .sidebar.collapsed .nav-badge{display:none}
+        .sidebar-user{padding:1rem .75rem;border-top:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:.875rem;position:relative;z-index:1;flex-shrink:0}
+        .sidebar-user-avatar{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--purple));display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:.9rem;flex-shrink:0}
+        .sidebar-user-info{overflow:hidden;flex:1}
+        .sidebar-user-name{font-size:.875rem;font-weight:600;color:white;white-space:nowrap}
+        .sidebar-user-role{font-size:.7rem;color:rgba(255,255,255,.4);white-space:nowrap}
+        .sidebar.collapsed .sidebar-user-info,.sidebar.collapsed .sidebar-user-btn{display:none}
+        .sidebar-user-btn{background:transparent;border:none;color:rgba(255,255,255,.4);cursor:pointer;padding:.25rem;transition:color .3s}
+        .sidebar-user-btn:hover{color:white}
+
+        /* ============================================================
+           TOPBAR
+        ============================================================ */
+        .topbar{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--topbar-h);background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 1.5rem;gap:1rem;z-index:900;transition:left .35s cubic-bezier(.4,0,.2,1)}
+        .topbar.sidebar-collapsed{left:var(--sidebar-collapsed)}
+        .topbar-title{flex:1}
+        .topbar-title h2{font-size:1.125rem;font-weight:700;color:var(--dark);display:flex;align-items:center;gap:.75rem;margin:0}
+        .topbar-title h2 span{background:linear-gradient(135deg,var(--primary),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .breadcrumb-custom{display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:var(--gray)}
+        .breadcrumb-custom a{color:var(--primary);text-decoration:none}
+        .breadcrumb-custom i{font-size:.6rem}
+        .topbar-actions{display:flex;align-items:center;gap:.75rem}
+        .topbar-search{display:flex;align-items:center;gap:.5rem;background:#F3F4F6;border:2px solid var(--border);border-radius:12px;padding:.5rem 1rem;transition:all .3s}
+        .topbar-search:focus-within{background:white;border-color:var(--primary);box-shadow:0 0 0 4px rgba(99,102,241,.1)}
+        .topbar-search input{border:none;background:transparent;outline:none;font-size:.875rem;color:var(--dark);width:200px}
+        .topbar-search input::placeholder{color:var(--gray-light)}
+        .topbar-search i{color:var(--gray-light)}
+        .topbar-btn{width:40px;height:40px;border-radius:12px;border:2px solid var(--border);background:white;color:var(--gray);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;position:relative;font-size:.9rem}
+        .topbar-btn:hover{border-color:var(--primary);color:var(--primary);background:rgba(99,102,241,.05)}
+        .topbar-badge{position:absolute;top:-4px;right:-4px;width:18px;height:18px;border-radius:50%;background:var(--danger);color:white;font-size:.55rem;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid white}
+        .topbar-outlet{display:flex;align-items:center;gap:.5rem;padding:.5rem .875rem;background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(139,92,246,.08));border:1px solid rgba(99,102,241,.15);border-radius:10px;font-size:.8rem;font-weight:600;color:var(--primary);cursor:pointer}
+        .topbar-user{display:flex;align-items:center;gap:.75rem;padding:.5rem 1rem;background:white;border:2px solid var(--border);border-radius:12px;cursor:pointer;transition:all .3s}
+        .topbar-user:hover{border-color:var(--primary)}
+        .topbar-avatar{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--primary),var(--purple));display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:.75rem}
+        .topbar-user-name{font-size:.875rem;font-weight:600;color:var(--dark)}
+        .topbar-user-role{font-size:.7rem;color:var(--gray)}
+
+        /* ============================================================
+           MAIN CONTENT
+        ============================================================ */
+        .main-content{margin-left:var(--sidebar-w);margin-top:var(--topbar-h);padding:1.5rem;transition:margin-left .35s cubic-bezier(.4,0,.2,1);min-height:calc(100vh - var(--topbar-h))}
+        .main-content.sidebar-collapsed{margin-left:var(--sidebar-collapsed)}
+
+        /* ============================================================
+           PAGE HEADER
+        ============================================================ */
+        .page-header-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem}
+        .page-header-left h2{font-size:1.5rem;font-weight:800;color:var(--dark);margin:0}
+        .page-header-left p{font-size:.875rem;color:var(--gray);margin:.25rem 0 0}
+        .page-header-actions{display:flex;gap:.75rem;flex-wrap:wrap;align-items:center}
+        .btn-page{display:flex;align-items:center;gap:.5rem;padding:.75rem 1.25rem;border-radius:12px;font-size:.875rem;font-weight:600;border:none;cursor:pointer;transition:all .3s;text-decoration:none}
+        .btn-page-outline{background:white;border:2px solid var(--border);color:var(--gray)}
+        .btn-page-outline:hover{border-color:var(--primary);color:var(--primary)}
+        .btn-page-primary{background:linear-gradient(135deg,var(--primary),var(--purple));color:white;box-shadow:0 4px 15px rgba(99,102,241,.3)}
+        .btn-page-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(99,102,241,.4)}
+
+        /* ============================================================
+           SUMMARY STATS
+        ============================================================ */
+        .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;margin-bottom:1.5rem}
+        .stat-card{background:white;border-radius:var(--radius);padding:1.25rem;border:1px solid var(--border);transition:all .4s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden}
+        .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;opacity:0;transition:opacity .3s}
+        .stat-card:hover::before{opacity:1}
+        .stat-card:hover{transform:translateY(-5px);box-shadow:var(--shadow-lg)}
+        .stat-card.c1::before{background:linear-gradient(90deg,var(--primary),var(--purple))}
+        .stat-card.c2::before{background:linear-gradient(90deg,var(--secondary),var(--cyan))}
+        .stat-card.c3::before{background:linear-gradient(90deg,var(--warning),var(--orange))}
+        .stat-card.c4::before{background:linear-gradient(90deg,var(--pink),var(--purple))}
+        .stat-card::after{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;opacity:.05;transition:all .4s}
+        .stat-card.c1::after{background:var(--primary)}.stat-card.c2::after{background:var(--secondary)}.stat-card.c3::after{background:var(--warning)}.stat-card.c4::after{background:var(--pink)}
+        .stat-card:hover::after{transform:scale(3);opacity:.08}
+        .stat-hdr{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem}
+        .stat-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.25rem}
+        .stat-icon.c1{background:linear-gradient(135deg,rgba(99,102,241,.12),rgba(139,92,246,.12));color:var(--primary)}
+        .stat-icon.c2{background:linear-gradient(135deg,rgba(16,185,129,.12),rgba(6,182,212,.12));color:var(--secondary)}
+        .stat-icon.c3{background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(249,115,22,.12));color:var(--warning)}
+        .stat-icon.c4{background:linear-gradient(135deg,rgba(236,72,153,.12),rgba(139,92,246,.12));color:var(--pink)}
+        .stat-value{font-size:2rem;font-weight:800;color:var(--dark);margin-bottom:.25rem;letter-spacing:-.5px}
+        .stat-label{font-size:.875rem;color:var(--gray);font-weight:500}
+        .stat-footer{margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border);font-size:.8rem;color:var(--gray)}
+
+        /* ============================================================
+           TABS — Kiloan / Satuan / Paket / Antar Jemput
+        ============================================================ */
+        .tabs-bar{display:flex;gap:.5rem;margin-bottom:1.5rem;background:white;padding:.5rem;border-radius:var(--radius);border:1px solid var(--border);overflow-x:auto}
+        .tab-btn{display:flex;align-items:center;gap:.5rem;padding:.65rem 1.25rem;border-radius:12px;border:none;background:transparent;font-size:.875rem;font-weight:600;color:var(--gray);cursor:pointer;transition:all .3s;white-space:nowrap;flex-shrink:0}
+        .tab-btn:hover{color:var(--primary);background:rgba(99,102,241,.05)}
+        .tab-btn.active{background:linear-gradient(135deg,var(--primary),var(--purple));color:white;box-shadow:0 4px 12px rgba(99,102,241,.3)}
+        .tab-btn .tab-count{font-size:.7rem;padding:.15rem .45rem;border-radius:20px;font-weight:700;background:rgba(255,255,255,.25)}
+        .tab-btn:not(.active) .tab-count{background:rgba(99,102,241,.1);color:var(--primary)}
+
+        /* ============================================================
+           SERVICE CARDS GRID
+        ============================================================ */
+        .services-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.25rem}
+
+        .service-card{background:white;border-radius:20px;border:1px solid var(--border);overflow:hidden;transition:all .4s cubic-bezier(.4,0,.2,1);position:relative}
+        .service-card:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(0,0,0,.1);border-color:rgba(99,102,241,.2)}
+
+        /* top accent bar */
+        .service-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;border-radius:20px 20px 0 0;transition:height .3s}
+        .service-card:hover::before{height:6px}
+        .sc-purple::before{background:linear-gradient(90deg,var(--primary),var(--purple))}
+        .sc-green::before{background:linear-gradient(90deg,var(--secondary),var(--cyan))}
+        .sc-orange::before{background:linear-gradient(90deg,var(--orange),var(--warning))}
+        .sc-pink::before{background:linear-gradient(90deg,var(--pink),var(--purple))}
+        .sc-blue::before{background:linear-gradient(90deg,var(--info),var(--cyan))}
+        .sc-teal::before{background:linear-gradient(90deg,#14B8A6,var(--secondary))}
+        .sc-red::before{background:linear-gradient(90deg,var(--danger),var(--pink))}
+        .sc-indigo::before{background:linear-gradient(90deg,var(--primary-dark),var(--primary))}
+
+        /* card body */
+        .sc-body{padding:1.5rem}
+        .sc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem}
+        .sc-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+        .sc-icon.purple{background:linear-gradient(135deg,rgba(99,102,241,.12),rgba(139,92,246,.12))}
+        .sc-icon.green{background:linear-gradient(135deg,rgba(16,185,129,.12),rgba(6,182,212,.12))}
+        .sc-icon.orange{background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(245,158,11,.12))}
+        .sc-icon.pink{background:linear-gradient(135deg,rgba(236,72,153,.12),rgba(139,92,246,.12))}
+        .sc-icon.blue{background:linear-gradient(135deg,rgba(59,130,246,.12),rgba(6,182,212,.12))}
+        .sc-icon.teal{background:linear-gradient(135deg,rgba(20,184,166,.12),rgba(16,185,129,.12))}
+        .sc-icon.red{background:linear-gradient(135deg,rgba(239,68,68,.12),rgba(236,72,153,.12))}
+        .sc-icon.indigo{background:linear-gradient(135deg,rgba(79,70,229,.12),rgba(99,102,241,.12))}
+        .sc-badges{display:flex;flex-direction:column;align-items:flex-end;gap:.35rem}
+        .sc-status{display:inline-flex;align-items:center;gap:.3rem;padding:.25rem .65rem;border-radius:6px;font-size:.72rem;font-weight:600}
+        .sc-status.aktif{background:rgba(16,185,129,.1);color:var(--secondary)}
+        .sc-status.aktif::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--secondary);animation:pDot 1.5s infinite}
+        .sc-status.nonaktif{background:rgba(107,114,128,.1);color:var(--gray)}
+        .sc-type-pill{display:inline-flex;align-items:center;gap:.25rem;padding:.2rem .55rem;border-radius:6px;font-size:.68rem;font-weight:700}
+        .sc-type-pill.kiloan{background:rgba(59,130,246,.1);color:var(--info)}
+        .sc-type-pill.satuan{background:rgba(236,72,153,.1);color:var(--pink)}
+        .sc-type-pill.paket{background:rgba(245,158,11,.1);color:var(--warning)}
+        .sc-type-pill.antar{background:rgba(16,185,129,.1);color:var(--secondary)}
+        @keyframes pDot{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(1.5);opacity:.6}}
+        .sc-name{font-size:1.125rem;font-weight:800;color:var(--dark);margin-bottom:.3rem}
+        .sc-desc{font-size:.8rem;color:var(--gray);line-height:1.5;margin-bottom:1rem}
+
+        /* price section */
+        .sc-price-section{background:linear-gradient(135deg,rgba(99,102,241,.03),rgba(139,92,246,.05));border-radius:12px;padding:1rem;margin-bottom:1rem;position:relative;overflow:hidden}
+        .sc-price-section::before{content:'';position:absolute;top:-20px;right:-20px;width:70px;height:70px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.06),transparent 70%)}
+        .sc-price-label{font-size:.7rem;font-weight:600;color:var(--gray-light);text-transform:uppercase;letter-spacing:.4px;margin-bottom:.35rem}
+        .sc-price-main{font-size:1.75rem;font-weight:800;background:linear-gradient(135deg,var(--primary),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1}
+        .sc-price-unit{font-size:.8rem;color:var(--gray);margin-top:.2rem}
+        .sc-price-est{display:flex;align-items:center;gap:.35rem;margin-top:.75rem;padding-top:.75rem;border-top:1px dashed rgba(99,102,241,.15);font-size:.78rem;color:var(--gray)}
+        .sc-price-est i{color:var(--primary);font-size:.7rem}
+
+        /* price tiers */
+        .sc-price-tiers{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1rem}
+        .sc-price-tier{display:flex;justify-content:space-between;align-items:center;padding:.6rem .875rem;background:#F9FAFB;border-radius:10px;border:1px solid var(--border);transition:all .25s}
+        .sc-price-tier:hover{border-color:rgba(99,102,241,.2);background:rgba(99,102,241,.02)}
+        .sc-tier-label{font-size:.8rem;font-weight:500;color:var(--gray)}
+        .sc-tier-price{font-size:.875rem;font-weight:700;color:var(--dark)}
+        .sc-tier-edit{background:none;border:none;color:var(--gray-light);cursor:pointer;padding:.2rem;transition:color .2s;font-size:.75rem}
+        .sc-tier-edit:hover{color:var(--primary)}
+
+        /* stats row */
+        .sc-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:.5rem;margin-bottom:1rem}
+        .sc-stat{text-align:center;padding:.6rem .5rem;background:#F9FAFB;border-radius:10px}
+        .sc-stat-val{font-size:.9rem;font-weight:700;color:var(--dark)}
+        .sc-stat-lbl{font-size:.65rem;color:var(--gray);text-transform:uppercase;letter-spacing:.3px;margin-top:.1rem}
+
+        /* features list */
+        .sc-features{display:flex;flex-direction:column;gap:.35rem;margin-bottom:1rem}
+        .sc-feature{display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:var(--gray)}
+        .sc-feature i{color:var(--secondary);font-size:.75rem;flex-shrink:0}
+
+        /* action footer */
+        .sc-footer{padding:1rem 1.5rem;border-top:1px solid var(--border);background:#FAFAFA;display:flex;gap:.5rem}
+        .sc-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:.4rem;padding:.65rem;border-radius:10px;border:none;font-size:.78rem;font-weight:600;cursor:pointer;transition:all .3s}
+        .sc-btn-primary{background:linear-gradient(135deg,var(--primary),var(--purple));color:white}
+        .sc-btn-primary:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(99,102,241,.3)}
+        .sc-btn-outline{background:white;border:2px solid var(--border);color:var(--gray)}
+        .sc-btn-outline:hover{border-color:var(--primary);color:var(--primary)}
+        .sc-btn-danger{background:white;border:2px solid rgba(239,68,68,.15);color:var(--danger)}
+        .sc-btn-danger:hover{background:var(--danger);color:white}
+
+        /* Inactive card overlay */
+        .service-card.inactive{opacity:.65}
+        .service-card.inactive .sc-name{color:var(--gray)}
+
+        /* ============================================================
+           EMPTY STATE
+        ============================================================ */
+        .empty-state{padding:5rem 2rem;text-align:center;background:white;border-radius:var(--radius);border:1px solid var(--border)}
+        .empty-icon{width:80px;height:80px;border-radius:24px;background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(139,92,246,.08));display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--gray-light);margin:0 auto 1rem}
+        .empty-title{font-size:1.125rem;font-weight:700;color:var(--dark);margin-bottom:.5rem}
+        .empty-desc{font-size:.875rem;color:var(--gray)}
+
+        /* ============================================================
+           ADD/EDIT MODAL
+        ============================================================ */
+        .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:2000;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;visibility:hidden;transition:all .3s ease}
+        .modal-overlay.show{opacity:1;visibility:visible}
+        .modal-box{background:white;border-radius:24px;width:100%;max-width:640px;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;transform:scale(.9) translateY(20px);transition:all .3s cubic-bezier(.4,0,.2,1);box-shadow:0 25px 60px rgba(0,0,0,.2)}
+        .modal-overlay.show .modal-box{transform:scale(1) translateY(0)}
+        .modal-header{padding:1.5rem;display:flex;align-items:center;gap:1rem;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(99,102,241,.04),rgba(139,92,246,.04));flex-shrink:0;position:relative;overflow:hidden}
+        .modal-header::after{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.06),transparent 70%)}
+        .modal-header-icon{width:48px;height:48px;border-radius:14px;background:linear-gradient(135deg,var(--primary),var(--purple));display:flex;align-items:center;justify-content:center;color:white;font-size:1.25rem;position:relative;z-index:1}
+        .modal-title{flex:1;position:relative;z-index:1}
+        .modal-title h3{font-size:1.125rem;font-weight:700;color:var(--dark);margin:0}
+        .modal-title p{font-size:.8rem;color:var(--gray);margin:.1rem 0 0}
+        .modal-close{width:36px;height:36px;border-radius:10px;border:2px solid var(--border);background:white;color:var(--gray);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;position:relative;z-index:1}
+        .modal-close:hover{border-color:var(--danger);color:var(--danger)}
+        .modal-body{padding:1.5rem;overflow-y:auto;flex:1}
+        .modal-body::-webkit-scrollbar{width:4px}
+        .modal-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+        .modal-footer{padding:1.25rem 1.5rem;border-top:1px solid var(--border);display:flex;gap:.75rem;justify-content:flex-end;flex-shrink:0}
+
+        .form-section{margin-bottom:1.5rem}
+        .form-section-title{font-size:.72rem;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.875rem;display:flex;align-items:center;gap:.5rem}
+        .form-section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+        .form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+        .form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
+        .form-field{display:flex;flex-direction:column;gap:.4rem}
+        .form-field.full{grid-column:span 2}
+        .form-field.full3{grid-column:span 3}
+        .form-field label{font-size:.75rem;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.4px}
+        .form-field label .req{color:var(--danger)}
+        .form-control{padding:.75rem 1rem;border:2px solid var(--border);border-radius:12px;font-size:.9375rem;transition:all .3s;background:rgba(255,255,255,.8);width:100%}
+        .form-control:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 4px rgba(99,102,241,.1)}
+        .input-wrap{position:relative}
+        .input-wrap .form-control{padding-left:2.75rem}
+        .input-wrap .ic{position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:var(--gray-light);font-size:.875rem}
+        textarea.form-control{resize:vertical;min-height:80px}
+        .form-control.emoji{font-size:1.5rem;text-align:center;padding:.5rem}
+
+        /* Price tiers in modal */
+        .price-tiers-editor{display:flex;flex-direction:column;gap:.5rem}
+        .price-tier-row{display:grid;grid-template-columns:1fr 1fr auto;gap:.5rem;align-items:center}
+        .btn-add-tier{display:flex;align-items:center;gap:.5rem;padding:.6rem 1rem;border:2px dashed var(--border);border-radius:10px;background:transparent;color:var(--gray);font-size:.8rem;font-weight:600;cursor:pointer;width:100%;justify-content:center;transition:all .3s}
+        .btn-add-tier:hover{border-color:var(--primary);color:var(--primary);background:rgba(99,102,241,.03)}
+        .btn-rm-tier{width:32px;height:32px;border-radius:8px;border:none;background:rgba(239,68,68,.08);color:var(--danger);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+        .btn-rm-tier:hover{background:var(--danger);color:white}
+
+        /* Toggle switch */
+        .toggle-row{display:flex;align-items:center;justify-content:space-between;padding:.875rem 1rem;background:#F9FAFB;border-radius:12px;border:1px solid var(--border)}
+        .toggle-info h4{font-size:.875rem;font-weight:600;color:var(--dark);margin:0 0 .15rem}
+        .toggle-info p{font-size:.78rem;color:var(--gray);margin:0}
+        .toggle-switch{position:relative;width:48px;height:26px;flex-shrink:0}
+        .toggle-switch input{opacity:0;width:0;height:0}
+        .toggle-slider{position:absolute;cursor:pointer;inset:0;background:var(--border);border-radius:26px;transition:.3s}
+        .toggle-slider::before{content:'';position:absolute;height:20px;width:20px;left:3px;bottom:3px;background:white;border-radius:50%;transition:.3s;box-shadow:0 1px 4px rgba(0,0,0,.1)}
+        .toggle-switch input:checked+.toggle-slider{background:linear-gradient(135deg,var(--secondary),var(--success))}
+        .toggle-switch input:checked+.toggle-slider::before{transform:translateX(22px)}
+
+        .modal-btn{display:flex;align-items:center;gap:.5rem;padding:.75rem 1.25rem;border-radius:10px;font-size:.875rem;font-weight:600;border:none;cursor:pointer;transition:all .3s}
+        .modal-btn-primary{background:linear-gradient(135deg,var(--primary),var(--purple));color:white}
+        .modal-btn-primary:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(99,102,241,.3)}
+        .modal-btn-outline{background:white;border:2px solid var(--border);color:var(--gray)}
+        .modal-btn-outline:hover{border-color:var(--primary);color:var(--primary)}
+
+        /* ============================================================
+           CONFIRM DELETE MODAL
+        ============================================================ */
+        .confirm-modal-box{background:white;border-radius:24px;width:100%;max-width:420px;overflow:hidden;transform:scale(.9) translateY(20px);transition:all .3s cubic-bezier(.4,0,.2,1);box-shadow:0 25px 60px rgba(0,0,0,.2)}
+        .modal-overlay.show .confirm-modal-box{transform:scale(1) translateY(0)}
+        .confirm-icon-wrap{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,rgba(239,68,68,.1),rgba(236,72,153,.1));display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:1.75rem;color:var(--danger)}
+        .confirm-actions{display:flex;gap:.75rem;padding:1.25rem 1.5rem;border-top:1px solid var(--border)}
+        .confirm-btn-cancel{flex:1;padding:.75rem;border-radius:10px;border:2px solid var(--border);background:white;color:var(--gray);font-weight:600;cursor:pointer;transition:all .3s}
+        .confirm-btn-cancel:hover{border-color:var(--primary);color:var(--primary)}
+        .confirm-btn-delete{flex:1;padding:.75rem;border-radius:10px;border:none;background:var(--danger);color:white;font-weight:600;cursor:pointer;transition:all .3s}
+        .confirm-btn-delete:hover{background:#DC2626;transform:translateY(-2px);box-shadow:0 4px 12px rgba(239,68,68,.35)}
+
+        /* ============================================================
+           TOAST
+        ============================================================ */
+        .toast-wrap{position:fixed;top:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:.75rem}
+        .toast{padding:1rem 1.25rem;border-radius:14px;background:white;box-shadow:0 10px 30px rgba(0,0,0,.12);display:flex;align-items:center;gap:.75rem;transform:translateX(120%);transition:transform .4s cubic-bezier(.4,0,.2,1);border:1px solid var(--border);min-width:280px}
+        .toast.show{transform:translateX(0)}
+        .toast-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+        .toast-icon.success{background:rgba(16,185,129,.1);color:var(--secondary)}
+        .toast-icon.error{background:rgba(239,68,68,.1);color:var(--danger)}
+        .toast-icon.info{background:rgba(99,102,241,.1);color:var(--primary)}
+        .toast-title{font-size:.875rem;font-weight:700;color:var(--dark)}
+        .toast-msg{font-size:.78rem;color:var(--gray);margin-top:.1rem}
+        .toast-x{background:none;border:none;color:var(--gray-light);cursor:pointer;margin-left:auto;font-size:.875rem}
+        .toast-x:hover{color:var(--dark)}
+
+        /* ============================================================
+           FLOAT BUTTON
+        ============================================================ */
+        .float-btn-container{position:fixed;bottom:2rem;right:2rem;z-index:1000}
+        .float-btn{width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:white;background:linear-gradient(135deg,var(--primary),var(--purple));box-shadow:0 4px 20px rgba(99,102,241,.4);transition:all .4s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden;opacity:0;visibility:hidden;transform:scale(0) translateY(20px)}
+        .float-btn.visible{opacity:1;visibility:visible;transform:scale(1) translateY(0);animation:floatAppear .6s cubic-bezier(.68,-.55,.265,1.55),floatHover 3s ease-in-out .6s infinite}
+        @keyframes floatAppear{0%{transform:scale(0) translateY(50px);opacity:0}50%{transform:scale(1.2) translateY(-10px)}70%{transform:scale(.9) translateY(5px)}100%{transform:scale(1) translateY(0);opacity:1}}
+        @keyframes floatHover{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+        .float-btn::before{content:'';position:absolute;inset:0;border-radius:50%;background:inherit;animation:pulseBig 2s cubic-bezier(.4,0,.6,1) infinite;z-index:-1}
+        @keyframes pulseBig{0%{transform:scale(1);opacity:.5}50%,100%{transform:scale(1.5);opacity:0}}
+        .float-btn::after{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:linear-gradient(45deg,transparent 40%,rgba(255,255,255,.3) 50%,transparent 60%);animation:shimmer 3s infinite}
+        @keyframes shimmer{0%{transform:translateX(-100%) rotate(45deg)}100%{transform:translateX(100%) rotate(45deg)}}
+        .float-btn:hover{transform:translateY(-5px) scale(1.1) !important;box-shadow:0 8px 30px rgba(99,102,241,.5);animation:none !important}
+        .float-btn i{position:relative;z-index:1}
+        .float-btn-ring{position:absolute;width:calc(100% + 8px);height:calc(100% + 8px);border-radius:50%;z-index:-2;opacity:0;background:conic-gradient(from 0deg,var(--primary),var(--purple),var(--pink),var(--cyan),var(--secondary),var(--primary));animation:ringRotate 4s linear infinite;transition:opacity .3s}
+        @keyframes ringRotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+        .float-btn:hover .float-btn-ring{opacity:1}
+        .float-btn-tooltip{position:absolute;right:calc(100% + 14px);top:50%;transform:translateY(-50%) translateX(8px);background:var(--dark);color:white;padding:.4rem .875rem;border-radius:8px;font-size:.78rem;font-weight:500;white-space:nowrap;opacity:0;visibility:hidden;transition:all .3s;pointer-events:none}
+        .float-btn-tooltip::after{content:'';position:absolute;left:100%;top:50%;transform:translateY(-50%);border:5px solid transparent;border-left-color:var(--dark)}
+        .float-btn:hover .float-btn-tooltip{opacity:1;visibility:visible;transform:translateY(-50%) translateX(0)}
+
+        /* ============================================================
+           RESPONSIVE
+        ============================================================ */
+        @media(max-width:1200px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+        @media(max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.mobile-open{transform:translateX(0)}.topbar{left:0 !important}.main-content{margin-left:0 !important;padding:1rem}.topbar-search,.topbar-outlet{display:none}.stats-grid{grid-template-columns:1fr 1fr}.services-grid{grid-template-columns:1fr}.page-header-bar{flex-direction:column;align-items:stretch}.float-btn-tooltip{display:none}}
+        @media(max-width:576px){.stats-grid{grid-template-columns:1fr}.form-grid-2,.form-grid-3{grid-template-columns:1fr}.form-field.full,.form-field.full3{grid-column:span 1}}
+
+        .fade-in{animation:fadeUp .45s ease both}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+        .d1{animation-delay:.05s}.d2{animation-delay:.1s}.d3{animation-delay:.15s}.d4{animation-delay:.2s}
+    </style>
+</head>
+<body>
+
+<!-- ======================== SIDEBAR ======================== -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-toggle" onclick="toggleSidebar()"><i class="fas fa-chevron-left"></i></div>
+    <div class="sidebar-brand">
+        <div class="brand-icon"><i class="fas fa-tshirt"></i></div>
+        <div class="brand-text"><span class="brand-name">LaundryPro</span><span class="brand-sub">Admin Panel</span></div>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="nav-section-label">Utama</div>
+        <a href="laundry-admin-dashboard.html" class="nav-item"><div class="nav-icon"><i class="fas fa-th-large"></i></div><span class="nav-label">Dashboard</span></a>
+        <a href="laundry-admin-orders.html"    class="nav-item"><div class="nav-icon"><i class="fas fa-receipt"></i></div><span class="nav-label">Semua Order</span><span class="nav-badge">12</span></a>
+        <a href="laundry-admin-customers.html" class="nav-item"><div class="nav-icon"><i class="fas fa-users"></i></div><span class="nav-label">Pelanggan</span></a>
+        <a href="#"                            class="nav-item"><div class="nav-icon"><i class="fas fa-store"></i></div><span class="nav-label">Outlet</span></a>
+        <div class="nav-section-label">Operasional</div>
+        <a href="#" class="nav-item active"><div class="nav-icon"><i class="fas fa-concierge-bell"></i></div><span class="nav-label">Layanan & Harga</span></a>
+        <a href="#" class="nav-item"><div class="nav-icon"><i class="fas fa-truck"></i></div><span class="nav-label">Antar Jemput</span><span class="nav-badge">3</span></a>
+        <a href="#" class="nav-item"><div class="nav-icon"><i class="fas fa-user-tie"></i></div><span class="nav-label">Karyawan</span></a>
+        <a href="#" class="nav-item"><div class="nav-icon"><i class="fas fa-boxes"></i></div><span class="nav-label">Inventaris</span></a>
+        <div class="nav-section-label">Keuangan</div>
+        <a href="#" class="nav-item"><div class="nav-icon"><i class="fas fa-chart-line"></i></div><span class="nav-label">Laporan</span></a>
+        <a href="#" class="nav-item"><div class="nav-icon"><i class="fas fa-file-invoice-dollar"></i></div><span class="nav-label">Pembayaran</span></a>
+        <a href="#" class="nav-item"><div class="nav-icon"><i class="fas fa-percent"></i></div><span class="nav-label">Promo & Diskon</span></a>
+        <div class="nav-section-label">Sistem</div>
+        <a href="#" class="nav-item"><div class="nav-icon"><i class="fas fa-cog"></i></div><span class="nav-label">Pengaturan</span></a>
+    </nav>
+    <div class="sidebar-user">
+        <div class="sidebar-user-avatar">SA</div>
+        <div class="sidebar-user-info"><div class="sidebar-user-name">Sari Admin</div><div class="sidebar-user-role">Super Admin</div></div>
+        <button class="sidebar-user-btn" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i></button>
+    </div>
+</aside>
+
+<!-- ======================== TOPBAR ======================== -->
+<header class="topbar" id="topbar">
+    <div class="topbar-title">
+        <h2><i class="fas fa-concierge-bell" style="color:var(--primary);font-size:1rem"></i><span>Layanan & Harga</span></h2>
+        <div class="breadcrumb-custom">
+            <a href="laundry-admin-dashboard.html">Home</a>
+            <i class="fas fa-chevron-right"></i>
+            <span>Layanan & Harga</span>
+        </div>
+    </div>
+    <div class="topbar-actions">
+        <div class="topbar-search">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Cari layanan..." id="topbarSearch" oninput="handleSearch(this.value)">
+        </div>
+        <button class="topbar-btn"><i class="fas fa-bell"></i><span class="topbar-badge">5</span></button>
+        <button class="topbar-btn"><i class="fas fa-comment-alt"></i><span class="topbar-badge">2</span></button>
+        <div class="topbar-outlet"><i class="fas fa-store"></i><span>Semua Outlet</span><i class="fas fa-chevron-down" style="font-size:.65rem;opacity:.6"></i></div>
+        <div class="topbar-user"><div class="topbar-avatar">SA</div><div><div class="topbar-user-name">Sari Admin</div><div class="topbar-user-role">Super Admin</div></div></div>
+    </div>
+</header>
+
+<!-- ======================== MAIN CONTENT ======================== -->
+<main class="main-content" id="mainContent">
+
+    <!-- Page Header -->
+    <div class="page-header-bar fade-in">
+        <div class="page-header-left">
+            <h2>Layanan & Harga</h2>
+            <p>Kelola seluruh layanan laundry, harga satuan, dan paket langganan</p>
+        </div>
+        <div class="page-header-actions">
+            <button class="btn-page btn-page-outline" onclick="showToast('info','Import','Fitur import segera hadir')"><i class="fas fa-file-import"></i> Import</button>
+            <button class="btn-page btn-page-outline" onclick="showToast('info','Harga Massal','Membuka editor harga massal')"><i class="fas fa-tags"></i> Atur Harga Massal</button>
+            <button class="btn-page btn-page-primary" onclick="openAddModal()"><i class="fas fa-plus"></i> Tambah Layanan</button>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+        <div class="stat-card c1 fade-in d1">
+            <div class="stat-hdr"><div class="stat-icon c1"><i class="fas fa-list-alt"></i></div></div>
+            <div class="stat-value" id="statTotal">0</div>
+            <div class="stat-label">Total Layanan</div>
+            <div class="stat-footer">Semua kategori layanan</div>
+        </div>
+        <div class="stat-card c2 fade-in d2">
+            <div class="stat-hdr"><div class="stat-icon c2"><i class="fas fa-check-circle"></i></div></div>
+            <div class="stat-value" id="statAktif">0</div>
+            <div class="stat-label">Layanan Aktif</div>
+            <div class="stat-footer">Tersedia untuk pelanggan</div>
+        </div>
+        <div class="stat-card c3 fade-in d3">
+            <div class="stat-hdr"><div class="stat-icon c3"><i class="fas fa-fire-alt"></i></div></div>
+            <div class="stat-value" id="statTerlaris">—</div>
+            <div class="stat-label">Layanan Terlaris</div>
+            <div class="stat-footer">Order bulan ini terbanyak</div>
+        </div>
+        <div class="stat-card c4 fade-in d4">
+            <div class="stat-hdr"><div class="stat-icon c4"><i class="fas fa-wallet"></i></div></div>
+            <div class="stat-value" id="statRevenue">—</div>
+            <div class="stat-label">Kontribusi Tertinggi</div>
+            <div class="stat-footer">Layanan penghasil terbesar</div>
+        </div>
+    </div>
+
+    <!-- Category Tabs -->
+    <div class="tabs-bar fade-in" id="tabsBar"></div>
+
+    <!-- Service Cards Grid -->
+    <div id="servicesContainer"></div>
+
+</main>
+
+<!-- ======================== ADD/EDIT MODAL ======================== -->
+<div class="modal-overlay" id="serviceModal" onclick="closeModalOut(event,'serviceModal')">
+    <div class="modal-box">
+        <div class="modal-header">
+            <div class="modal-header-icon" id="modalIconEl"><i class="fas fa-concierge-bell"></i></div>
+            <div class="modal-title">
+                <h3 id="modalTitleEl">Tambah Layanan</h3>
+                <p id="modalSubEl">Isi detail layanan baru</p>
+            </div>
+            <button class="modal-close" onclick="closeModal('serviceModal')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+
+            <!-- Basic Info -->
+            <div class="form-section">
+                <div class="form-section-title"><i class="fas fa-info-circle"></i> Informasi Layanan</div>
+                <div class="form-grid-2">
+                    <div class="form-field">
+                        <label>Nama Layanan <span class="req">*</span></label>
+                        <div class="input-wrap"><input class="form-control" id="f-name" type="text" placeholder="cth. Cuci Setrika"><i class="fas fa-tag ic"></i></div>
+                    </div>
+                    <div class="form-field">
+                        <label>Ikon (Emoji)</label>
+                        <input class="form-control emoji" id="f-emoji" type="text" placeholder="🧺" maxlength="2">
+                    </div>
+                    <div class="form-field">
+                        <label>Kategori <span class="req">*</span></label>
+                        <select class="form-control" id="f-category">
+                            <option value="kiloan">Kiloan</option>
+                            <option value="satuan">Satuan</option>
+                            <option value="paket">Paket</option>
+                            <option value="antar">Antar Jemput</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label>Estimasi Waktu</label>
+                        <div class="input-wrap"><input class="form-control" id="f-eta" type="text" placeholder="cth. 1-2 hari"><i class="fas fa-clock ic"></i></div>
+                    </div>
+                    <div class="form-field full">
+                        <label>Deskripsi</label>
+                        <textarea class="form-control" id="f-desc" placeholder="Deskripsi singkat layanan ini..."></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pricing -->
+            <div class="form-section">
+                <div class="form-section-title"><i class="fas fa-money-bill-wave"></i> Harga</div>
+                <div class="form-grid-2" style="margin-bottom:1rem">
+                    <div class="form-field">
+                        <label>Harga Dasar <span class="req">*</span></label>
+                        <div class="input-wrap"><input class="form-control" id="f-price" type="number" placeholder="0" min="0"><i class="fas fa-rupiah-sign ic" style="font-size:.75rem;font-style:normal;font-weight:700">Rp</i></div>
+                    </div>
+                    <div class="form-field">
+                        <label>Satuan Harga</label>
+                        <select class="form-control" id="f-unit">
+                            <option value="/kg">per kg</option>
+                            <option value="/pcs">per pcs</option>
+                            <option value="/set">per set</option>
+                            <option value="/pair">per pair</option>
+                            <option value="/m²">per m²</option>
+                            <option value="/trip">per trip</option>
+                            <option value="/bulan">per bulan</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-section-title" style="font-size:.7rem;margin-bottom:.6rem">Tingkatan Harga (opsional)</div>
+                <div class="price-tiers-editor" id="priceTiersEditor"></div>
+                <button class="btn-add-tier" onclick="addPriceTier()" style="margin-top:.5rem"><i class="fas fa-plus"></i> Tambah Tingkatan Harga</button>
+            </div>
+
+            <!-- Stats Targets -->
+            <div class="form-section">
+                <div class="form-section-title"><i class="fas fa-chart-bar"></i> Target & Info</div>
+                <div class="form-grid-3">
+                    <div class="form-field">
+                        <label>Target Order/Bulan</label>
+                        <input class="form-control" id="f-target" type="number" placeholder="cth. 200">
+                    </div>
+                    <div class="form-field">
+                        <label>Min. Berat/Qty</label>
+                        <input class="form-control" id="f-min" type="text" placeholder="cth. 1 kg">
+                    </div>
+                    <div class="form-field">
+                        <label>Warna Kartu</label>
+                        <select class="form-control" id="f-color">
+                            <option value="sc-purple">Ungu</option>
+                            <option value="sc-green">Hijau</option>
+                            <option value="sc-orange">Oranye</option>
+                            <option value="sc-pink">Pink</option>
+                            <option value="sc-blue">Biru</option>
+                            <option value="sc-teal">Teal</option>
+                            <option value="sc-red">Merah</option>
+                            <option value="sc-indigo">Indigo</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features -->
+            <div class="form-section">
+                <div class="form-section-title"><i class="fas fa-check-circle"></i> Fitur Layanan</div>
+                <div id="featuresEditor" style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:.5rem"></div>
+                <button class="btn-add-tier" onclick="addFeatureRow()"><i class="fas fa-plus"></i> Tambah Fitur</button>
+            </div>
+
+            <!-- Toggles -->
+            <div class="form-section">
+                <div class="form-section-title"><i class="fas fa-sliders-h"></i> Pengaturan</div>
+                <div style="display:flex;flex-direction:column;gap:.5rem">
+                    <div class="toggle-row">
+                        <div class="toggle-info"><h4>Status Aktif</h4><p>Tampilkan layanan ini kepada pelanggan</p></div>
+                        <label class="toggle-switch"><input type="checkbox" id="f-aktif" checked><span class="toggle-slider"></span></label>
+                    </div>
+                    <div class="toggle-row">
+                        <div class="toggle-info"><h4>Express Tersedia</h4><p>Layanan ini bisa diproses express (harga x1.5)</p></div>
+                        <label class="toggle-switch"><input type="checkbox" id="f-express"><span class="toggle-slider"></span></label>
+                    </div>
+                    <div class="toggle-row">
+                        <div class="toggle-info"><h4>Antar Jemput</h4><p>Tersedia layanan antar/jemput untuk ini</p></div>
+                        <label class="toggle-switch"><input type="checkbox" id="f-pickup"><span class="toggle-slider"></span></label>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn modal-btn-outline" onclick="closeModal('serviceModal')"><i class="fas fa-times"></i> Batal</button>
+            <button class="modal-btn modal-btn-primary" onclick="saveService()"><i class="fas fa-save"></i> Simpan Layanan</button>
+        </div>
+    </div>
+</div>
+
+<!-- ======================== CONFIRM DELETE ======================== -->
+<div class="modal-overlay" id="confirmModal" onclick="closeModalOut(event,'confirmModal')">
+    <div class="confirm-modal-box">
+        <div style="padding:2rem 1.5rem 1rem;text-align:center">
+            <div class="confirm-icon-wrap"><i class="fas fa-trash-alt"></i></div>
+            <h3 style="font-size:1.125rem;font-weight:700;color:var(--dark);margin-bottom:.5rem">Hapus Layanan?</h3>
+            <p style="font-size:.875rem;color:var(--gray)" id="confirmMsg">Layanan ini akan dihapus secara permanen.</p>
+        </div>
+        <div class="confirm-actions">
+            <button class="confirm-btn-cancel" onclick="closeModal('confirmModal')">Batal</button>
+            <button class="confirm-btn-delete" id="confirmDeleteBtn">Ya, Hapus</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast -->
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- Float Button -->
+<div class="float-btn-container">
+    <button class="float-btn" id="scrollTopBtn" onclick="scrollToTop(event)">
+        <div class="float-btn-ring"></div>
+        <i class="fas fa-arrow-up"></i>
+        <span class="float-btn-tooltip">Kembali ke Atas</span>
+    </button>
+</div>
+
+<script>
+/* ============================================================
+   DATA
+============================================================ */
+let services = [
+    // KILOAN
+    {id:'SVC-001',name:'Cuci Kering',emoji:'🧺',category:'kiloan',desc:'Proses cuci dan pengeringan tanpa setrika. Cocok untuk pakaian sehari-hari.',price:8000,unit:'/kg',eta:'1-2 hari',color:'sc-purple',status:true,express:true,pickup:true,orders:412,revenue:3296000,target:400,minQty:'1 kg',features:['Dicuci dengan deterjen premium','Dikeringkan hingga sempurna','Dilipat rapi','Dikemas plastik bersih'],tiers:[{label:'1-5 kg',price:8000},{label:'6-10 kg',price:7500},{label:'>10 kg',price:7000}]},
+    {id:'SVC-002',name:'Cuci Setrika',emoji:'👕',category:'kiloan',desc:'Layanan lengkap cuci, keringkan, dan setrika. Pakaian siap pakai.',price:10000,unit:'/kg',eta:'1-2 hari',color:'sc-green',status:true,express:true,pickup:true,orders:387,revenue:3870000,target:350,minQty:'1 kg',features:['Dicuci bersih menyeluruh','Dikeringkan sempurna','Disetrika rapi & wangi','Dikemas plastik premium'],tiers:[{label:'1-5 kg',price:10000},{label:'6-10 kg',price:9500},{label:'>10 kg',price:9000}]},
+    {id:'SVC-003',name:'Setrika Saja',emoji:'🔥',category:'kiloan',desc:'Layanan setrika pakaian bersih yang sudah dicuci sendiri.',price:5000,unit:'/kg',eta:'6-8 jam',color:'sc-orange',status:true,express:false,pickup:false,orders:156,revenue:780000,target:150,minQty:'1 kg',features:['Setrika rapi & presisi','Bebas lipatan','Wangi segar','Pengerjaan cepat'],tiers:[]},
+    {id:'SVC-004',name:'Express',emoji:'⚡',category:'kiloan',desc:'Layanan cuci setrika kilat, selesai dalam 6 jam untuk kebutuhan mendesak.',price:15000,unit:'/kg',eta:'4-6 jam',color:'sc-pink',status:true,express:false,pickup:true,orders:98,revenue:1470000,target:100,minQty:'1 kg',features:['Prioritas antrian tertinggi','Selesai 4-6 jam','Cuci + setrika lengkap','Notifikasi real-time'],tiers:[]},
+    // SATUAN
+    {id:'SVC-005',name:'Jas & Blazer',emoji:'🤵',category:'satuan',desc:'Perawatan khusus jas dan blazer dengan teknik dry cleaning profesional.',price:35000,unit:'/pcs',eta:'2-3 hari',color:'sc-indigo',status:true,express:true,pickup:true,orders:89,revenue:3115000,target:80,minQty:'1 pcs',features:['Dry cleaning profesional','Anti kusut & kilap','Penanganan bahan mewah','Dikemas gantung'],tiers:[]},
+    {id:'SVC-006',name:'Bed Cover',emoji:'🛏️',category:'satuan',desc:'Pencucian bed cover dan sprei ukuran besar dengan mesin kapasitas khusus.',price:25000,unit:'/pcs',eta:'1-2 hari',color:'sc-blue',status:true,express:false,pickup:true,orders:134,revenue:3350000,target:120,minQty:'1 pcs',features:['Mesin kapasitas besar','Deterjen anti bakteri','Keringkan sempurna','Dilipat rapi'],tiers:[{label:'Single',price:20000},{label:'Double/Queen',price:25000},{label:'King',price:30000}]},
+    {id:'SVC-007',name:'Gorden',emoji:'🪟',category:'satuan',desc:'Pencucian gorden berbagai ukuran dengan teknik khusus menjaga warna dan bentuk.',price:15000,unit:'/m²',eta:'2-3 hari',color:'sc-teal',status:true,express:false,pickup:true,orders:67,revenue:1005000,target:70,minQty:'1 m²',features:['Teknik cuci lembut','Menjaga warna & bentuk','Anti kusut','Bisa antar pasang'],tiers:[]},
+    {id:'SVC-008',name:'Sepatu & Tas',emoji:'👟',category:'satuan',desc:'Perawatan sepatu dan tas dengan bahan khusus sesuai material.',price:40000,unit:'/pair',eta:'2-3 hari',color:'sc-orange',status:true,express:true,pickup:true,orders:103,revenue:4120000,target:90,minQty:'1 pair',features:['Dibersihkan per material','Obat khusus kulit/kanvas','Dikeringkan sempurna','Dikemas dus'],tiers:[{label:'Sneakers',price:35000},{label:'Boots/Heels',price:45000},{label:'Tas kulit',price:55000}]},
+    {id:'SVC-009',name:'Boneka',emoji:'🧸',category:'satuan',desc:'Pencucian boneka lembut berbagai ukuran dengan deterjen ramah anak.',price:20000,unit:'/pcs',eta:'2-3 hari',color:'sc-pink',status:false,express:false,pickup:false,orders:31,revenue:620000,target:50,minQty:'1 pcs',features:['Deterjen ramah anak','Bahan lembut terjaga','Anti jamur & bakteri','Dikemas plastik'],tiers:[{label:'Kecil (<30cm)',price:15000},{label:'Sedang (30-60cm)',price:20000},{label:'Besar (>60cm)',price:35000}]},
+    // PAKET
+    {id:'SVC-010',name:'Paket Bulanan Basic',emoji:'📦',category:'paket',desc:'Paket langganan bulanan untuk 30 kg cucian. Hemat hingga 20% dari harga normal.',price:240000,unit:'/bulan',eta:'1-2 hari',color:'sc-blue',status:true,express:false,pickup:true,orders:48,revenue:11520000,target:50,minQty:'1 paket',features:['30 kg cuci setrika/bulan','Prioritas antrian','Antar jemput gratis','Laporan bulanan'],tiers:[]},
+    {id:'SVC-011',name:'Paket Bulanan Premium',emoji:'💎',category:'paket',desc:'Paket VIP bulanan dengan 60 kg cucian, express tersedia, dan konsultasi perawatan baju.',price:420000,unit:'/bulan',eta:'Same day',color:'sc-purple',status:true,express:true,pickup:true,orders:23,revenue:9660000,target:30,minQty:'1 paket',features:['60 kg cuci setrika/bulan','Layanan express included','Antar jemput 2x/minggu','Konsultasi perawatan','Laporan detail'],tiers:[]},
+    // ANTAR JEMPUT
+    {id:'SVC-012',name:'Antar Jemput Standar',emoji:'🛵',category:'antar',desc:'Layanan ambil cucian di rumah pelanggan dan antar kembali setelah selesai.',price:10000,unit:'/trip',eta:'Sesuai jadwal',color:'sc-teal',status:true,express:false,pickup:false,orders:215,revenue:2150000,target:200,minQty:'Min. 2 kg',features:['Radius 5 km dari outlet','Jadwal fleksibel','Tracking real-time','Dikemas aman'],tiers:[{label:'Radius 0-3 km',price:8000},{label:'Radius 3-5 km',price:12000},{label:'Radius 5-10 km',price:18000}]},
+    {id:'SVC-013',name:'Antar Jemput Express',emoji:'🏍️',category:'antar',desc:'Layanan antar jemput kilat dengan prioritas dan jaminan sampai 2 jam.',price:20000,unit:'/trip',eta:'< 2 jam',color:'sc-red',status:true,express:false,pickup:false,orders:87,revenue:1740000,target:80,minQty:'Min. 1 kg',features:['Jaminan datang < 2 jam','Prioritas penjemputan','Tracking live','Dikemas express'],tiers:[]},
+];
+
+/* ============================================================
+   STATE
+============================================================ */
+const CATEGORIES = [
+    {key:'all',   label:'Semua',        icon:'fas fa-layer-group'},
+    {key:'kiloan',label:'Kiloan',       icon:'fas fa-weight-hanging'},
+    {key:'satuan',label:'Satuan',       icon:'fas fa-tshirt'},
+    {key:'paket', label:'Paket',        icon:'fas fa-box'},
+    {key:'antar', label:'Antar Jemput', icon:'fas fa-motorcycle'},
+];
+let activeTab    = 'all';
+let editMode     = false;
+let activeId     = null;
+let priceTiers   = [];
+let featuresList = [];
+let searchQuery  = '';
+
+/* ============================================================
+   SIDEBAR / TOPBAR
+============================================================ */
+const sidebar  = document.getElementById('sidebar');
+const topbar   = document.getElementById('topbar');
+const mainCont = document.getElementById('mainContent');
+let collapsed  = false;
+
+function toggleSidebar(){
+    collapsed = !collapsed;
+    sidebar.classList.toggle('collapsed',collapsed);
+    topbar.classList.toggle('sidebar-collapsed',collapsed);
+    mainCont.classList.toggle('sidebar-collapsed',collapsed);
+}
+function handleLogout(){ if(confirm('Yakin ingin keluar?')) window.location.href='laundry-landing-page.html'; }
+
+/* ============================================================
+   RENDER TABS
+============================================================ */
+function renderTabs(){
+    const bar = document.getElementById('tabsBar');
+    bar.innerHTML = CATEGORIES.map(cat => {
+        const count = cat.key==='all' ? services.length : services.filter(s=>s.category===cat.key).length;
+        return `<button class="tab-btn ${activeTab===cat.key?'active':''}" onclick="switchTab('${cat.key}')">
+            <i class="${cat.icon}"></i> ${cat.label}
+            <span class="tab-count">${count}</span>
+        </button>`;
+    }).join('');
+}
+
+function switchTab(tab){
+    activeTab = tab;
+    renderTabs();
+    renderServices();
+}
+
+/* ============================================================
+   RENDER SERVICES
+============================================================ */
+function renderServices(){
+    const container = document.getElementById('servicesContainer');
+    let list = services;
+    if (activeTab !== 'all') list = list.filter(s => s.category === activeTab);
+    if (searchQuery) list = list.filter(s => s.name.toLowerCase().includes(searchQuery) || s.desc.toLowerCase().includes(searchQuery));
+
+    updateStats();
+
+    if (!list.length){
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon"><i class="fas fa-concierge-bell"></i></div>
+                <div class="empty-title">Belum ada layanan</div>
+                <div class="empty-desc">Klik "Tambah Layanan" untuk menambahkan layanan baru</div>
+            </div>`;
+        return;
+    }
+
+    container.innerHTML = `<div class="services-grid">${list.map(s => renderCard(s)).join('')}</div>`;
+}
+
+function renderCard(s){
+    const catLabels = {kiloan:'kiloan',satuan:'satuan',paket:'paket',antar:'antar'};
+    const catColors = {kiloan:'#3B82F6',satuan:'#EC4899',paket:'#F59E0B',antar:'#10B981'};
+    const iconColor = s.color.replace('sc-','');
+
+    const tiersHtml = s.tiers.length ? `
+        <div class="sc-price-tiers">
+            ${s.tiers.map(t=>`
+                <div class="sc-price-tier">
+                    <span class="sc-tier-label">${t.label}</span>
+                    <span class="sc-tier-price">${formatRp(t.price)}${s.unit}</span>
+                    <button class="sc-tier-edit" onclick="openEditModal('${s.id}')" title="Edit harga"><i class="fas fa-pen"></i></button>
+                </div>`).join('')}
+        </div>` : '';
+
+    const featuresHtml = s.features.length ? `
+        <div class="sc-features">
+            ${s.features.slice(0,3).map(f=>`<div class="sc-feature"><i class="fas fa-check-circle"></i>${f}</div>`).join('')}
+            ${s.features.length > 3 ? `<div class="sc-feature" style="color:var(--primary)"><i class="fas fa-plus-circle"></i>+${s.features.length-3} fitur lainnya</div>` : ''}
+        </div>` : '';
+
+    return `
+    <div class="service-card ${s.color} ${s.status?'':'inactive'}">
+        <div class="sc-body">
+            <div class="sc-top">
+                <div class="sc-icon ${iconColor}">${s.emoji}</div>
+                <div class="sc-badges">
+                    <span class="sc-status ${s.status?'aktif':'nonaktif'}">${s.status?'Aktif':'Nonaktif'}</span>
+                    <span class="sc-type-pill ${s.category}">${s.category.charAt(0).toUpperCase()+s.category.slice(1)}</span>
+                </div>
+            </div>
+            <div class="sc-name">${s.name}</div>
+            <div class="sc-desc">${s.desc}</div>
+
+            <div class="sc-price-section">
+                <div class="sc-price-label">Harga Mulai Dari</div>
+                <div class="sc-price-main">${formatRp(s.price)}</div>
+                <div class="sc-price-unit">${s.unit}</div>
+                <div class="sc-price-est">
+                    <i class="fas fa-clock"></i> Estimasi: ${s.eta}
+                    ${s.express?'<span style="margin-left:auto;background:rgba(245,158,11,.1);color:#D97706;padding:.15rem .5rem;border-radius:5px;font-size:.68rem;font-weight:700">⚡ Express</span>':''}
+                </div>
+            </div>
+
+            ${tiersHtml}
+
+            <div class="sc-stats">
+                <div class="sc-stat">
+                    <div class="sc-stat-val">${s.orders}</div>
+                    <div class="sc-stat-lbl">Order</div>
+                </div>
+                <div class="sc-stat">
+                    <div class="sc-stat-val">${(s.revenue/1000000).toFixed(1)}jt</div>
+                    <div class="sc-stat-lbl">Revenue</div>
+                </div>
+                <div class="sc-stat">
+                    <div class="sc-stat-val">${Math.round(s.orders/s.target*100)}%</div>
+                    <div class="sc-stat-lbl">Target</div>
+                </div>
+            </div>
+
+            ${featuresHtml}
+        </div>
+        <div class="sc-footer">
+            <button class="sc-btn sc-btn-outline" onclick="toggleStatus('${s.id}')" title="${s.status?'Nonaktifkan':'Aktifkan'}">
+                <i class="fas fa-${s.status?'eye-slash':'eye'}"></i> ${s.status?'Nonaktifkan':'Aktifkan'}
+            </button>
+            <button class="sc-btn sc-btn-primary" onclick="openEditModal('${s.id}')"><i class="fas fa-pen"></i> Edit</button>
+            <button class="sc-btn sc-btn-danger" onclick="confirmDelete('${s.id}')" title="Hapus"><i class="fas fa-trash-alt"></i></button>
+        </div>
+    </div>`;
+}
+
+/* ============================================================
+   UPDATE STATS
+============================================================ */
+function updateStats(){
+    document.getElementById('statTotal').textContent  = services.length;
+    document.getElementById('statAktif').textContent  = services.filter(s=>s.status).length;
+    const top = [...services].sort((a,b)=>b.orders-a.orders)[0];
+    const topR = [...services].sort((a,b)=>b.revenue-a.revenue)[0];
+    if(top)  document.getElementById('statTerlaris').textContent  = top.name;
+    if(topR) document.getElementById('statRevenue').textContent   = topR.name;
+}
+
+function handleSearch(v){ searchQuery = v.toLowerCase(); renderServices(); }
+function formatRp(n){ return 'Rp '+n.toLocaleString('id-ID'); }
+
+/* ============================================================
+   TOGGLE STATUS
+============================================================ */
+function toggleStatus(id){
+    const s = services.find(x=>x.id===id);
+    if(!s) return;
+    s.status = !s.status;
+    renderTabs();
+    renderServices();
+    showToast('success',s.status?'Aktif':'Nonaktif',`${s.name} berhasil ${s.status?'diaktifkan':'dinonaktifkan'}`);
+}
+
+/* ============================================================
+   ADD / EDIT MODAL
+============================================================ */
+function openAddModal(){
+    editMode = false; activeId = null;
+    priceTiers = []; featuresList = [''];
+    document.getElementById('modalIconEl').innerHTML   = '<i class="fas fa-concierge-bell"></i>';
+    document.getElementById('modalTitleEl').textContent = 'Tambah Layanan';
+    document.getElementById('modalSubEl').textContent   = 'Isi detail layanan baru';
+    // reset
+    ['f-name','f-desc','f-eta','f-target','f-min'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
+    document.getElementById('f-emoji').value    = '🧺';
+    document.getElementById('f-category').value = 'kiloan';
+    document.getElementById('f-price').value    = '';
+    document.getElementById('f-unit').value     = '/kg';
+    document.getElementById('f-color').value    = 'sc-purple';
+    document.getElementById('f-aktif').checked  = true;
+    document.getElementById('f-express').checked = false;
+    document.getElementById('f-pickup').checked  = false;
+    renderTiersEditor();
+    renderFeaturesEditor();
+    document.getElementById('serviceModal').classList.add('show');
+}
+
+function openEditModal(id){
+    const s = services.find(x=>x.id===id);
+    if(!s) return;
+    editMode = true; activeId = id;
+    priceTiers   = [...s.tiers];
+    featuresList = [...s.features];
+    document.getElementById('modalIconEl').innerHTML    = '<i class="fas fa-pen"></i>';
+    document.getElementById('modalTitleEl').textContent  = 'Edit Layanan';
+    document.getElementById('modalSubEl').textContent    = 'Perbarui detail layanan';
+    document.getElementById('f-name').value     = s.name;
+    document.getElementById('f-emoji').value    = s.emoji;
+    document.getElementById('f-category').value = s.category;
+    document.getElementById('f-desc').value     = s.desc;
+    document.getElementById('f-price').value    = s.price;
+    document.getElementById('f-unit').value     = s.unit;
+    document.getElementById('f-eta').value      = s.eta;
+    document.getElementById('f-color').value    = s.color;
+    document.getElementById('f-target').value   = s.target;
+    document.getElementById('f-min').value      = s.minQty;
+    document.getElementById('f-aktif').checked  = s.status;
+    document.getElementById('f-express').checked= s.express;
+    document.getElementById('f-pickup').checked = s.pickup;
+    renderTiersEditor();
+    renderFeaturesEditor();
+    document.getElementById('serviceModal').classList.add('show');
+}
+
+/* Price tiers editor */
+function addPriceTier(){ priceTiers.push({label:'',price:0}); renderTiersEditor(); }
+function removeTier(i){ priceTiers.splice(i,1); renderTiersEditor(); }
+function renderTiersEditor(){
+    const el = document.getElementById('priceTiersEditor');
+    el.innerHTML = priceTiers.map((t,i)=>`
+        <div class="price-tier-row">
+            <input class="form-control" type="text"   placeholder="cth. 1-5 kg"  value="${t.label}" oninput="priceTiers[${i}].label=this.value" style="font-size:.875rem;padding:.6rem .875rem">
+            <input class="form-control" type="number" placeholder="Harga"        value="${t.price||''}" oninput="priceTiers[${i}].price=parseInt(this.value)||0" style="font-size:.875rem;padding:.6rem .875rem">
+            <button class="btn-rm-tier" onclick="removeTier(${i})"><i class="fas fa-times"></i></button>
+        </div>`).join('');
+}
+
+/* Features editor */
+function addFeatureRow(){ featuresList.push(''); renderFeaturesEditor(); }
+function removeFeature(i){ featuresList.splice(i,1); renderFeaturesEditor(); }
+function renderFeaturesEditor(){
+    const el = document.getElementById('featuresEditor');
+    el.innerHTML = featuresList.map((f,i)=>`
+        <div style="display:flex;gap:.5rem;align-items:center">
+            <input class="form-control" type="text" placeholder="cth. Deterjen premium" value="${f}" oninput="featuresList[${i}]=this.value" style="font-size:.875rem;padding:.6rem .875rem">
+            <button class="btn-rm-tier" onclick="removeFeature(${i})"><i class="fas fa-times"></i></button>
+        </div>`).join('');
+}
+
+function saveService(){
+    const name = document.getElementById('f-name').value.trim();
+    const price = parseInt(document.getElementById('f-price').value)||0;
+    if(!name){ showToast('error','Validasi','Nama layanan wajib diisi'); return; }
+    if(!price){ showToast('error','Validasi','Harga wajib diisi'); return; }
+
+    const data = {
+        name,
+        emoji:    document.getElementById('f-emoji').value    || '🧺',
+        category: document.getElementById('f-category').value,
+        desc:     document.getElementById('f-desc').value,
+        price,
+        unit:     document.getElementById('f-unit').value,
+        eta:      document.getElementById('f-eta').value      || '1-2 hari',
+        color:    document.getElementById('f-color').value,
+        target:   parseInt(document.getElementById('f-target').value)||100,
+        minQty:   document.getElementById('f-min').value      || '1',
+        status:   document.getElementById('f-aktif').checked,
+        express:  document.getElementById('f-express').checked,
+        pickup:   document.getElementById('f-pickup').checked,
+        tiers:    priceTiers.filter(t=>t.label),
+        features: featuresList.filter(f=>f.trim()),
+    };
+
+    if(editMode && activeId){
+        const idx = services.findIndex(x=>x.id===activeId);
+        if(idx>-1){ services[idx] = {...services[idx],...data}; }
+        showToast('success','Diperbarui',`${name} berhasil diperbarui`);
+    } else {
+        const newId = 'SVC-'+String(900+services.length).padStart(3,'0');
+        services.unshift({id:newId,...data,orders:0,revenue:0});
+        showToast('success','Ditambahkan',`${name} berhasil ditambahkan`);
+    }
+
+    closeModal('serviceModal');
+    renderTabs();
+    renderServices();
+}
+
+/* ============================================================
+   DELETE
+============================================================ */
+function confirmDelete(id){
+    const s = services.find(x=>x.id===id);
+    if(!s) return;
+    document.getElementById('confirmMsg').textContent = `"${s.name}" akan dihapus secara permanen dan tidak dapat dikembalikan.`;
+    document.getElementById('confirmDeleteBtn').onclick = ()=>{ doDelete(id); closeModal('confirmModal'); };
+    document.getElementById('confirmModal').classList.add('show');
+}
+function doDelete(id){
+    const s = services.find(x=>x.id===id);
+    if(!s) return;
+    services = services.filter(x=>x.id!==id);
+    renderTabs();
+    renderServices();
+    showToast('success','Dihapus',`${s.name} berhasil dihapus`);
+}
+
+/* ============================================================
+   MODAL UTILS
+============================================================ */
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+function closeModalOut(e,id){ if(e.target===e.currentTarget) closeModal(id); }
+
+/* ============================================================
+   TOAST
+============================================================ */
+function showToast(type,title,msg){
+    const wrap = document.getElementById('toastWrap');
+    const t = document.createElement('div');
+    t.className='toast';
+    t.innerHTML=`
+        <div class="toast-icon ${type}"><i class="fas fa-${type==='success'?'check':type==='error'?'times':'info-circle'}"></i></div>
+        <div style="flex:1"><div class="toast-title">${title}</div><div class="toast-msg">${msg}</div></div>
+        <button class="toast-x" onclick="this.closest('.toast').remove()"><i class="fas fa-times"></i></button>`;
+    wrap.appendChild(t);
+    setTimeout(()=>t.classList.add('show'),10);
+    setTimeout(()=>{ t.classList.remove('show'); setTimeout(()=>t.remove(),400); },4000);
+}
+
+/* ============================================================
+   FLOAT BUTTON
+============================================================ */
+window.addEventListener('scroll',()=>{
+    document.getElementById('scrollTopBtn').classList.toggle('visible',window.scrollY>300);
+});
+function scrollToTop(event){
+    const btn=document.getElementById('scrollTopBtn');
+    const r=document.createElement('span');
+    r.style.cssText='position:absolute;border-radius:50%;background:rgba(255,255,255,.4);width:52px;height:52px;left:0;top:0;transform:scale(0);animation:rippleA .6s ease-out';
+    btn.appendChild(r); setTimeout(()=>r.remove(),600);
+    const start=window.scrollY,t0=performance.now();
+    function bounce(t){
+        const p=Math.min((t-t0)/800,1),n=7.5625,d=2.75;
+        let e;
+        if(p<1/d)e=n*p*p;
+        else if(p<2/d)e=n*(p-=1.5/d)*p+.75;
+        else if(p<2.5/d)e=n*(p-=2.25/d)*p+.9375;
+        else e=n*(p-=2.625/d)*p+.984375;
+        window.scrollTo(0,start*(1-e));
+        if(p<1)requestAnimationFrame(bounce);
+    }
+    requestAnimationFrame(bounce);
+}
+
+/* ============================================================
+   INIT
+============================================================ */
+renderTabs();
+renderServices();
+</script>
+</body>
+</html>

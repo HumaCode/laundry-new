@@ -54,6 +54,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/businesses/{id}', [BisnisController::class, 'show'])->name('businesses.show');
     Route::put('/businesses/{id}', [BisnisController::class, 'update'])->name('businesses.update');
     Route::delete('/businesses/{id}', [BisnisController::class, 'destroy'])->name('businesses.destroy');
+
+    // Layanan & Harga (Services)
+    Route::get('/services', [\App\Http\Controllers\Operasional\LayananController::class, 'index'])->name('services');
+    Route::post('/services', [\App\Http\Controllers\Operasional\LayananController::class, 'store'])->name('services.store');
+    Route::get('/services/{id}', [\App\Http\Controllers\Operasional\LayananController::class, 'show'])->name('services.show');
+    Route::put('/services/{id}', [\App\Http\Controllers\Operasional\LayananController::class, 'update'])->name('services.update');
+    Route::delete('/services/{id}', [\App\Http\Controllers\Operasional\LayananController::class, 'destroy'])->name('services.destroy');
+    Route::patch('/services/{id}/toggle-status', [\App\Http\Controllers\Operasional\LayananController::class, 'toggleStatus'])->name('services.toggle-status');
+    Route::post('/services/bulk-price', [\App\Http\Controllers\Operasional\LayananController::class, 'bulkPriceUpdate'])->name('services.bulk-price');
 });
 
 require __DIR__.'/auth.php';
