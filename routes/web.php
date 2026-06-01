@@ -6,6 +6,7 @@ use App\Http\Controllers\Master\PelangganController;
 use App\Http\Controllers\Master\OutletController;
 use App\Http\Controllers\Master\KaryawanController;
 use App\Http\Controllers\Master\BisnisController;
+use App\Http\Controllers\Master\OrderController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -25,6 +26,13 @@ Route::middleware('auth')->group(function () {
     Route::get('/customers/{id}', [PelangganController::class, 'show'])->name('customers.show');
     Route::put('/customers/{id}', [PelangganController::class, 'update'])->name('customers.update');
     Route::delete('/customers/{id}', [PelangganController::class, 'destroy'])->name('customers.destroy');
+
+    // Order (Orders)
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders');
+    Route::post('/orders', [OrderController::class, 'store'])->name('orders.store');
+    Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
+    Route::put('/orders/{id}', [OrderController::class, 'update'])->name('orders.update');
+    Route::delete('/orders/{id}', [OrderController::class, 'destroy'])->name('orders.destroy');
 
     // Outlet
     Route::get('/outlets', [OutletController::class, 'index'])->name('outlets');

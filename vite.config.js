@@ -23,7 +23,9 @@ export default defineConfig({
                 'resources/css/admin/karyawan.css',
                 'resources/js/admin/karyawan.js',
                 'resources/css/admin/bisnis.css',
-                'resources/js/admin/bisnis.js'
+                'resources/js/admin/bisnis.js',
+                'resources/css/admin/order.css',
+                'resources/js/admin/order.js'
             ],
             refresh: true,
         }),

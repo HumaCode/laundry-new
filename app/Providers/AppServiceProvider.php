@@ -27,6 +27,10 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Contracts\CustomerRepositoryInterface::class,
             \App\Repositories\Eloquent\CustomerRepository::class
         );
+        $this->app->bind(
+            \App\Repositories\Contracts\OrderRepositoryInterface::class,
+            \App\Repositories\Eloquent\OrderRepository::class
+        );
     }
 
     /**
