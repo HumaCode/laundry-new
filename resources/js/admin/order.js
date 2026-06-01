@@ -31,30 +31,34 @@ $(document).ready(function () {
 
 // Toast notification helper
 function showToast(type, title, message) {
-    const toastHtml = `
-        <div class="toast show">
-            <div class="toast-icon ${type}">
-                <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-times-circle' : 'fa-info-circle'}"></i>
+    if (typeof window.showToast === 'function') {
+        window.showToast(message, type, title);
+    } else {
+        const toastHtml = `
+            <div class="toast show">
+                <div class="toast-icon ${type}">
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-times-circle' : 'fa-info-circle'}"></i>
+                </div>
+                <div>
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-msg">${message}</div>
+                </div>
+                <button class="toast-close-btn" onclick="$(this).closest('.toast').remove()"><i class="fas fa-times"></i></button>
             </div>
-            <div>
-                <div class="toast-title">${title}</div>
-                <div class="toast-msg">${message}</div>
-            </div>
-            <button class="toast-close-btn" onclick="$(this).closest('.toast').remove()"><i class="fas fa-times"></i></button>
-        </div>
-    `;
-    
-    // Check if toast wrapper exists, if not create it
-    if ($('.toast-wrap').length === 0) {
-        $('body').append('<div class="toast-wrap"></div>');
+        `;
+        
+        // Check if toast wrapper exists, if not create it
+        if ($('.toast-wrap').length === 0) {
+            $('body').append('<div class="toast-wrap"></div>');
+        }
+        
+        const $toast = $(toastHtml);
+        $('.toast-wrap').append($toast);
+        
+        setTimeout(() => {
+            $toast.fadeOut(400, function() { $(this).remove(); });
+        }, 4000);
     }
-    
-    const $toast = $(toastHtml);
-    $('.toast-wrap').append($toast);
-    
-    setTimeout(() => {
-        $toast.fadeOut(400, function() { $(this).remove(); });
-    }, 4000);
 }
 
 // Fetch orders with current filters
@@ -460,6 +464,10 @@ function saveOrder() {
     const url = isEdit ? `/orders/${id}` : '/orders';
     const method = isEdit ? 'PUT' : 'POST';
 
+    const $btn = $('#orderForm').find('button[type="submit"]');
+    const originalHtml = $btn.html();
+    $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Sedang Proses...');
+
     $.ajax({
         url: url,
         method: method,
@@ -483,6 +491,9 @@ function saveOrder() {
             } else {
                 showToast('error', 'Error', 'Terjadi kesalahan sistem');
             }
+        },
+        complete: function () {
+            $btn.prop('disabled', false).html(originalHtml);
         }
     });
 }
@@ -591,6 +602,10 @@ function saveNewStatus() {
     else if (selectedNewStatus === 'siap' || selectedNewStatus === 'Selesai') mappedStatus = 'Selesai';
     else if (selectedNewStatus === 'selesai' || selectedNewStatus === 'Diambil') mappedStatus = 'Diambil';
 
+    const $btn = $('#statusModal').find('.modal-btn-success');
+    const originalHtml = $btn.html();
+    $btn.prop('disabled', true).html('<i class="fas fa-spinner fa-spin"></i> Sedang Proses...');
+
     $.ajax({
         url: `/orders/${activeOrder.id}`,
         method: 'PUT',
@@ -607,6 +622,9 @@ function saveNewStatus() {
         },
         error: function () {
             showToast('error', 'Error', 'Gagal memperbarui status order');
+        },
+        complete: function () {
+            $btn.prop('disabled', false).html(originalHtml);
         }
     });
 }
