@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Master\Employee;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Outlet extends Model
 {
@@ -35,8 +37,16 @@ class Outlet extends Model
     /**
      * Outlet memiliki banyak karyawan.
      */
-    public function employees()
+    public function employees(): HasMany
     {
         return $this->hasMany(Employee::class, 'outlet_id');
+    }
+
+    /**
+     * Outlet milik sebuah bisnis.
+     */
+    public function business(): BelongsTo
+    {
+        return $this->belongsTo(Business::class, 'business_id');
     }
 }

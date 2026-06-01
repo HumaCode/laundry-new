@@ -21,7 +21,9 @@ export default defineConfig({
                 'resources/css/admin/outlet.css',
                 'resources/js/admin/outlet.js',
                 'resources/css/admin/karyawan.css',
-                'resources/js/admin/karyawan.js'
+                'resources/js/admin/karyawan.js',
+                'resources/css/admin/bisnis.css',
+                'resources/js/admin/bisnis.js'
             ],
             refresh: true,
         }),

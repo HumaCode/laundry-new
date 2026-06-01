@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             MenuSeeder::class,
             UserSeeder::class,
             OutletSeeder::class,
+            BusinessSeeder::class,
             EmployeeSeeder::class,
         ]);
 

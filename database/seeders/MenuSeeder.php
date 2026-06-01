@@ -36,6 +36,12 @@ class MenuSeeder extends Seeder
                     'permissions' => ['menu', 'create', 'read', 'show', 'update', 'delete'],
                 ],
                 [
+                    'name' => 'Bisnis',
+                    'url' => 'businesses',
+                    'icon' => 'building',
+                    'permissions' => ['menu', 'create', 'read', 'show', 'update', 'delete'],
+                ],
+                [
                     'name' => 'Outlet',
                     'url' => 'outlets',
                     'icon' => 'home',
