@@ -27,7 +27,9 @@ export default defineConfig({
                 'resources/css/admin/order.css',
                 'resources/js/admin/order.js',
                 'resources/css/admin/services.css',
-                'resources/js/admin/services.js'
+                'resources/js/admin/services.js',
+                'resources/css/admin/antarjemput.css',
+                'resources/js/admin/antarjemput.js'
             ],
             refresh: true,
         }),

@@ -63,6 +63,13 @@ Route::middleware('auth')->group(function () {
     Route::delete('/services/{id}', [\App\Http\Controllers\Operasional\LayananController::class, 'destroy'])->name('services.destroy');
     Route::patch('/services/{id}/toggle-status', [\App\Http\Controllers\Operasional\LayananController::class, 'toggleStatus'])->name('services.toggle-status');
     Route::post('/services/bulk-price', [\App\Http\Controllers\Operasional\LayananController::class, 'bulkPriceUpdate'])->name('services.bulk-price');
+
+    // Antar Jemput (Pickup & Delivery)
+    Route::get('/shuttles', [\App\Http\Controllers\Operasional\AntarJemputController::class, 'index'])->name('shuttles');
+    Route::post('/shuttles', [\App\Http\Controllers\Operasional\AntarJemputController::class, 'store'])->name('shuttles.store');
+    Route::get('/shuttles/{id}', [\App\Http\Controllers\Operasional\AntarJemputController::class, 'show'])->name('shuttles.show');
+    Route::put('/shuttles/{id}', [\App\Http\Controllers\Operasional\AntarJemputController::class, 'update'])->name('shuttles.update');
+    Route::delete('/shuttles/{id}', [\App\Http\Controllers\Operasional\AntarJemputController::class, 'destroy'])->name('shuttles.destroy');
 });
 
 require __DIR__.'/auth.php';
