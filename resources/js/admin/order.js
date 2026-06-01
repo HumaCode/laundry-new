@@ -641,3 +641,24 @@ function printOrder() {
     if (!activeOrder) return;
     alert(`Mencetak nota belanja untuk Order #${activeOrder.order_code}`);
 }
+
+// Expose functions globally for Blade template onclick events
+window.applyFilters = applyFilters;
+window.openAddModal = openAddModal;
+window.filterByStatus = filterByStatus;
+window.resetFilters = resetFilters;
+window.changePerPage = changePerPage;
+window.toggleAllCheck = toggleAllCheck;
+window.closeModal = closeModal;
+window.closeModalOutside = closeModalOutside;
+window.openStatusModal = openStatusModal;
+window.printOrder = printOrder;
+window.saveNewStatus = saveNewStatus;
+window.openEditModal = openEditModal;
+window.deleteOrder = deleteOrder;
+window.bulkDelete = bulkDelete;
+window.openDetail = openDetail;
+window.toggleRowCheck = toggleRowCheck;
+window.changePage = changePage;
+window.selectStatus = selectStatus;
+window.clearSelection = clearSelection;
