@@ -215,7 +215,7 @@
 
 .drawer-header{padding:1.5rem;display:flex;align-items:center;gap:1rem;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(99,102,241,.04),rgba(139,92,246,.04));flex-shrink:0;position:relative;overflow:hidden}
 .drawer-header::before{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.08),transparent 70%)}
-.drawer-header-avatar{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;font-weight:800;color:white;flex-shrink:0;position:relative;z-index:1}
+.drawer-header-avatar{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;font-weight:800;color:white;background:linear-gradient(135deg,var(--primary),var(--purple));box-shadow:0 4px 12px rgba(99,102,241,.2);flex-shrink:0;position:relative;z-index:1}
 .drawer-header-info{flex:1;position:relative;z-index:1}
 .drawer-header-name{font-size:1.125rem;font-weight:700;color:var(--dark)}
 .drawer-header-id{font-size:.75rem;color:var(--gray-light);font-family:monospace;margin:.15rem 0}
