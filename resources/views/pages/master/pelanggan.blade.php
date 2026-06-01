@@ -30,7 +30,7 @@
                 <div class="stat-icon c1"><i class="fas fa-users"></i></div>
                 <div class="stat-trend up"><i class="fas fa-arrow-up"></i> 5.7%</div>
             </div>
-            <div class="stat-value">3,891</div>
+            <div class="stat-value" id="statTotalCustomers">3,891</div>
             <div class="stat-label">Total Pelanggan</div>
             <div class="stat-footer">284 pelanggan baru bulan ini</div>
         </div>
@@ -39,7 +39,7 @@
                 <div class="stat-icon c2"><i class="fas fa-user-check"></i></div>
                 <div class="stat-trend up"><i class="fas fa-arrow-up"></i> 3.2%</div>
             </div>
-            <div class="stat-value">2,140</div>
+            <div class="stat-value" id="statActiveCustomers">2,140</div>
             <div class="stat-label">Pelanggan Aktif</div>
             <div class="stat-footer">Order dalam 30 hari terakhir</div>
         </div>
@@ -48,7 +48,7 @@
                 <div class="stat-icon c3"><i class="fas fa-crown"></i></div>
                 <div class="stat-trend up"><i class="fas fa-arrow-up"></i> 12%</div>
             </div>
-            <div class="stat-value">428</div>
+            <div class="stat-value" id="statVipCustomers">428</div>
             <div class="stat-label">Pelanggan VIP</div>
             <div class="stat-footer">Kontribusi 45% pendapatan</div>
         </div>
@@ -57,7 +57,7 @@
                 <div class="stat-icon c4"><i class="fas fa-user-plus"></i></div>
                 <div class="stat-trend up"><i class="fas fa-arrow-up"></i> 8.4%</div>
             </div>
-            <div class="stat-value">284</div>
+            <div class="stat-value" id="statNewCustomers">284</div>
             <div class="stat-label">Pelanggan Baru</div>
             <div class="stat-footer">Bulan Desember 2024</div>
         </div>
@@ -83,11 +83,9 @@
             <label class="filter-label">Outlet Favorit</label>
             <select class="filter-input" id="filterOutlet" onchange="applyFilters()">
                 <option value="">Semua Outlet</option>
-                <option>Outlet Pusat</option>
-                <option>Outlet Bandung</option>
-                <option>Outlet Surabaya</option>
-                <option>Outlet Yogyakarta</option>
-                <option>Outlet Semarang</option>
+                @foreach($outlets as $o)
+                    <option value="{{ $o->id }}">{{ $o->name }}</option>
+                @endforeach
             </select>
         </div>
         <div class="filter-group" style="min-width:130px">
@@ -255,11 +253,9 @@
                         <label>Outlet Favorit</label>
                         <select class="form-control" id="f-outlet">
                             <option value="">-- Pilih --</option>
-                            <option>Outlet Pusat</option>
-                            <option>Outlet Bandung</option>
-                            <option>Outlet Surabaya</option>
-                            <option>Outlet Yogyakarta</option>
-                            <option>Outlet Semarang</option>
+                            @foreach($outlets as $o)
+                                <option value="{{ $o->id }}">{{ $o->name }}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="form-field full">

@@ -13,12 +13,20 @@ use Illuminate\Notifications\Notifiable;
 use App\Notifications\Auth\ResetPasswordNotification;
 use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['name', 'username', 'email', 'password', 'avatar', 'phone', 'gender', 'is_active', 'last_seen'])]
+#[Fillable(['name', 'username', 'email', 'password', 'avatar', 'phone', 'gender', 'is_active', 'last_seen', 'dob', 'address', 'tier', 'notes', 'outlet_id'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, HasUlids, HasRoles;
+
+    /**
+     * Get the favorite outlet of the customer.
+     */
+    public function outlet(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Master\Outlet::class, 'outlet_id');
+    }
 
     /**
      * Get the attributes that should be cast.

@@ -21,6 +21,10 @@ Route::middleware('auth')->group(function () {
     
     // Pelanggan (Customers)
     Route::get('/customers', [PelangganController::class, 'index'])->name('customers');
+    Route::post('/customers', [PelangganController::class, 'store'])->name('customers.store');
+    Route::get('/customers/{id}', [PelangganController::class, 'show'])->name('customers.show');
+    Route::put('/customers/{id}', [PelangganController::class, 'update'])->name('customers.update');
+    Route::delete('/customers/{id}', [PelangganController::class, 'destroy'])->name('customers.destroy');
 
     // Outlet
     Route::get('/outlets', [OutletController::class, 'index'])->name('outlets');
