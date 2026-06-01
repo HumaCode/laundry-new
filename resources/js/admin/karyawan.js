@@ -29,7 +29,7 @@ function getInitials(name) { return name.split(' ').slice(0,2).map(w => w[0]).jo
 function statusBadge(isActive) {
     return isActive
         ? `<span class="status-badge status-aktif">🟢 Aktif</span>`
-        : `<span class="status-badge status-tutup">🔴 Tutup</span>`;
+        : `<span class="status-badge status-nonaktif">🔴 Tidak Aktif</span>`;
 }
 
 function showSkeletonTable() {
@@ -223,7 +223,7 @@ function renderTable(meta) {
                 <div style="display:flex;align-items:center;gap:.75rem">
                     <div class="employee-avatar" style="background:#6366F1">
                         ${getInitials(c.name)}
-                        <span class="employee-avatar-status ${c.is_active?'aktif':'tutup'}"></span>
+                        <span class="employee-avatar-status ${c.is_active?'aktif':'nonaktif'}"></span>
                     </div>
                     <div>
                         <div class="employee-name">${c.name}</div>
@@ -477,7 +477,7 @@ function openEditModal(id) {
                     }
                 }
                 
-                document.getElementById('f-status').value = c.is_active ? 'Aktif' : 'Tutup';
+                document.getElementById('f-status').value = c.is_active ? 'Aktif' : 'Tidak Aktif';
                 document.getElementById('employeeModal').classList.add('show');
             }
         }

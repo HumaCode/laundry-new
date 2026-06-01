@@ -76,7 +76,7 @@
             <select class="filter-input" id="filterStatus" onchange="applyFilters()">
                 <option value="">Semua Status</option>
                 <option value="Aktif">Aktif</option>
-                <option value="Tutup">Tutup</option>
+                <option value="Tidak Aktif">Tidak Aktif</option>
             </select>
         </div>
         <div class="filter-group" style="min-width:145px">
@@ -254,7 +254,7 @@
                         <label>Status</label>
                         <select class="form-control" id="f-status">
                             <option value="Aktif">Aktif</option>
-                            <option value="Tutup">Tutup</option>
+                            <option value="Tidak Aktif">Tidak Aktif</option>
                         </select>
                     </div>
                     <div class="form-field">

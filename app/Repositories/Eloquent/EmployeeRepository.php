@@ -31,7 +31,7 @@ class EmployeeRepository implements EmployeeRepositoryInterface
         if (isset($filters['status']) && $filters['status'] !== '') {
             if ($filters['status'] === 'Aktif') {
                 $query->where('is_active', true);
-            } elseif ($filters['status'] === 'Tutup') {
+            } elseif ($filters['status'] === 'Tidak Aktif' || $filters['status'] === 'Tutup') {
                 $query->where('is_active', false);
             }
         }
