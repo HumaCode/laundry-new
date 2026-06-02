@@ -39,6 +39,10 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Contracts\PickupRepositoryInterface::class,
             \App\Repositories\Eloquent\PickupRepository::class
         );
+        $this->app->bind(
+            \App\Repositories\Contracts\InventoryRepositoryInterface::class,
+            \App\Repositories\Eloquent\InventoryRepository::class
+        );
     }
 
     /**
