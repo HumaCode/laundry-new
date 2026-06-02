@@ -314,6 +314,7 @@
                 <button class="modal-btn modal-btn-success" id="btnConfirmRestock" onclick="confirmRestock()"><i class="fas fa-check btn-icon"></i> <span class="btn-text">Konfirmasi Restock</span></button>
             </div>
         </div>
+    </div>
     <!-- ====================== AUTO RESTOCK MODAL ====================== -->
     <div class="modal-overlay" id="autoRestockModal" onclick="closeModalOut(event,'autoRestockModal')">
         <div class="modal-box" style="max-width:480px">
