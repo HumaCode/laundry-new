@@ -735,28 +735,31 @@ function confirmRestock(){
     });
 }
 function openRestockAllModal(){
-    document.getElementById('ar-outlet').value = '';
-    document.getElementById('ar-category').value = '';
+    if ($.fn.select2) {
+        $('#ar-outlet').val('').trigger('change.select2');
+        $('#ar-category').val('').trigger('change.select2');
+    } else {
+        document.getElementById('ar-outlet').value = '';
+        document.getElementById('ar-category').value = '';
+    }
     openModal('autoRestockModal');
 }
 
 function confirmAutoRestock(){
-    const outlet = document.getElementById('ar-outlet').value;
+    const outlet = $('#ar-outlet').val();
     if (!outlet) {
         showToast('warning', 'Pilih Outlet', 'Silakan pilih outlet terlebih dahulu.');
         return;
     }
 
-    const cat = document.getElementById('ar-category').value;
+    const cat = $('#ar-category').val();
 
     const btn = document.getElementById('btnConfirmAutoRestock');
-    const btnText = btn ? btn.querySelector('.btn-text') : null;
-    const originalText = btnText ? btnText.textContent : 'Mulai Restock';
+    const originalHtml = btn ? btn.innerHTML : '';
     
     if (btn) {
-        btn.classList.add('loading');
         btn.disabled = true;
-        if (btnText) btnText.textContent = 'Sedang proses...';
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sedang proses...';
     }
 
     $.ajax({
@@ -785,9 +788,8 @@ function confirmAutoRestock(){
         },
         complete: function() {
             if (btn) {
-                btn.classList.remove('loading');
                 btn.disabled = false;
-                if (btnText) btnText.textContent = originalText;
+                btn.innerHTML = originalHtml;
             }
         }
     });
@@ -887,4 +889,18 @@ window.scrollToTop = function(event){
    ========================================================= */
 document.addEventListener('DOMContentLoaded', () => {
     applyFilters();
+
+    // Initialize Select2 dropdowns if present
+    if ($.fn.select2) {
+        $('#ar-outlet').select2({
+            placeholder: '-- Pilih Outlet --',
+            allowClear: true,
+            dropdownParent: $('#autoRestockModal')
+        });
+        $('#ar-category').select2({
+            placeholder: 'Semua Kategori',
+            allowClear: true,
+            dropdownParent: $('#autoRestockModal')
+        });
+    }
 });
