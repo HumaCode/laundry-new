@@ -192,7 +192,23 @@
                     <div class="form-field"><label>Kode Barang</label><div class="input-wrap"><input class="form-control" id="f-code" type="text" placeholder="cth. DTJ-001"><i class="fas fa-barcode ic"></i></div></div>
                     <div class="form-field"><label>Kategori <span class="req">*</span></label><select class="form-control" id="f-category"><option>Deterjen & Kimia</option><option>Pewangi & Softener</option><option>Plastik & Kemasan</option><option>Peralatan Cuci</option><option>Peralatan Setrika</option><option>Kebersihan Outlet</option><option>ATK & Administrasi</option></select></div>
                     <div class="form-field"><label>Merek / Supplier</label><div class="input-wrap"><input class="form-control" id="f-brand" type="text" placeholder="cth. Attack / CV Maju Jaya"><i class="fas fa-building ic"></i></div></div>
-                    <div class="form-field"><label>Ikon (Emoji)</label><input class="form-control emoji-input" id="f-emoji" type="text" placeholder="📦" maxlength="2"></div>
+                    <div class="form-field"><label>Ikon (Emoji)</label>
+                        <select class="form-control" id="f-emoji">
+                            <option value="📦">📦 Box / Kemasan</option>
+                            <option value="🧴">🧴 Botol / Deterjen</option>
+                            <option value="🌸">🌸 Bunga / Pewangi</option>
+                            <option value="🪣">🪣 Ember / Peralatan Cuci</option>
+                            <option value="🔌">🔌 Colokan / Setrika</option>
+                            <option value="🧹">🧹 Sapu / Kebersihan</option>
+                            <option value="📋">📋 Papan Ujian / ATK</option>
+                            <option value="🫧">🫧 Gelembung Sabun</option>
+                            <option value="🧺">🧺 Keranjang Baju</option>
+                            <option value="💧">💧 Tetes Air</option>
+                            <option value="🧼">🧼 Sabun Batang</option>
+                            <option value="👕">👕 Kaos / Pakaian</option>
+                            <option value="🧤">🧤 Sarung Tangan</option>
+                        </select>
+                    </div>
                     <div class="form-field"><label>Warna Ikon</label><select class="form-control" id="f-color"><option value="#6366F1">Ungu (Deterjen)</option><option value="#10B981">Hijau (Kimia)</option><option value="#F59E0B">Kuning (Peralatan)</option><option value="#EC4899">Pink (Pewangi)</option><option value="#3B82F6">Biru (Kemasan)</option><option value="#F97316">Oranye (ATK)</option></select></div>
                     <div class="form-field full"><label>Deskripsi</label><textarea class="form-control" id="f-desc" placeholder="Deskripsi singkat atau spesifikasi barang..."></textarea></div>
                 </div>

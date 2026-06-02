@@ -663,7 +663,7 @@ function exportData(){ showToast('info','Export','Mengekspor data inventaris ke 
    TOAST
    ========================================================= */
 function showToast(type,title,msg){
-    if (typeof window.showToast === 'function') {
+    if (typeof window.showToast === 'function' && window.showToast !== showToast) {
         window.showToast(msg, type, title);
         return;
     }
@@ -711,7 +711,7 @@ window.openRestockAllModal = openRestockAllModal;
 window.closeModal = closeModal;
 window.closeModalOut = closeModalOut;
 window.exportData = exportData;
-window.showToast = showToast;
+
 
 /* =========================================================
    FLOAT BUTTON
