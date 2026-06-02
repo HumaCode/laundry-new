@@ -647,3 +647,69 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* Premium Payment Methods Radio Cards */
+.payment-methods-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+}
+.payment-method-card {
+    position: relative;
+    cursor: pointer;
+    display: block;
+}
+.payment-method-card input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+.method-card-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 0.5rem;
+    border: 2px solid var(--border);
+    border-radius: 16px;
+    background: white;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-align: center;
+    gap: 0.5rem;
+}
+.method-card-content .method-icon {
+    font-size: 1.5rem;
+    color: var(--gray-light);
+    transition: all 0.3s ease;
+}
+.method-card-content .method-name {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--gray);
+    transition: all 0.3s ease;
+}
+/* Hover State */
+.payment-method-card:hover .method-card-content {
+    border-color: var(--primary);
+    background: rgba(99, 102, 241, 0.02);
+    transform: translateY(-2px);
+}
+.payment-method-card:hover .method-icon {
+    color: var(--primary);
+}
+/* Active/Checked State */
+.payment-method-card input[type="radio"]:checked + .method-card-content {
+    border-color: transparent;
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.08));
+    box-shadow: 0 0 0 2px var(--primary);
+}
+.payment-method-card input[type="radio"]:checked + .method-card-content .method-icon {
+    color: var(--primary);
+    transform: scale(1.1);
+}
+.payment-method-card input[type="radio"]:checked + .method-card-content .method-name {
+    color: var(--primary);
+}
+
+

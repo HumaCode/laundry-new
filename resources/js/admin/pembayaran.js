@@ -349,8 +349,8 @@ function openPaymentModal(id) {
                 const statusSelect = document.getElementById('payStatus');
                 statusSelect.value = order.payment_status;
                 
-                const methodSelect = document.getElementById('payMethod');
-                methodSelect.value = order.payment_method || 'Tunai';
+                const targetMethod = order.payment_method || 'Tunai';
+                $(`input[name="pay_method_option"][value="${targetMethod}"]`).prop('checked', true);
 
                 toggleMethodSelect(order.payment_status);
 
@@ -371,7 +371,7 @@ function toggleMethodSelect(status) {
 
 function savePayment() {
     const status = document.getElementById('payStatus').value;
-    const method = document.getElementById('payMethod').value;
+    const method = $('input[name="pay_method_option"]:checked').val() || 'Tunai';
 
     const btn = document.getElementById('btnSavePayment');
     const originalHtml = btn.innerHTML;

@@ -245,12 +245,30 @@
                     </select>
                 </div>
                 <div class="form-field mb-3" id="methodSelectContainer" style="display:none">
-                    <label>Metode Pembayaran</label>
-                    <select class="form-control" id="payMethod">
-                        <option value="Tunai">Tunai / Cash</option>
-                        <option value="QRIS">QRIS</option>
-                        <option value="Transfer">Bank Transfer</option>
-                    </select>
+                    <label class="mb-2">Metode Pembayaran</label>
+                    <div class="payment-methods-grid">
+                        <label class="payment-method-card">
+                            <input type="radio" name="pay_method_option" value="Tunai" checked>
+                            <div class="method-card-content">
+                                <i class="fas fa-money-bill-wave method-icon"></i>
+                                <span class="method-name">Tunai / Cash</span>
+                            </div>
+                        </label>
+                        <label class="payment-method-card">
+                            <input type="radio" name="pay_method_option" value="QRIS">
+                            <div class="method-card-content">
+                                <i class="fas fa-qrcode method-icon"></i>
+                                <span class="method-name">QRIS</span>
+                            </div>
+                        </label>
+                        <label class="payment-method-card">
+                            <input type="radio" name="pay_method_option" value="Transfer">
+                            <div class="method-card-content">
+                                <i class="fas fa-university method-icon"></i>
+                                <span class="method-name">Transfer</span>
+                            </div>
+                        </label>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
