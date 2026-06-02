@@ -244,3 +244,51 @@ test('inventory item can be deleted', function () {
         'id' => $item->id,
     ]);
 });
+
+test('inventories can be automatically restocked', function () {
+    // Create an item below min stock (needs restock)
+    $item1 = Inventory::create([
+        'name' => 'Deterjen Kritis',
+        'code' => 'DET-KRI-01',
+        'category' => 'Deterjen & Kimia',
+        'stock' => 2,
+        'min_stock' => 10,
+        'max_stock' => 100,
+        'price' => 30000,
+        'outlet_id' => $this->outlet->id,
+        'history' => []
+    ]);
+
+    // Create an item above min stock (does not need restock)
+    $item2 = Inventory::create([
+        'name' => 'Sabun Aman',
+        'code' => 'SBN-AMN-02',
+        'category' => 'Deterjen & Kimia',
+        'stock' => 40,
+        'min_stock' => 10,
+        'max_stock' => 100,
+        'price' => 5000,
+        'outlet_id' => $this->outlet->id,
+        'history' => []
+    ]);
+
+    $response = $this
+        ->actingAs($this->user)
+        ->postJson('/inventories/auto-restock');
+
+    $response->assertSuccessful();
+    $response->assertJsonPath('success', true);
+    $response->assertJsonPath('message', '1 barang berhasil di-restock otomatis');
+
+    // Assert item1 was restocked to max_stock (100)
+    $this->assertDatabaseHas('inventories', [
+        'id' => $item1->id,
+        'stock' => 100,
+    ]);
+
+    // Assert item2 stock remains unchanged (40)
+    $this->assertDatabaseHas('inventories', [
+        'id' => $item2->id,
+        'stock' => 40,
+    ]);
+});

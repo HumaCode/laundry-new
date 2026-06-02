@@ -125,6 +125,11 @@ class InventoryRepository implements InventoryRepositoryInterface
         return $item->delete();
     }
 
+    public function getBelowMinStock()
+    {
+        return Inventory::whereRaw('stock < min_stock')->get();
+    }
+
     private function applyStatusFilter($q, $status)
     {
         if ($status === 'habis') {

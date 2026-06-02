@@ -734,7 +734,38 @@ function confirmRestock(){
         }
     });
 }
-function openRestockAllModal(){ showToast('info','Restock Otomatis','Memproses restock otomatis untuk semua stok kritis...'); }
+function openRestockAllModal(){
+    const btn = document.querySelector('.btn-page-warning');
+    const originalHtml = btn ? btn.innerHTML : '';
+    
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sedang proses...';
+    }
+
+    $.ajax({
+        url: '/inventories/auto-restock',
+        type: 'POST',
+        dataType: 'json',
+        success: function(response) {
+            if (response.success) {
+                showToast('success', 'Restock Otomatis', response.message);
+                applyFilters();
+            } else {
+                showToast('error', 'Error', response.message);
+            }
+        },
+        error: function() {
+            showToast('error', 'Error', 'Gagal melakukan restock otomatis');
+        },
+        complete: function() {
+            if (btn) {
+                btn.disabled = false;
+                btn.innerHTML = originalHtml;
+            }
+        }
+    });
+}
 
 /* =========================================================
    MODAL UTILS

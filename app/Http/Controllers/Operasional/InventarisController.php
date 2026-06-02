@@ -100,4 +100,18 @@ class InventarisController extends Controller
 
         return ResponseHelper::jsonResponse(true, 'Restock barang berhasil dilakukan', new InventoryResource($item), 200);
     }
+
+    /**
+     * Automatically restock all items below minimum stock.
+     */
+    public function autoRestock(): JsonResponse
+    {
+        $count = $this->inventoryService->autoRestock();
+
+        if ($count > 0) {
+            return ResponseHelper::jsonResponse(true, $count . ' barang berhasil di-restock otomatis', null, 200);
+        }
+
+        return ResponseHelper::jsonResponse(true, 'Semua stok barang masih aman, tidak ada barang yang perlu di-restock', null, 200);
+    }
 }

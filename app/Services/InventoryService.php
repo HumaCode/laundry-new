@@ -77,4 +77,28 @@ class InventoryService
 
         return $this->inventoryRepository->update($id, $updateData);
     }
+
+    public function autoRestock()
+    {
+        $items = $this->inventoryRepository->getBelowMinStock();
+        $count = 0;
+
+        foreach ($items as $item) {
+            $qty = $item->max_stock - $item->stock;
+            if ($qty <= 0) {
+                $qty = $item->min_stock > 0 ? $item->min_stock * 2 : 10;
+            }
+
+            $this->restockInventory($item->id, [
+                'qty' => $qty,
+                'date' => date('Y-m-d'),
+                'supplier' => 'Sistem Otomatis',
+                'invoice' => 'AUTO-' . date('YmdHis') . '-' . mt_rand(10, 99),
+            ]);
+
+            $count++;
+        }
+
+        return $count;
+    }
 }

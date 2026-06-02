@@ -74,6 +74,7 @@ Route::middleware('auth')->group(function () {
     // Inventaris (Inventory)
     Route::get('/inventories', [\App\Http\Controllers\Operasional\InventarisController::class, 'index'])->name('inventories');
     Route::post('/inventories', [\App\Http\Controllers\Operasional\InventarisController::class, 'store'])->name('inventories.store');
+    Route::post('/inventories/auto-restock', [\App\Http\Controllers\Operasional\InventarisController::class, 'autoRestock'])->name('inventories.auto-restock');
     Route::get('/inventories/{id}', [\App\Http\Controllers\Operasional\InventarisController::class, 'show'])->name('inventories.show');
     Route::put('/inventories/{id}', [\App\Http\Controllers\Operasional\InventarisController::class, 'update'])->name('inventories.update');
     Route::delete('/inventories/{id}', [\App\Http\Controllers\Operasional\InventarisController::class, 'destroy'])->name('inventories.destroy');
