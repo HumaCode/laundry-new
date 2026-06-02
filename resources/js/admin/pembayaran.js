@@ -97,7 +97,12 @@ function showSkeletonTable() {
                 <td><div class="skeleton-bar" style="width: 70px"></div></td>
                 <td><div class="skeleton-bar" style="width: 60px"></div></td>
                 <td><div class="skeleton-bar" style="width: 100px"></div></td>
-                <td><div class="skeleton-bar" style="width: 70px"></div></td>
+                <td>
+                    <div class="action-cell">
+                        <div class="skeleton-bar" style="width: 32px; height: 32px; border-radius: 8px"></div>
+                        <div class="skeleton-bar" style="width: 32px; height: 32px; border-radius: 8px"></div>
+                    </div>
+                </td>
             </tr>
         `;
     }
@@ -184,9 +189,9 @@ function renderTable() {
                 <td><span class="badge bg-light text-dark font-weight-bold" style="padding:0.3rem 0.6rem; border-radius:6px; font-size:0.75rem">${order.payment_method}</span></td>
                 <td><div>${order.created_at_formatted}</div></td>
                 <td>
-                    <div style="display:flex; gap:0.5rem">
-                        <button class="btn btn-sm btn-outline-primary" onclick="openDetailModal('${order.id}')" title="Detail"><i class="fas fa-eye"></i></button>
-                        <button class="btn btn-sm btn-primary" onclick="openPaymentModal('${order.id}')" title="Bayar / Edit"><i class="fas fa-credit-card"></i></button>
+                    <div class="action-cell">
+                        <button class="act-btn act-btn-view" onclick="openDetailModal('${order.id}')" title="Detail"><i class="fas fa-eye"></i></button>
+                        <button class="act-btn act-btn-pay" onclick="openPaymentModal('${order.id}')" title="Bayar / Edit"><i class="fas fa-credit-card"></i></button>
                     </div>
                 </td>
             </tr>

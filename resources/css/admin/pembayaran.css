@@ -282,6 +282,42 @@
     background: rgba(99,102,241,.02);
 }
 
+/* Action Buttons */
+.action-cell {
+    display: flex;
+    gap: 0.5rem;
+}
+.act-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: .8rem;
+    transition: all .25s ease;
+}
+.act-btn-view {
+    background: rgba(59, 130, 246, .1);
+    color: var(--info);
+}
+.act-btn-view:hover {
+    background: var(--info);
+    color: white;
+    transform: scale(1.1);
+}
+.act-btn-pay {
+    background: rgba(99, 102, 241, .1);
+    color: var(--primary);
+}
+.act-btn-pay:hover {
+    background: var(--primary);
+    color: white;
+    transform: scale(1.1);
+}
+
 .order-code-text {
     font-weight: 700;
     color: var(--primary);
