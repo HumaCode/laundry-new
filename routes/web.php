@@ -7,6 +7,7 @@ use App\Http\Controllers\Master\OutletController;
 use App\Http\Controllers\Master\KaryawanController;
 use App\Http\Controllers\Master\BisnisController;
 use App\Http\Controllers\Master\OrderController;
+use App\Http\Controllers\Keuangan\LaporanController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -79,6 +80,9 @@ Route::middleware('auth')->group(function () {
     Route::put('/inventories/{id}', [\App\Http\Controllers\Operasional\InventarisController::class, 'update'])->name('inventories.update');
     Route::delete('/inventories/{id}', [\App\Http\Controllers\Operasional\InventarisController::class, 'destroy'])->name('inventories.destroy');
     Route::post('/inventories/{id}/restock', [\App\Http\Controllers\Operasional\InventarisController::class, 'restock'])->name('inventories.restock');
+
+    // Laporan (Reports)
+    Route::get('/reports', [LaporanController::class, 'index'])->name('reports');
 });
 
 require __DIR__.'/auth.php';

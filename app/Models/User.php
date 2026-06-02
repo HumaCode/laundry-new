@@ -29,6 +29,14 @@ class User extends Authenticatable
     }
 
     /**
+     * Get the orders for the customer.
+     */
+    public function orders(): \Illuminate\Database\Eloquent\Relations\HasMany
+    {
+        return $this->hasMany(Master\Order::class, 'customer_id');
+    }
+
+    /**
      * Get the attributes that should be cast.
      *
      * @return array<string, string>

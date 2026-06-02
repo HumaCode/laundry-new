@@ -43,6 +43,14 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Contracts\InventoryRepositoryInterface::class,
             \App\Repositories\Eloquent\InventoryRepository::class
         );
+        $this->app->bind(
+            \App\Repositories\Contracts\LaporanRepositoryInterface::class,
+            \App\Repositories\Eloquent\LaporanRepository::class
+        );
+        $this->app->bind(
+            \App\Services\Contracts\LaporanServiceInterface::class,
+            \App\Services\LaporanService::class
+        );
     }
 
     /**

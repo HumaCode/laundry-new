@@ -31,7 +31,9 @@ export default defineConfig({
                 'resources/css/admin/antarjemput.css',
                 'resources/js/admin/antarjemput.js',
                 'resources/css/admin/inventaris.css',
-                'resources/js/admin/inventaris.js'
+                'resources/js/admin/inventaris.js',
+                'resources/css/admin/laporan.css',
+                'resources/js/admin/laporan.js'
             ],
             refresh: true,
         }),

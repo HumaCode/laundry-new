@@ -23,6 +23,9 @@ class DatabaseSeeder extends Seeder
             BusinessSeeder::class,
             EmployeeSeeder::class,
             ServiceSeeder::class,
+            InventorySeeder::class,
+            OrderSeeder::class,
+            PickupSeeder::class,
         ]);
 
         // User::factory(10)->create();
