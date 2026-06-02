@@ -11,6 +11,7 @@
     'value' => null,
     'isPassword' => false,
     'formField' => false,
+    'formGroup' => false,
     'fullWidth' => false,
 ])
 
@@ -53,6 +54,25 @@
                 {{ $attributes }}
             >
         @endif
+    </div>
+@elseif($formGroup)
+    <div class="form-group">
+        @if($label)
+            <label for="{{ $id }}">{{ $label }} @if($required)<span class="text-danger">*</span>@endif</label>
+        @endif
+        <input 
+            type="{{ $type }}" 
+            class="form-control" 
+            id="{{ $id }}" 
+            name="{{ $name }}" 
+            value="{{ $value }}" 
+            placeholder="{{ $placeholder }}" 
+            @if($autocomplete) autocomplete="{{ $autocomplete }}" @endif
+            @if($required) required @endif
+            @if($autofocus) autofocus @endif
+            {{ $attributes }}
+        >
+        <div class="invalid-feedback"></div>
     </div>
 @else
     <div class="form-group">

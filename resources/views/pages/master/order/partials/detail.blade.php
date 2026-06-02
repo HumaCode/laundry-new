@@ -51,9 +51,9 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button class="modal-btn modal-btn-outline" onclick="closeModal('detailModal')"><i class="fas fa-times"></i> Tutup</button>
-            <button class="modal-btn modal-btn-success" onclick="openStatusModal()"><i class="fas fa-exchange-alt"></i> Update Status</button>
-            <button class="modal-btn modal-btn-primary" onclick="printOrder()"><i class="fas fa-print"></i> Cetak Nota</button>
+            <x-form.button variant="outline" onclick="closeModal('detailModal')" icon="fas fa-times"> Tutup</x-form.button>
+            <x-form.button variant="success" onclick="openStatusModal()" icon="fas fa-exchange-alt"> Update Status</x-form.button>
+            <x-form.button variant="primary" onclick="printOrder()" icon="fas fa-print"> Cetak Nota</x-form.button>
         </div>
     </div>
 </div>

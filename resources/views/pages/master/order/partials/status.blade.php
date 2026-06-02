@@ -31,8 +31,8 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button class="modal-btn modal-btn-outline" onclick="closeModal('statusModal')">Batal</button>
-            <button class="modal-btn modal-btn-success" onclick="saveNewStatus()"><i class="fas fa-check"></i> Konfirmasi</button>
+            <x-form.button variant="outline" onclick="closeModal('statusModal')">Batal</x-form.button>
+            <x-form.button variant="success" onclick="saveNewStatus()" icon="fas fa-check"> Konfirmasi</x-form.button>
         </div>
     </div>
 </div>
