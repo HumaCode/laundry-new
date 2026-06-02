@@ -8,46 +8,88 @@
         </div>
         <div class="modal-body">
             <div class="form-grid-2">
-                <div class="form-field">
-                    <label>Nama Outlet <span class="req">*</span></label>
-                    <div class="input-icon-wrap"><input class="form-control" id="f-name" type="text" placeholder="Masukkan nama outlet"><i class="fas fa-store icon"></i></div>
-                </div>
-                <div class="form-field">
-                    <label>No. Telepon <span class="req">*</span></label>
-                    <div class="input-icon-wrap"><input class="form-control" id="f-phone" type="tel" placeholder="08xxxxxxxxxx atau 021-xxxxxx"><i class="fas fa-phone icon"></i></div>
-                </div>
-                <div class="form-field">
-                    <label>Email</label>
-                    <div class="input-icon-wrap"><input class="form-control" id="f-email" type="email" placeholder="cabang@laundrypro.com"><i class="fas fa-envelope icon"></i></div>
-                </div>
-                <div class="form-field">
-                    <label>Kota Lokasi <span class="req">*</span></label>
-                    <div class="input-icon-wrap"><input class="form-control" id="f-city" type="text" placeholder="Contoh: Jakarta Selatan"><i class="fas fa-city icon"></i></div>
-                </div>
-                <div class="form-field">
-                    <label>Manager (PIC)</label>
-                    <div class="input-icon-wrap"><input class="form-control" id="f-manager" type="text" placeholder="Nama penanggung jawab"><i class="fas fa-user-tie icon"></i></div>
-                </div>
-                <div class="form-field">
-                    <label>Status</label>
-                    <select class="form-control" id="f-status">
-                        <option value="Aktif">Aktif</option>
-                        <option value="Tutup">Tutup</option>
-                    </select>
-                </div>
-                <div class="form-field full">
-                    <label>Alamat Lengkap</label>
-                    <div class="input-icon-wrap"><textarea class="form-control" id="f-address" rows="3" placeholder="Alamat lengkap cabang outlet" style="padding-left:2.75rem;resize:vertical"></textarea><i class="fas fa-map-marker-alt icon" style="top:1rem;transform:none"></i></div>
-                </div>
-                <div class="form-field full">
-                    <label>Catatan Operasional</label>
-                    <input class="form-control" id="f-notes" type="text" placeholder="Catatan operasional khusus (opsional)">
-                </div>
+                <x-form.input 
+                    formField 
+                    label="Nama Outlet" 
+                    id="f-name" 
+                    name="name" 
+                    placeholder="Masukkan nama outlet" 
+                    icon="fas fa-store" 
+                    required 
+                />
+
+                <x-form.input 
+                    formField 
+                    label="No. Telepon" 
+                    type="tel"
+                    id="f-phone" 
+                    name="phone" 
+                    placeholder="08xxxxxxxxxx atau 021-xxxxxx" 
+                    icon="fas fa-phone" 
+                    required 
+                />
+
+                <x-form.input 
+                    formField 
+                    label="Email" 
+                    type="email"
+                    id="f-email" 
+                    name="email" 
+                    placeholder="cabang@laundrypro.com" 
+                    icon="fas fa-envelope" 
+                />
+
+                <x-form.input 
+                    formField 
+                    label="Kota Lokasi" 
+                    id="f-city" 
+                    name="city" 
+                    placeholder="Contoh: Jakarta Selatan" 
+                    icon="fas fa-city" 
+                    required 
+                />
+
+                <x-form.input 
+                    formField 
+                    label="Manager (PIC)" 
+                    id="f-manager" 
+                    name="manager" 
+                    placeholder="Nama penanggung jawab" 
+                    icon="fas fa-user-tie" 
+                />
+
+                <x-form.select 
+                    label="Status" 
+                    id="f-status" 
+                    name="status"
+                >
+                    <option value="Aktif">Aktif</option>
+                    <option value="Tutup">Tutup</option>
+                </x-form.select>
+
+                <x-form.textarea 
+                    label="Alamat Lengkap" 
+                    id="f-address" 
+                    name="address" 
+                    rows="3" 
+                    placeholder="Alamat lengkap cabang outlet" 
+                    icon="fas fa-map-marker-alt" 
+                    fullWidth 
+                />
+
+                <x-form.input 
+                    formField 
+                    label="Catatan Operasional" 
+                    id="f-notes" 
+                    name="notes" 
+                    placeholder="Catatan operasional khusus (opsional)" 
+                    fullWidth 
+                />
             </div>
         </div>
         <div class="modal-footer">
-            <button class="modal-btn modal-btn-outline" onclick="closeModal('outletModal')"><i class="fas fa-times"></i> Batal</button>
-            <button class="modal-btn modal-btn-primary" id="saveOutletBtn" onclick="saveOutlet()"><i class="fas fa-save"></i> Simpan</button>
+            <x-form.button variant="outline" onclick="closeModal('outletModal')" icon="fas fa-times"> Batal</x-form.button>
+            <x-form.button variant="primary" id="saveOutletBtn" onclick="saveOutlet()" icon="fas fa-save"> Simpan</x-form.button>
         </div>
     </div>
 </div>
