@@ -48,6 +48,7 @@
         </div>
         <div class="modal-footer">
             <x-form.button variant="danger" onclick="cancelTrip()" icon="fas fa-times-circle"> Batalkan</x-form.button>
+            <div class="me-auto d-none d-sm-block"></div>
             <x-form.button variant="outline" onclick="closeModal('detailModal')" icon="fas fa-times"> Tutup</x-form.button>
             <x-form.button variant="primary" onclick="openAssignModal()" icon="fas fa-user-plus"> Tugaskan Kurir</x-form.button>
             <x-form.button variant="success" onclick="openStatusModal()" icon="fas fa-exchange-alt"> Update Status</x-form.button>
