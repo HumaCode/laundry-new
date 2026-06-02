@@ -400,13 +400,13 @@ body {
 /* ============================================================
    FLOAT BUTTON (SCROLL TO TOP)
 ============================================================ */
-.float-btn-container { position: fixed; bottom: 2rem; right: 2rem; z-index: 1000; }
+.float-btn-container { position: fixed; bottom: 6.5rem; right: 0.5rem; z-index: 9999; }
 
 .float-btn {
-    width: 52px; height: 52px; border-radius: 50%;
+    width: 44px; height: 44px; border-radius: 50%;
     border: none; cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    font-size: 1.1rem; color: white;
+    font-size: 0.95rem; color: white;
     background: linear-gradient(135deg, var(--primary), var(--purple));
     box-shadow: 0 4px 20px rgba(99,102,241,0.4);
     transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
@@ -505,10 +505,9 @@ body {
     .topbar-search { display: none; }
     .float-btn-tooltip { display: none; }
     .topbar-user { padding: 0.35rem 0.5rem; gap: 0.25rem; }
-}
-
-@media (max-width: 576px) {
-    .float-btn-container { bottom: 1.25rem; right: 1.25rem; }
+    
+    .float-btn-container { bottom: 7.5rem !important; right: 0.5rem !important; }
+    .float-btn { width: 44px !important; height: 44px !important; font-size: 0.95rem !important; }
 }
 
 /* ============================================================
@@ -852,4 +851,145 @@ body {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
 }
+
+/* ============================================================
+   GLOBAL PAGINATION & RESPONSIVE CENTERING
+============================================================ */
+.page-ellipsis {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray-light);
+    font-size: 0.85rem;
+    font-weight: 600;
+    user-select: none;
+}
+
+@media (max-width: 576px) {
+    .pagination-bar {
+        flex-direction: column !important;
+        justify-content: center !important;
+        align-items: center !important;
+        text-align: center !important;
+        gap: 0.75rem !important;
+    }
+}
+
+/* ============================================================
+   GLOBAL STAT CARD COMPONENTS
+============================================================ */
+.stat-card {
+    background: white;
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+    transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+    position: relative;
+    overflow: hidden;
+}
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.stat-card:hover::before,
+.stat-card.active-filter::before {
+    opacity: 1;
+}
+.stat-card:hover,
+.stat-card.active-filter {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.stat-card.c1::before, .stat-card.blue::before { background: linear-gradient(90deg, var(--info), var(--primary)); }
+.stat-card.c2::before, .stat-card.green::before { background: linear-gradient(90deg, var(--secondary), var(--cyan)); }
+.stat-card.c3::before, .stat-card.purple::before { background: linear-gradient(90deg, var(--purple), var(--pink)); }
+.stat-card.c4::before, .stat-card.orange::before { background: linear-gradient(90deg, var(--orange), var(--warning)); }
+.stat-card.c5::before, .stat-card.pink::before { background: linear-gradient(90deg, var(--pink), var(--purple)); }
+
+.stat-card::after {
+    content: '';
+    position: absolute;
+    top: -20px; right: -20px;
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    opacity: 0.05;
+    transition: all 0.4s ease;
+}
+.stat-card.c1::after, .stat-card.blue::after { background: var(--info); }
+.stat-card.c2::after, .stat-card.green::after { background: var(--secondary); }
+.stat-card.c3::after, .stat-card.purple::after { background: var(--purple); }
+.stat-card.c4::after, .stat-card.orange::after { background: var(--orange); }
+.stat-card.c5::after, .stat-card.pink::after { background: var(--pink); }
+.stat-card:hover::after,
+.stat-card.active-filter::after {
+    transform: scale(3);
+    opacity: 0.08;
+}
+
+.stat-header, .stat-hdr {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+.stat-icon {
+    width: 48px; height: 48px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.25rem;
+}
+.stat-icon.c1, .stat-icon.blue { background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(99,102,241,0.12)); color: var(--info); }
+.stat-icon.c2, .stat-icon.green { background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(6,182,212,0.12)); color: var(--secondary); }
+.stat-icon.c3, .stat-icon.purple { background: linear-gradient(135deg, rgba(139,92,246,0.12), rgba(236,72,153,0.12)); color: var(--purple); }
+.stat-icon.c4, .stat-icon.orange { background: linear-gradient(135deg, rgba(249,115,22,0.12), rgba(245,158,11,0.12)); color: var(--orange); }
+.stat-icon.c5, .stat-icon.pink { background: linear-gradient(135deg, rgba(236,72,153,0.12), rgba(139,92,246,0.12)); color: var(--pink); }
+
+.stat-trend {
+    display: inline-flex; align-items: center; gap: 0.25rem;
+    font-size: 0.75rem; font-weight: 700;
+    padding: 0.25rem 0.5rem; border-radius: 6px;
+}
+.stat-trend.up { color: var(--secondary); background: rgba(16,185,129,0.1); }
+.stat-trend.down { color: var(--danger); background: rgba(239,68,68,0.1); }
+
+.stat-value {
+    font-size: 2rem; font-weight: 800;
+    color: var(--dark); margin-bottom: 0.25rem;
+    letter-spacing: -0.5px;
+}
+.stat-label { font-size: 0.875rem; color: var(--gray); font-weight: 500; }
+
+.stat-footer {
+    margin-top: 1rem; padding-top: 1rem;
+    border-top: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 0.8rem; color: var(--gray);
+}
+.stat-sub {
+    font-size: 0.72rem;
+    margin-top: 0.35rem;
+}
+.stat-sub.warn { color: var(--danger); font-weight: 600; }
+.stat-sub.ok { color: var(--secondary); font-weight: 600; }
+
+.stat-mini-bar {
+    width: 60px; height: 4px; background: var(--border); border-radius: 2px;
+    overflow: hidden;
+}
+.stat-mini-fill {
+    height: 100%; border-radius: 2px;
+}
+
+.stat-value.text-long {
+    font-size: 1.25rem !important;
+}
+
+
 

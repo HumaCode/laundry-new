@@ -24,36 +24,62 @@
 
     <!-- Stat Cards -->
     <div class="stats-grid">
-        <div class="stat-card c1 active-filter fade-in d1" onclick="filterByStat('all',this)">
-            <div class="stat-hdr"><div class="stat-icon c1"><i class="fas fa-boxes"></i></div></div>
-            <div class="stat-value" id="sc-all">0</div>
-            <div class="stat-label">Total Jenis Barang</div>
-            <div class="stat-sub ok" id="sc-all-sub">—</div>
-        </div>
-        <div class="stat-card c2 fade-in d2" onclick="filterByStat('cukup',this)">
-            <div class="stat-hdr"><div class="stat-icon c2"><i class="fas fa-check-circle"></i></div></div>
-            <div class="stat-value" id="sc-cukup">0</div>
-            <div class="stat-label">Stok Aman</div>
-            <div class="stat-sub ok">Di atas batas minimum</div>
-        </div>
-        <div class="stat-card c3 fade-in d3" onclick="filterByStat('rendah',this)">
-            <div class="stat-hdr"><div class="stat-icon c3"><i class="fas fa-exclamation-triangle"></i></div></div>
-            <div class="stat-value" id="sc-rendah">0</div>
-            <div class="stat-label">Stok Rendah</div>
-            <div class="stat-sub warn">Segera restock</div>
-        </div>
-        <div class="stat-card c4 fade-in d4" onclick="filterByStat('kritis',this)">
-            <div class="stat-hdr"><div class="stat-icon c4"><i class="fas fa-fire"></i></div></div>
-            <div class="stat-value" id="sc-kritis">0</div>
-            <div class="stat-label">Stok Kritis / Habis</div>
-            <div class="stat-sub warn">Butuh restock segera!</div>
-        </div>
-        <div class="stat-card c5 fade-in d5">
-            <div class="stat-hdr"><div class="stat-icon c5"><i class="fas fa-dollar-sign"></i></div></div>
-            <div class="stat-value" id="sc-nilai">0</div>
-            <div class="stat-label">Nilai Inventaris</div>
-            <div class="stat-sub ok">Total keseluruhan outlet</div>
-        </div>
+        <x-stat-card 
+            class="active-filter"
+            theme="c1"
+            icon="boxes"
+            value="0"
+            valueId="sc-all"
+            title="Total Jenis Barang"
+            subClass="ok"
+            subId="sc-all-sub"
+            footerText="—"
+            delayClass="d1"
+            onclick="filterByStat('all',this)"
+        />
+        <x-stat-card 
+            theme="c2"
+            icon="check-circle"
+            value="0"
+            valueId="sc-cukup"
+            title="Stok Aman"
+            subClass="ok"
+            footerText="Di atas batas minimum"
+            delayClass="d2"
+            onclick="filterByStat('cukup',this)"
+        />
+        <x-stat-card 
+            theme="c3"
+            icon="exclamation-triangle"
+            value="0"
+            valueId="sc-rendah"
+            title="Stok Rendah"
+            subClass="warn"
+            footerText="Segera restock"
+            delayClass="d3"
+            onclick="filterByStat('rendah',this)"
+        />
+        <x-stat-card 
+            theme="c4"
+            icon="fire"
+            value="0"
+            valueId="sc-kritis"
+            title="Stok Kritis / Habis"
+            subClass="warn"
+            footerText="Butuh restock segera!"
+            delayClass="d4"
+            onclick="filterByStat('kritis',this)"
+        />
+        <x-stat-card 
+            theme="c5"
+            icon="dollar-sign"
+            value="0"
+            valueId="sc-nilai"
+            title="Nilai Inventaris"
+            subClass="ok"
+            footerText="Total keseluruhan outlet"
+            delayClass="d5"
+        />
     </div>
 
     <!-- Dashboard Grid: Chart + Low Stock -->

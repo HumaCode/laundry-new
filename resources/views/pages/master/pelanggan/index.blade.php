@@ -25,42 +25,46 @@
 
     <!-- Summary Cards -->
     <div class="summary-grid fade-in">
-        <div class="stat-card c1">
-            <div class="stat-header">
-                <div class="stat-icon c1"><i class="fas fa-users"></i></div>
-                <div class="stat-trend up"><i class="fas fa-arrow-up"></i> 5.7%</div>
-            </div>
-            <div class="stat-value" id="statTotalCustomers">3,891</div>
-            <div class="stat-label">Total Pelanggan</div>
-            <div class="stat-footer">284 pelanggan baru bulan ini</div>
-        </div>
-        <div class="stat-card c2">
-            <div class="stat-header">
-                <div class="stat-icon c2"><i class="fas fa-user-check"></i></div>
-                <div class="stat-trend up"><i class="fas fa-arrow-up"></i> 3.2%</div>
-            </div>
-            <div class="stat-value" id="statActiveCustomers">2,140</div>
-            <div class="stat-label">Pelanggan Aktif</div>
-            <div class="stat-footer">Order dalam 30 hari terakhir</div>
-        </div>
-        <div class="stat-card c3">
-            <div class="stat-header">
-                <div class="stat-icon c3"><i class="fas fa-crown"></i></div>
-                <div class="stat-trend up"><i class="fas fa-arrow-up"></i> 12%</div>
-            </div>
-            <div class="stat-value" id="statVipCustomers">428</div>
-            <div class="stat-label">Pelanggan VIP</div>
-            <div class="stat-footer">Kontribusi 45% pendapatan</div>
-        </div>
-        <div class="stat-card c4">
-            <div class="stat-header">
-                <div class="stat-icon c4"><i class="fas fa-user-plus"></i></div>
-                <div class="stat-trend up"><i class="fas fa-arrow-up"></i> 8.4%</div>
-            </div>
-            <div class="stat-value" id="statNewCustomers">284</div>
-            <div class="stat-label">Pelanggan Baru</div>
-            <div class="stat-footer">Bulan Desember 2024</div>
-        </div>
+        <x-stat-card 
+            theme="c1"
+            icon="users"
+            trend="5.7%"
+            trendType="up"
+            value="3,891"
+            valueId="statTotalCustomers"
+            title="Total Pelanggan"
+            footerText="284 pelanggan baru bulan ini"
+        />
+        <x-stat-card 
+            theme="c2"
+            icon="user-check"
+            trend="3.2%"
+            trendType="up"
+            value="2,140"
+            valueId="statActiveCustomers"
+            title="Pelanggan Aktif"
+            footerText="Order dalam 30 hari terakhir"
+        />
+        <x-stat-card 
+            theme="c3"
+            icon="crown"
+            trend="12%"
+            trendType="up"
+            value="428"
+            valueId="statVipCustomers"
+            title="Pelanggan VIP"
+            footerText="Kontribusi 45% pendapatan"
+        />
+        <x-stat-card 
+            theme="c4"
+            icon="user-plus"
+            trend="8.4%"
+            trendType="up"
+            value="284"
+            valueId="statNewCustomers"
+            title="Pelanggan Baru"
+            footerText="Bulan Desember 2024"
+        />
     </div>
 
     <!-- Filter Bar -->

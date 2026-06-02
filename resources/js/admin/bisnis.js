@@ -268,7 +268,7 @@ function buildPageControls(containerId, total, fnName) {
     html += `<button class="page-btn" onclick="${fnName}(${currentPage+1})" ${currentPage>=total?'disabled':''}><i class="fas fa-chevron-right"></i></button>`;
     el.innerHTML = html;
 }
-function goPage(p) { currentPage = p; applyFilters(); window.scrollTo({top:0,behavior:'smooth'}); }
+function goPage(p) { currentPage = p; applyFilters(); }
 function changePerPage(val) { perPage = parseInt(val); currentPage = 1; applyFilters(); }
 
 function toggleAllCheck() {

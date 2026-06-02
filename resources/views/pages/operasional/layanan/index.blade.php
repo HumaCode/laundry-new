@@ -22,38 +22,44 @@
 
     <!-- Stats -->
     <div class="stats-grid">
-        <div class="stat-card c1 fade-in d1">
-            <div class="stat-hdr">
-                <div class="stat-icon c1"><i class="fas fa-list-alt"></i></div>
-            </div>
-            <div class="stat-value" id="statTotal">{{ $stats['total'] }}</div>
-            <div class="stat-label">Total Layanan</div>
-            <div class="stat-footer">Semua kategori layanan</div>
-        </div>
-        <div class="stat-card c2 fade-in d2">
-            <div class="stat-hdr">
-                <div class="stat-icon c2"><i class="fas fa-check-circle"></i></div>
-            </div>
-            <div class="stat-value" id="statAktif">{{ $stats['active'] }}</div>
-            <div class="stat-label">Layanan Aktif</div>
-            <div class="stat-footer">Tersedia untuk pelanggan</div>
-        </div>
-        <div class="stat-card c3 fade-in d3">
-            <div class="stat-hdr">
-                <div class="stat-icon c3"><i class="fas fa-fire-alt"></i></div>
-            </div>
-            <div class="stat-value" id="statTerlaris" style="font-size: 1.25rem;">{{ $stats['terlaris'] }}</div>
-            <div class="stat-label">Layanan Terlaris</div>
-            <div class="stat-footer">Order terbanyak</div>
-        </div>
-        <div class="stat-card c4 fade-in d4">
-            <div class="stat-hdr">
-                <div class="stat-icon c4"><i class="fas fa-wallet"></i></div>
-            </div>
-            <div class="stat-value" id="statRevenue" style="font-size: 1.25rem;">{{ $stats['revenue_max'] }}</div>
-            <div class="stat-label">Kontribusi Tertinggi</div>
-            <div class="stat-footer">Layanan penghasil terbesar</div>
-        </div>
+        <x-stat-card 
+            theme="c1"
+            icon="list-alt"
+            value="{{ $stats['total'] }}"
+            valueId="statTotal"
+            title="Total Layanan"
+            footerText="Semua kategori layanan"
+            delayClass="d1"
+        />
+        <x-stat-card 
+            theme="c2"
+            icon="check-circle"
+            value="{{ $stats['active'] }}"
+            valueId="statAktif"
+            title="Layanan Aktif"
+            footerText="Tersedia untuk pelanggan"
+            delayClass="d2"
+        />
+        <x-stat-card 
+            theme="c3"
+            icon="fire-alt"
+            value="{{ $stats['terlaris'] }}"
+            valueId="statTerlaris"
+            title="Layanan Terlaris"
+            footerText="Order terbanyak"
+            delayClass="d3"
+            valueClass="text-long"
+        />
+        <x-stat-card 
+            theme="c4"
+            icon="wallet"
+            value="{{ $stats['revenue_max'] }}"
+            valueId="statRevenue"
+            title="Kontribusi Tertinggi"
+            footerText="Layanan penghasil terbesar"
+            delayClass="d4"
+            valueClass="text-long"
+        />
     </div>
 
     <!-- Category Tabs -->

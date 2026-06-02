@@ -23,31 +23,31 @@
     <div class="summary-grid fade-in">
         <div class="summary-card all active-filter" onclick="filterByStatus('all', this)">
             <div class="summary-icon all"><i class="fas fa-layer-group"></i></div>
-            <div class="summary-count" id="count-all">0</div>
+            <div class="summary-count" id="count-all">{{ number_format($stats['total_orders'] ?? 0) }}</div>
             <div class="summary-label">Semua Order</div>
             <div class="summary-sub">Keseluruhan order</div>
         </div>
         <div class="summary-card diterima" onclick="filterByStatus('diterima', this)">
             <div class="summary-icon diterima"><i class="fas fa-inbox"></i></div>
-            <div class="summary-count" id="count-diterima">0</div>
+            <div class="summary-count" id="count-diterima">{{ number_format($stats['baru_orders'] ?? 0) }}</div>
             <div class="summary-label">Diterima</div>
             <div class="summary-sub">Menunggu dikerjakan</div>
         </div>
         <div class="summary-card proses" onclick="filterByStatus('proses', this)">
             <div class="summary-icon proses"><i class="fas fa-spinner"></i></div>
-            <div class="summary-count" id="count-proses">0</div>
+            <div class="summary-count" id="count-proses">{{ number_format($stats['proses_orders'] ?? 0) }}</div>
             <div class="summary-label">Diproses</div>
             <div class="summary-sub">Sedang dikerjakan</div>
         </div>
         <div class="summary-card siap" onclick="filterByStatus('siap', this)">
             <div class="summary-icon siap"><i class="fas fa-check-circle"></i></div>
-            <div class="summary-count" id="count-siap">0</div>
+            <div class="summary-count" id="count-siap">{{ number_format($stats['selesai_orders'] ?? 0) }}</div>
             <div class="summary-label">Siap Diambil</div>
             <div class="summary-sub">Selesai dikerjakan</div>
         </div>
         <div class="summary-card selesai" onclick="filterByStatus('selesai', this)">
             <div class="summary-icon selesai"><i class="fas fa-flag-checkered"></i></div>
-            <div class="summary-count" id="count-selesai">0</div>
+            <div class="summary-count" id="count-selesai">{{ number_format($stats['diambil_orders'] ?? 0) }}</div>
             <div class="summary-label">Selesai</div>
             <div class="summary-sub">Sudah diambil pelanggan</div>
         </div>

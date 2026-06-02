@@ -131,17 +131,16 @@ class OrderRepository implements OrderRepositoryInterface
         return $order->delete();
     }
 
-    /**
-     * Get summary statistics of orders.
-     */
     public function getSummaryStats()
     {
         $startOfMonth = Carbon::now()->startOfMonth();
         $endOfMonth = Carbon::now()->endOfMonth();
 
         $totalOrders = Order::count();
-        $processingOrders = Order::whereIn('order_status', ['Baru', 'Proses', 'Selesai'])->count();
-        $completedOrders = Order::where('order_status', 'Diambil')->count();
+        $baruOrders = Order::where('order_status', 'Baru')->count();
+        $prosesOrders = Order::where('order_status', 'Proses')->count();
+        $selesaiOrders = Order::where('order_status', 'Selesai')->count();
+        $diambilOrders = Order::where('order_status', 'Diambil')->count();
         
         $monthlyRevenue = Order::where('payment_status', 'Lunas')
             ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
@@ -149,8 +148,12 @@ class OrderRepository implements OrderRepositoryInterface
 
         return [
             'total_orders' => $totalOrders,
-            'processing_orders' => $processingOrders,
-            'completed_orders' => $completedOrders,
+            'baru_orders' => $baruOrders,
+            'proses_orders' => $prosesOrders,
+            'selesai_orders' => $selesaiOrders,
+            'diambil_orders' => $diambilOrders,
+            'processing_orders' => $baruOrders + $prosesOrders + $selesaiOrders,
+            'completed_orders' => $diambilOrders,
             'monthly_revenue' => (int) $monthlyRevenue,
         ];
     }

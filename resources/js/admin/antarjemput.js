@@ -334,12 +334,6 @@ function goPage(p) {
     if (p < 1 || p > totalPages) return;
     currentPage = p;
     loadPickups();
-
-    // Scroll smoothly to top of cards grid
-    const target = document.getElementById('tripCardsGrid');
-    if (target) {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
 }
 
 /* ============================================================

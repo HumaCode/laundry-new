@@ -158,7 +158,7 @@ function scrollToTop(event) {
     // Ripple effect
     const ripple = document.createElement('span');
     ripple.classList.add('ripple');
-    ripple.style.width = ripple.style.height = '56px';
+    ripple.style.width = ripple.style.height = '44px';
     ripple.style.left = ripple.style.top = '0px';
     scrollTopBtn.appendChild(ripple);
     setTimeout(() => ripple.remove(), 600);

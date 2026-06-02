@@ -354,7 +354,6 @@ function buildPageControls(containerId, total, fnName) {
 function goPage(p) {
     currentPage = p;
     applyFilters();
-    window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
 function changePerPage(val) { perPage = parseInt(val); currentPage = 1; applyFilters(); }

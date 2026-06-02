@@ -25,42 +25,55 @@
 
     <!-- Summary Cards -->
     <div class="summary-grid fade-in">
-        <div class="stat-card c1">
-            <div class="stat-header">
-                <div class="stat-icon c1"><i class="fas fa-store"></i></div>
+        <x-stat-card 
+            theme="c1"
+            icon="store"
+            value="{{ $stats['total_outlets'] }}"
+            valueId="statTotalOutlets"
+            title="Total Outlet"
+            footerText="Tersebar di {{ $stats['cities_count'] }} kota besar"
+            subId="statFooterCities"
+        >
+            <x-slot:trendSlot>
                 <div class="stat-trend up" id="statTrendCities"><i class="fas fa-city"></i> {{ $stats['cities_count'] }} Kota</div>
-            </div>
-            <div class="stat-value" id="statTotalOutlets">{{ $stats['total_outlets'] }}</div>
-            <div class="stat-label">Total Outlet</div>
-            <div class="stat-footer" id="statFooterCities">Tersebar di {{ $stats['cities_count'] }} kota besar</div>
-        </div>
-        <div class="stat-card c2">
-            <div class="stat-header">
-                <div class="stat-icon c2"><i class="fas fa-check-circle"></i></div>
+            </x-slot:trendSlot>
+        </x-stat-card>
+        <x-stat-card 
+            theme="c2"
+            icon="check-circle"
+            value="{{ $stats['active_outlets'] }}"
+            valueId="statActiveOutlets"
+            title="Outlet Aktif"
+            footerText="Beroperasi normal melayani pelanggan"
+        >
+            <x-slot:trendSlot>
                 <div class="stat-trend up" id="statTrendActive"><i class="fas fa-arrow-up"></i> {{ $stats['active_percentage'] }}%</div>
-            </div>
-            <div class="stat-value" id="statActiveOutlets">{{ $stats['active_outlets'] }}</div>
-            <div class="stat-label">Outlet Aktif</div>
-            <div class="stat-footer">Beroperasi normal melayani pelanggan</div>
-        </div>
-        <div class="stat-card c3">
-            <div class="stat-header">
-                <div class="stat-icon c3"><i class="fas fa-tools"></i></div>
+            </x-slot:trendSlot>
+        </x-stat-card>
+        <x-stat-card 
+            theme="c3"
+            icon="tools"
+            value="{{ $stats['maintenance_outlets'] }}"
+            valueId="statMaintenanceOutlets"
+            title="Dalam Perawatan"
+            footerText="Mesin cuci & fasilitas sedang diservis"
+        >
+            <x-slot:trendSlot>
                 <div class="stat-trend down" id="statTrendMaintenance"><i class="fas fa-exclamation-triangle"></i> {{ $stats['maintenance_outlets'] }} Unit</div>
-            </div>
-            <div class="stat-value" id="statMaintenanceOutlets">{{ $stats['maintenance_outlets'] }}</div>
-            <div class="stat-label">Dalam Perawatan</div>
-            <div class="stat-footer">Mesin cuci & fasilitas sedang diservis</div>
-        </div>
-        <div class="stat-card c4">
-            <div class="stat-header">
-                <div class="stat-icon c4"><i class="fas fa-users-cog"></i></div>
+            </x-slot:trendSlot>
+        </x-stat-card>
+        <x-stat-card 
+            theme="c4"
+            icon="users-cog"
+            value="{{ $stats['total_employees'] }}"
+            valueId="statTotalEmployees"
+            title="Total Karyawan"
+            footerText="Dari seluruh outlet & kurir"
+        >
+            <x-slot:trendSlot>
                 <div class="stat-trend up" id="statTrendEmployees"><i class="fas fa-users"></i> {{ $stats['total_outlets'] > 0 ? 'Aktif' : '0%' }}</div>
-            </div>
-            <div class="stat-value" id="statTotalEmployees">{{ $stats['total_employees'] }}</div>
-            <div class="stat-label">Total Karyawan</div>
-            <div class="stat-footer">Dari seluruh outlet & kurir</div>
-        </div>
+            </x-slot:trendSlot>
+        </x-stat-card>
     </div>
 
     <!-- Filter Bar -->

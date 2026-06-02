@@ -349,7 +349,7 @@ function renderPagination(){
 }
 function goPage(p){
     const total=Math.ceil(filtered.length/perPage)||1;
-    if(p<1||p>total)return; currentPage=p; renderTable(); window.scrollTo({top:0,behavior:'smooth'});
+    if(p<1||p>total)return; currentPage=p; renderTable();
 }
 
 /* =========================================================
@@ -868,7 +868,7 @@ window.addEventListener('scroll',()=>{
 window.scrollToTop = function(event){
     const btn=document.getElementById('scrollTopBtn');
     const r=document.createElement('span');
-    r.style.cssText='position:absolute;border-radius:50%;background:rgba(255,255,255,.4);width:52px;height:52px;left:0;top:0;transform:scale(0);animation:pulseBig .6s ease-out';
+    r.style.cssText='position:absolute;border-radius:50%;background:rgba(255,255,255,.4);width:44px;height:44px;left:0;top:0;transform:scale(0);animation:pulseBig .6s ease-out';
     btn.appendChild(r); setTimeout(()=>r.remove(),600);
     const start=window.scrollY,t0=performance.now();
     function bounce(t){

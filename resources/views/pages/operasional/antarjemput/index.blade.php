@@ -29,44 +29,69 @@
     <!-- Stats Filter Cards -->
     <div class="row row-cols-2 row-cols-sm-3 row-cols-lg-5 g-3 mb-4">
         <div class="col">
-            <div class="stat-card c1 fade-in d1 active-stat h-100" onclick="filterByStatus('all', this)">
-                <div class="stat-hdr"><div class="stat-icon c1"><i class="fas fa-layer-group"></i></div></div>
-                <div class="stat-value" id="sc-all">0</div>
-                <div class="stat-label">Semua Trip</div>
-                <div class="stat-sub">Hari ini</div>
-            </div>
+            <x-stat-card 
+                class="active-stat h-100"
+                theme="c1"
+                icon="layer-group"
+                value="0"
+                valueId="sc-all"
+                title="Semua Trip"
+                footerText="Hari ini"
+                delayClass="d1"
+                onclick="filterByStatus('all', this)"
+            />
         </div>
         <div class="col">
-            <div class="stat-card c2 fade-in d2 h-100" onclick="filterByStatus('menunggu', this)">
-                <div class="stat-hdr"><div class="stat-icon c2"><i class="fas fa-clock"></i></div></div>
-                <div class="stat-value" id="sc-menunggu">0</div>
-                <div class="stat-label">Menunggu</div>
-                <div class="stat-sub">Belum dijadwalkan</div>
-            </div>
+            <x-stat-card 
+                class="h-100"
+                theme="c2"
+                icon="clock"
+                value="0"
+                valueId="sc-menunggu"
+                title="Menunggu"
+                footerText="Belum dijadwalkan"
+                delayClass="d2"
+                onclick="filterByStatus('menunggu', this)"
+            />
         </div>
         <div class="col">
-            <div class="stat-card c3 fade-in d3 h-100" onclick="filterByStatus('jemput', this)">
-                <div class="stat-hdr"><div class="stat-icon c3"><i class="fas fa-motorcycle"></i></div></div>
-                <div class="stat-value" id="sc-jemput">0</div>
-                <div class="stat-label">Sedang Jemput</div>
-                <div class="stat-sub">Dalam perjalanan</div>
-            </div>
+            <x-stat-card 
+                class="h-100"
+                theme="c3"
+                icon="motorcycle"
+                value="0"
+                valueId="sc-jemput"
+                title="Sedang Jemput"
+                footerText="Dalam perjalanan"
+                delayClass="d3"
+                onclick="filterByStatus('jemput', this)"
+            />
         </div>
         <div class="col">
-            <div class="stat-card c4 fade-in d4 h-100" onclick="filterByStatus('proses', this)">
-                <div class="stat-hdr"><div class="stat-icon c4"><i class="fas fa-spinner"></i></div></div>
-                <div class="stat-value" id="sc-proses">0</div>
-                <div class="stat-label">Sedang Diproses</div>
-                <div class="stat-sub">Di outlet laundry</div>
-            </div>
+            <x-stat-card 
+                class="h-100"
+                theme="c4"
+                icon="spinner"
+                value="0"
+                valueId="sc-proses"
+                title="Sedang Diproses"
+                footerText="Di outlet laundry"
+                delayClass="d4"
+                onclick="filterByStatus('proses', this)"
+            />
         </div>
         <div class="col">
-            <div class="stat-card c5 fade-in d5 h-100" onclick="filterByStatus('antar', this)">
-                <div class="stat-hdr"><div class="stat-icon c5"><i class="fas fa-shipping-fast"></i></div></div>
-                <div class="stat-value" id="sc-antar">0</div>
-                <div class="stat-label">Sedang Antar</div>
-                <div class="stat-sub">Menuju ke pelanggan</div>
-            </div>
+            <x-stat-card 
+                class="h-100"
+                theme="c5"
+                icon="shipping-fast"
+                value="0"
+                valueId="sc-antar"
+                title="Sedang Antar"
+                footerText="Menuju ke pelanggan"
+                delayClass="d5"
+                onclick="filterByStatus('antar', this)"
+            />
         </div>
     </div>
 

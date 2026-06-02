@@ -312,12 +312,6 @@ function goPage(p) {
     if (p < 1 || p > total) return;
     currentPage = p;
     loadServices();
-    
-    // Scroll smoothly to top of cards grid
-    const target = document.getElementById('servicesContainer');
-    if (target) {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
 }
 
 /* ============================================================

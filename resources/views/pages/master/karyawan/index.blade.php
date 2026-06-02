@@ -30,39 +30,42 @@
 
     <!-- Summary Cards -->
     <div class="summary-grid fade-in">
-        <div class="stat-card c1">
-            <div class="stat-header">
-                <div class="stat-icon c1"><i class="fas fa-user-tie"></i></div>
+        <x-stat-card 
+            theme="c1"
+            icon="user-tie"
+            value="{{ $stats['total_employees'] }}"
+            valueId="statTotalEmployees"
+            title="Total Karyawan"
+            footerText="Jumlah terdaftar di sistem"
+        >
+            <x-slot:trendSlot>
                 <div class="stat-trend up" id="statTrendActive"><i class="fas fa-arrow-up"></i> {{ $stats['active_percentage'] }}%</div>
-            </div>
-            <div class="stat-value" id="statTotalEmployees">{{ $stats['total_employees'] }}</div>
-            <div class="stat-label">Total Karyawan</div>
-            <div class="stat-footer">Jumlah terdaftar di sistem</div>
-        </div>
-        <div class="stat-card c2">
-            <div class="stat-header">
-                <div class="stat-icon c2"><i class="fas fa-check-circle"></i></div>
-            </div>
-            <div class="stat-value" id="statActiveEmployees">{{ $stats['active_employees'] }}</div>
-            <div class="stat-label">Karyawan Aktif</div>
-            <div class="stat-footer">Sedang bertugas melayani cabang</div>
-        </div>
-        <div class="stat-card c3">
-            <div class="stat-header">
-                <div class="stat-icon c3"><i class="fas fa-briefcase"></i></div>
-            </div>
-            <div class="stat-value" id="statRolesCount">{{ $stats['roles_count'] }}</div>
-            <div class="stat-label">Variasi Peran</div>
-            <div class="stat-footer">Jenis spesialisasi keahlian</div>
-        </div>
-        <div class="stat-card c4">
-            <div class="stat-header">
-                <div class="stat-icon c4"><i class="fas fa-user-slash"></i></div>
-            </div>
-            <div class="stat-value" id="statInactiveEmployees">{{ $stats['inactive_employees'] }}</div>
-            <div class="stat-label">Karyawan Nonaktif</div>
-            <div class="stat-footer">Karyawan dengan status cuti/tidak aktif</div>
-        </div>
+            </x-slot:trendSlot>
+        </x-stat-card>
+        <x-stat-card 
+            theme="c2"
+            icon="check-circle"
+            value="{{ $stats['active_employees'] }}"
+            valueId="statActiveEmployees"
+            title="Karyawan Aktif"
+            footerText="Sedang bertugas melayani cabang"
+        />
+        <x-stat-card 
+            theme="c3"
+            icon="briefcase"
+            value="{{ $stats['roles_count'] }}"
+            valueId="statRolesCount"
+            title="Variasi Peran"
+            footerText="Jenis spesialisasi keahlian"
+        />
+        <x-stat-card 
+            theme="c4"
+            icon="user-slash"
+            value="{{ $stats['inactive_employees'] }}"
+            valueId="statInactiveEmployees"
+            title="Karyawan Nonaktif"
+            footerText="Karyawan dengan status cuti/tidak aktif"
+        />
     </div>
 
     <!-- Filter Bar -->

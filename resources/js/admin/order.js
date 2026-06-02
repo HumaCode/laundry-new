@@ -214,9 +214,10 @@ function updateSummaryStats(stats) {
     if (!stats) return;
     
     $('#count-all').text(stats.total_orders.toLocaleString());
-    $('#count-diterima').text(stats.processing_orders.toLocaleString()); // using processing as proxy for status filter
-    $('#count-proses').text(stats.processing_orders.toLocaleString());
-    $('#count-selesai').text(stats.completed_orders.toLocaleString());
+    $('#count-diterima').text((stats.baru_orders !== undefined ? stats.baru_orders : stats.processing_orders).toLocaleString());
+    $('#count-proses').text((stats.proses_orders !== undefined ? stats.proses_orders : stats.processing_orders).toLocaleString());
+    $('#count-siap').text((stats.selesai_orders !== undefined ? stats.selesai_orders : 0).toLocaleString());
+    $('#count-selesai').text((stats.diambil_orders !== undefined ? stats.diambil_orders : stats.completed_orders).toLocaleString());
     
     // Format Revenue for Monthly Revenue Card
     $('#revenue-monthly').text(formatRp(stats.monthly_revenue));
@@ -237,15 +238,40 @@ function updatePagination(meta) {
         </button>
     `;
 
-    for (let i = 1; i <= meta.last_page; i++) {
-        if (i === 1 || i === meta.last_page || (i >= meta.current_page - 2 && i <= meta.current_page + 2)) {
+    const current = meta.current_page;
+    const last = meta.last_page;
+    const delta = 1;
+    const range = [];
+    const rangeWithDots = [];
+    let l;
+
+    for (let i = 1; i <= last; i++) {
+        if (i === 1 || i === last || (i >= current - delta && i <= current + delta)) {
+            range.push(i);
+        }
+    }
+
+    for (let i of range) {
+        if (l) {
+            if (i - l === 2) {
+                rangeWithDots.push(l + 1);
+            } else if (i - l > 2) {
+                rangeWithDots.push('…');
+            }
+        }
+        rangeWithDots.push(i);
+        l = i;
+    }
+
+    for (let i of rangeWithDots) {
+        if (i === '…') {
+            html += `<span class="page-ellipsis">…</span>`;
+        } else {
             html += `
-                <button class="page-btn ${i === meta.current_page ? 'active' : ''}" onclick="changePage(${i})">
+                <button class="page-btn ${i === current ? 'active' : ''}" onclick="changePage(${i})">
                     ${i}
                 </button>
             `;
-        } else if (i === 2 || i === meta.last_page - 1) {
-            html += `<span style="padding:0 .25rem;color:var(--gray-light)">…</span>`;
         }
     }
 

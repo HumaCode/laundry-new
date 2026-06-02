@@ -330,11 +330,40 @@ function buildPageControls(containerId, total, fnName) {
     const el = document.getElementById(containerId);
     if (!el) return;
     let html = `<button class="page-btn" onclick="${fnName}(${currentPage-1})" ${currentPage<=1?'disabled':''}><i class="fas fa-chevron-left"></i></button>`;
-    let s = Math.max(1, currentPage-2), e = Math.min(total, s+4);
-    if (e-s<4) s = Math.max(1, e-4);
-    if (s>1) { html += `<button class="page-btn" onclick="${fnName}(1)">1</button>`; if(s>2) html += `<span style="padding:0 .2rem;color:var(--gray-light)">…</span>`; }
-    for (let i=s; i<=e; i++) html += `<button class="page-btn ${i===currentPage?'active':''}" onclick="${fnName}(${i})">${i}</button>`;
-    if (e<total) { if(e<total-1) html += `<span style="padding:0 .2rem;color:var(--gray-light)">…</span>`; html += `<button class="page-btn" onclick="${fnName}(${total})">${total}</button>`; }
+    
+    const current = currentPage;
+    const last = total;
+    const delta = 1;
+    const range = [];
+    const rangeWithDots = [];
+    let l;
+
+    for (let i = 1; i <= last; i++) {
+        if (i === 1 || i === last || (i >= current - delta && i <= current + delta)) {
+            range.push(i);
+        }
+    }
+
+    for (let i of range) {
+        if (l) {
+            if (i - l === 2) {
+                rangeWithDots.push(l + 1);
+            } else if (i - l > 2) {
+                rangeWithDots.push('…');
+            }
+        }
+        rangeWithDots.push(i);
+        l = i;
+    }
+
+    for (let i of rangeWithDots) {
+        if (i === '…') {
+            html += `<span class="page-ellipsis">…</span>`;
+        } else {
+            html += `<button class="page-btn ${i === current ? 'active' : ''}" onclick="${fnName}(${i})">${i}</button>`;
+        }
+    }
+
     html += `<button class="page-btn" onclick="${fnName}(${currentPage+1})" ${currentPage>=total?'disabled':''}><i class="fas fa-chevron-right"></i></button>`;
     el.innerHTML = html;
 }
@@ -345,7 +374,6 @@ function goPage(p) {
     if (p < 1 || p > total) return;
     currentPage = p;
     applyFilters();
-    window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
 function changePerPage(val) { perPage = parseInt(val); currentPage = 1; applyFilters(); }

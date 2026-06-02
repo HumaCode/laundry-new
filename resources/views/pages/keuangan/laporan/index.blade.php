@@ -61,54 +61,46 @@
 
     <!-- KPI Cards -->
     <div class="kpi-grid fade-in">
-        <div class="kpi-card c1">
-            <div class="kpi-hdr">
-                <div class="kpi-icon c1"><i class="fas fa-wallet"></i></div>
-                <div class="kpi-trend {{ $revenueGrowth >= 0 ? 'up' : 'down' }}"><i class="fas fa-arrow-{{ $revenueGrowth >= 0 ? 'up' : 'down' }}"></i> {{ number_format(abs($revenueGrowth), 1) }}%</div>
-            </div>
-            <div class="kpi-value">{{ formatRupiahK($totalRevenue) }}</div>
-            <div class="kpi-label">Total Pendapatan</div>
-            <div class="kpi-footer">
-                <span>vs bln lalu: {{ formatRupiahK($prevRevenueSum) }}</span>
-                <div class="kpi-sparkline" id="spark-revenue"></div>
-            </div>
-        </div>
-        <div class="kpi-card c2">
-            <div class="kpi-hdr">
-                <div class="kpi-icon c2"><i class="fas fa-box-open"></i></div>
-                <div class="kpi-trend up"><i class="fas fa-arrow-up"></i> 8.3%</div>
-            </div>
-            <div class="kpi-value">{{ number_format($totalOrders) }}</div>
-            <div class="kpi-label">Total Order</div>
-            <div class="kpi-footer">
-                <span>Rata-rata {{ $totalOrders > 0 ? number_format($totalOrders / 30, 1) : 0 }} order/hari</span>
-                <div class="kpi-sparkline" id="spark-orders"></div>
-            </div>
-        </div>
-        <div class="kpi-card c3">
-            <div class="kpi-hdr">
-                <div class="kpi-icon c3"><i class="fas fa-users"></i></div>
-                <div class="kpi-trend up"><i class="fas fa-arrow-up"></i> 5.7%</div>
-            </div>
-            <div class="kpi-value">{{ number_format($totalCustomers) }}</div>
-            <div class="kpi-label">Pelanggan Aktif</div>
-            <div class="kpi-footer">
-                <span>{{ App\Models\User::role('customer')->whereBetween('created_at', [Carbon\Carbon::parse($dateFrom)->startOfDay(), Carbon\Carbon::parse($dateTo)->endOfDay()])->count() }} pelanggan baru</span>
-                <div class="kpi-sparkline" id="spark-customers"></div>
-            </div>
-        </div>
-        <div class="kpi-card c4">
-            <div class="kpi-hdr">
-                <div class="kpi-icon c4"><i class="fas fa-star"></i></div>
-                <div class="kpi-trend down"><i class="fas fa-arrow-down"></i> 0.2</div>
-            </div>
-            <div class="kpi-value">{{ number_format($avgRating, 2) }}</div>
-            <div class="kpi-label">Rating Rata-rata</div>
-            <div class="kpi-footer">
-                <span>Dari {{ number_format($totalOrders) }} ulasan</span>
-                <div class="kpi-sparkline" id="spark-rating"></div>
-            </div>
-        </div>
+        <x-stat-card 
+            theme="c1"
+            icon="wallet"
+            trend="{{ number_format(abs($revenueGrowth), 1) }}%"
+            trendType="{{ $revenueGrowth >= 0 ? 'up' : 'down' }}"
+            value="{{ formatRupiahK($totalRevenue) }}"
+            title="Total Pendapatan"
+            footerText="vs bln lalu: {{ formatRupiahK($prevRevenueSum) }}"
+            sparklineId="spark-revenue"
+        />
+        <x-stat-card 
+            theme="c2"
+            icon="box-open"
+            trend="8.3%"
+            trendType="up"
+            value="{{ number_format($totalOrders) }}"
+            title="Total Order"
+            footerText="Rata-rata {{ $totalOrders > 0 ? number_format($totalOrders / 30, 1) : 0 }} order/hari"
+            sparklineId="spark-orders"
+        />
+        <x-stat-card 
+            theme="c3"
+            icon="users"
+            trend="5.7%"
+            trendType="up"
+            value="{{ number_format($totalCustomers) }}"
+            title="Pelanggan Aktif"
+            footerText="{{ App\Models\User::role('customer')->whereBetween('created_at', [Carbon\Carbon::parse($dateFrom)->startOfDay(), Carbon\Carbon::parse($dateTo)->endOfDay()])->count() }} pelanggan baru"
+            sparklineId="spark-customers"
+        />
+        <x-stat-card 
+            theme="c4"
+            icon="star"
+            trend="0.2"
+            trendType="down"
+            value="{{ number_format($avgRating, 2) }}"
+            title="Rating Rata-rata"
+            footerText="Dari {{ number_format($totalOrders) }} ulasan"
+            sparklineId="spark-rating"
+        />
     </div>
 
     <!-- Section Tabs -->
