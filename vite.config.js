@@ -33,7 +33,9 @@ export default defineConfig({
                 'resources/css/admin/inventaris.css',
                 'resources/js/admin/inventaris.js',
                 'resources/css/admin/laporan.css',
-                'resources/js/admin/laporan.js'
+                'resources/js/admin/laporan.js',
+                'resources/css/admin/pembayaran.css',
+                'resources/js/admin/pembayaran.js'
             ],
             refresh: true,
         }),

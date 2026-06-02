@@ -8,6 +8,7 @@ use App\Http\Controllers\Master\KaryawanController;
 use App\Http\Controllers\Master\BisnisController;
 use App\Http\Controllers\Master\OrderController;
 use App\Http\Controllers\Keuangan\LaporanController;
+use App\Http\Controllers\Keuangan\PembayaranController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -83,6 +84,11 @@ Route::middleware('auth')->group(function () {
 
     // Laporan (Reports)
     Route::get('/reports', [LaporanController::class, 'index'])->name('reports');
+
+    // Pembayaran (Payments)
+    Route::get('/payments', [PembayaranController::class, 'index'])->name('payments');
+    Route::get('/payments/{id}', [PembayaranController::class, 'show'])->name('payments.show');
+    Route::put('/payments/{id}', [PembayaranController::class, 'update'])->name('payments.update');
 });
 
 require __DIR__.'/auth.php';
