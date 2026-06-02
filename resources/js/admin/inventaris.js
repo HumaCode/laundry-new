@@ -1,112 +1,30 @@
-/* =========================================================
-   DATA — 32 inventory items
-========================================================= */
-const CATEGORIES = ['Deterjen & Kimia','Pewangi & Softener','Plastik & Kemasan','Peralatan Cuci','Peralalan Setrika','Kebersihan Outlet','ATK & Administrasi'];
-const OUTLETS    = ['Outlet Pusat','Outlet Bandung','Outlet Surabaya','Outlet Yogyakarta'];
-const CAT_ICONS  = {'Deterjen & Kimia':'🧴','Pewangi & Softener':'🌸','Plastik & Kemasan':'📦','Peralatan Cuci':'🪣','Peralalan Setrika':'🔌','Kebersihan Outlet':'🧹','ATK & Administrasi':'📋'};
-const CAT_COLORS = {'Deterjen & Kimia':'#6366F1','Pewangi & Softener':'#EC4899','Plastik & Kemasan':'#3B82F6','Peralatan Cuci':'#10B981','Peralalan Setrika':'#F59E0B','Kebersihan Outlet':'#14B8A6','ATK & Administrasi':'#F97316'};
-
-const RAW_ITEMS = [
-    /* Deterjen */
-    {name:'Deterjen Attack Cair',brand:'PT Kao Indonesia',price:45000,minS:20,maxS:100,unit:'liter'},
-    {name:'Deterjen Rinso Ultra',brand:'PT Unilever',price:38000,minS:15,maxS:80,unit:'kg'},
-    {name:'Deterjen Bubuk Wings',brand:'PT Wings Surya',price:28000,minS:10,maxS:60,unit:'kg'},
-    {name:'Pemutih Bayclin',brand:'PT Clorox',price:15000,minS:12,maxS:50,unit:'botol'},
-    {name:'Cairan Antinoda Pro',brand:'CV Kimia Prima',price:55000,minS:8,maxS:40,unit:'liter'},
-    /* Pewangi */
-    {name:'Pewangi Molto Ultra',brand:'PT Unilever',price:32000,minS:15,maxS:60,unit:'liter'},
-    {name:'Softener Downy',brand:'P&G Indonesia',price:42000,minS:10,maxS:50,unit:'liter'},
-    {name:'Pengharum Baju Fresh',brand:'CV Aroma Nusantara',price:18000,minS:20,maxS:80,unit:'botol'},
-    /* Kemasan */
-    {name:'Plastik PP 40x60 cm',brand:'CV Plastik Jaya',price:85000,minS:10,maxS:50,unit:'pack'},
-    {name:'Plastik Gantung Jas',brand:'CV Plastik Jaya',price:65000,minS:5,maxS:30,unit:'pack'},
-    {name:'Kantong Laundry Medium',brand:'UD Kemasan Prima',price:95000,minS:8,maxS:40,unit:'pack'},
-    {name:'Label Stiker Pelanggan',brand:'CV Print Express',price:25000,minS:20,maxS:100,unit:'roll'},
-    /* Peralatan Cuci */
-    {name:'Sikat Noda Pakaian',brand:'Merk Lokal',price:12000,minS:10,maxS:40,unit:'pcs'},
-    {name:'Ember Cuci 25L',brand:'Shinpo',price:35000,minS:5,maxS:20,unit:'pcs'},
-    {name:'Keranjang Cucian Besar',brand:'Olax',price:55000,minS:5,maxS:20,unit:'pcs'},
-    {name:'Selang Air 10m',brand:'Wavin',price:75000,minS:3,maxS:15,unit:'pcs'},
-    /* Peralalan Setrika */
-    {name:'Setrika Uap Philips GC',brand:'Philips',price:450000,minS:2,maxS:10,unit:'pcs'},
-    {name:'Papan Setrika Besar',brand:'Toyama',price:180000,minS:3,maxS:12,unit:'pcs'},
-    {name:'Spray Pelicin Pakaian',brand:'Robin',price:22000,minS:10,maxS:40,unit:'botol'},
-    {name:'Kain Lap Setrika',brand:'Merk Lokal',price:8000,minS:20,maxS:80,unit:'lembar'},
-    /* Kebersihan */
-    {name:'Sabun Cuci Tangan Dettol',brand:'RB Health',price:28000,minS:10,maxS:50,unit:'botol'},
-    {name:'Wipol Pembersih Lantai',brand:'Unilever',price:18000,minS:8,maxS:40,unit:'botol'},
-    {name:'Tisu Lap Serbaguna',brand:'Paseo',price:35000,minS:10,maxS:50,unit:'pack'},
-    {name:'Masker Kain Kasir',brand:'CV Sehat Jaya',price:5000,minS:30,maxS:100,unit:'pcs'},
-    /* ATK */
-    {name:'Nota Bon Rangkap',brand:'Sinar Dunia',price:8500,minS:20,maxS:80,unit:'dus'},
-    {name:'Bolpoin Pilot Hitam',brand:'Pilot',price:4500,minS:30,maxS:100,unit:'pcs'},
-    {name:'Buku Kas Laundry A4',brand:'Kiky',price:12000,minS:10,maxS:40,unit:'pcs'},
-    {name:'Stapler + Isi Staples',brand:'MAX',price:35000,minS:5,maxS:20,unit:'pcs'},
-    {name:'Selotip Besar',brand:'Nachi',price:9000,minS:10,maxS:40,unit:'pcs'},
-    {name:'Spidol Permanen',brand:'Snowman',price:6500,minS:15,maxS:50,unit:'pcs'},
-    {name:'Map Plastik Pelanggan',brand:'Bantex',price:3500,minS:50,maxS:200,unit:'pcs'},
-    {name:'Tinta Printer Epson',brand:'Epson',price:95000,minS:3,maxS:15,unit:'botol'},
-];
-
-const HISTORY_DATES = ['2024-12-01','2024-11-15','2024-11-01','2024-10-15','2024-10-01'];
-
-function buildStock(item, i) {
-    const cat   = CATEGORIES[i % CATEGORIES.length];
-    const outlet= OUTLETS[i % OUTLETS.length];
-    // vary stock levels to get interesting data
-    const stockLevels = [0, 3, 7, 14, 25, 40, 65, 90];
-    const rawStock = stockLevels[i % stockLevels.length];
-    const stock = Math.min(rawStock, item.maxS);
-    const pct   = stock / item.maxS;
-    let status;
-    if      (stock === 0)              status = 'habis';
-    else if (stock < item.minS * .5)   status = 'kritis';
-    else if (stock < item.minS)        status = 'rendah';
-    else if (pct > .8)                 status = 'lebih';
-    else                               status = 'cukup';
-
-    const history = HISTORY_DATES.slice(0,3).map((d,j)=>({
-        date: d,
-        qty: item.minS + j*5,
-        supplier: item.brand,
-        invoice: `INV-2024-${String(100+i*3+j).padStart(4,'0')}`,
-    }));
-
-    return {
-        id:   `INV-${String(1000+i).padStart(4,'0')}`,
-        name: item.name, brand: item.brand,
-        code: `${cat.slice(0,3).toUpperCase().replace(/ /g,'')}-${String(i+1).padStart(3,'0')}`,
-        category: cat, outlet,
-        emoji: CAT_ICONS[cat] || '📦',
-        color: CAT_COLORS[cat] || '#6366F1',
-        stock, minStock: item.minS, maxStock: item.maxS,
-        unit: item.unit, price: item.price,
-        value: stock * item.price,
-        status, desc: '',
-        lastRestock: HISTORY_DATES[i % HISTORY_DATES.length],
-        lastRestockQty: item.minS + 10,
-        history,
-    };
-}
-
-let allItems = RAW_ITEMS.map((item, i) => buildStock(item, i));
+// Setup CSRF headers for jQuery Ajax requests
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
 
 /* =========================================================
-   STATE
-========================================================= */
-let filtered       = [...allItems];
-let currentPage    = 1;
-let perPage        = 10;
-let selectedIds    = new Set();
-let sortCol        = 'name';
-let sortDir        = 'asc';
+   DATA — fetched dynamically from database
+   ========================================================= */
+const CATEGORIES = ['Deterjen & Kimia','Pewangi & Softener','Plastik & Kemasan','Peralatan Cuci','Peralatan Setrika','Kebersihan Outlet','ATK & Administrasi'];
+const CAT_COLORS = {'Deterjen & Kimia':'#6366F1','Pewangi & Softener':'#EC4899','Plastik & Kemasan':'#3B82F6','Peralatan Cuci':'#10B981','Peralatan Setrika':'#F59E0B','Kebersihan Outlet':'#14B8A6','ATK & Administrasi':'#F97316'};
+
+let allItems = [];
+let filtered = [];
+let currentPage = 1;
+let perPage = 10;
+let selectedIds = new Set();
+let sortCol = 'name';
+let sortDir = 'asc';
 let activeStatFilter = 'all';
-let activeItem     = null;
-let editMode       = false;
+let activeItem = null;
+let editMode = false;
 
 /* =========================================================
    HELPERS
-========================================================= */
+   ========================================================= */
 function formatRp(n){ return 'Rp '+n.toLocaleString('id-ID'); }
 function formatRpK(n){
     if(n>=1000000000) return 'Rp '+(n/1000000000).toFixed(1)+'M';
@@ -115,6 +33,7 @@ function formatRpK(n){
     return formatRp(n);
 }
 function relDate(d){
+    if (!d) return '—';
     const diff=Math.floor((new Date()-new Date(d))/86400000);
     if(diff===0)return'Hari ini';if(diff===1)return'Kemarin';
     if(diff<30)return diff+' hari lalu';return Math.floor(diff/30)+' bln lalu';
@@ -135,8 +54,55 @@ function stockBarColor(status){
 }
 
 /* =========================================================
+   SKELETON TABLE LOADING
+   ========================================================= */
+function showSkeletonTable() {
+    const tbody = document.getElementById('invTableBody');
+    if (!tbody) return;
+    
+    let html = '';
+    for (let i = 0; i < 5; i++) {
+        html += `
+        <tr class="skeleton-row">
+            <td class="cb-cell"><div class="skeleton" style="width:18px;height:18px;border-radius:5px"></div></td>
+            <td>
+                <div style="display:flex;align-items:center;gap:.75rem">
+                    <div class="skeleton skeleton-circle" style="width:38px;height:38px;border-radius:10px"></div>
+                    <div>
+                        <div class="skeleton skeleton-text medium" style="height:14px;width:120px;margin-bottom:4px"></div>
+                        <div class="skeleton skeleton-text short" style="height:10px;width:60px"></div>
+                    </div>
+                </div>
+            </td>
+            <td><div class="skeleton skeleton-badge" style="width:80px;height:22px;border-radius:12px"></div></td>
+            <td><div class="skeleton skeleton-text short" style="width:70px;height:14px"></div></td>
+            <td>
+                <div class="skeleton skeleton-text short" style="width:40px;height:14px;margin-bottom:6px"></div>
+                <div class="skeleton" style="width:100px;height:6px;border-radius:3px"></div>
+            </td>
+            <td><div class="skeleton skeleton-badge" style="width:65px;height:20px;border-radius:10px"></div></td>
+            <td><div class="skeleton skeleton-text short" style="width:70px;height:14px"></div></td>
+            <td><div class="skeleton skeleton-text short" style="width:50px;height:14px"></div></td>
+            <td>
+                <div class="skeleton skeleton-text short" style="width:75px;height:14px;margin-bottom:4px"></div>
+                <div class="skeleton skeleton-text short" style="width:60px;height:10px"></div>
+            </td>
+            <td>
+                <div style="display:flex;gap:4px">
+                    <div class="skeleton skeleton-btn" style="width:28px;height:28px;border-radius:6px"></div>
+                    <div class="skeleton skeleton-btn" style="width:28px;height:28px;border-radius:6px"></div>
+                    <div class="skeleton skeleton-btn" style="width:28px;height:28px;border-radius:6px"></div>
+                    <div class="skeleton skeleton-btn" style="width:28px;height:28px;border-radius:6px"></div>
+                </div>
+            </td>
+        </tr>`;
+    }
+    tbody.innerHTML = html;
+}
+
+/* =========================================================
    RENDER TABLE
-========================================================= */
+   ========================================================= */
 function renderTable(){
     const tbody = document.getElementById('invTableBody');
     const empty = document.getElementById('emptyState');
@@ -161,7 +127,7 @@ function renderTable(){
                     <div>
                         <div class="item-name">${item.name}</div>
                         <div class="item-id">${item.code}</div>
-                        <div style="font-size:.72rem;color:var(--gray-light);margin-top:.1rem">${item.brand}</div>
+                        <div style="font-size:.72rem;color:var(--gray-light);margin-top:.1rem">${item.brand || '—'}</div>
                     </div>
                 </div>
             </td>
@@ -184,8 +150,8 @@ function renderTable(){
             <td style="font-size:.875rem;font-weight:600;color:var(--dark)">${formatRp(item.price)}<div style="font-size:.7rem;color:var(--gray-light)">per ${item.unit}</div></td>
             <td style="font-weight:700;color:var(--primary)">${formatRpK(item.value)}</td>
             <td>
-                <div style="font-size:.8rem;font-weight:600;color:var(--dark)">${item.lastRestock}</div>
-                <div style="font-size:.7rem;color:var(--gray-light)">${relDate(item.lastRestock)}</div>
+                <div style="font-size:.8rem;font-weight:600;color:var(--dark)">${item.lastRestock || 'Belum Pernah'}</div>
+                <div style="font-size:.7rem;color:var(--gray-light)">${item.lastRestock ? relDate(item.lastRestock) : '—'}</div>
             </td>
             <td>
                 <div class="act-cell">
@@ -204,23 +170,10 @@ function renderTable(){
 
 /* =========================================================
    STATS
-========================================================= */
+   ========================================================= */
 function updateStats(){
-    const all    = allItems;
-    const habis  = all.filter(x=>x.status==='habis'||x.status==='kritis').length;
-    const rendah = all.filter(x=>x.status==='rendah').length;
-    const cukup  = all.filter(x=>x.status==='cukup'||x.status==='lebih').length;
-    const total  = all.reduce((s,x)=>s+x.value,0);
-
-    document.getElementById('sc-all').textContent    = all.length;
-    document.getElementById('sc-all-sub').textContent= all.length + ' jenis barang';
-    document.getElementById('sc-cukup').textContent  = cukup;
-    document.getElementById('sc-rendah').textContent = rendah;
-    document.getElementById('sc-kritis').textContent = habis;
-    document.getElementById('sc-nilai').textContent  = formatRpK(total);
-
     // Alert list
-    const alerts = all.filter(x=>x.status==='habis'||x.status==='kritis'||x.status==='rendah')
+    const alerts = allItems.filter(x=>x.status==='habis'||x.status==='kritis'||x.status==='rendah')
                        .sort((a,b)=> {
                            const o={habis:0,kritis:1,rendah:2};
                            return (o[a.status]||3)-(o[b.status]||3);
@@ -244,9 +197,18 @@ function updateStats(){
     }).join('') : `<div style="text-align:center;padding:2rem;color:var(--gray-light)"><i class="fas fa-check-circle" style="font-size:2rem;color:var(--secondary);display:block;margin-bottom:.5rem"></i>Semua stok dalam kondisi aman</div>`;
 }
 
+function updateStatsData(stats) {
+    document.getElementById('sc-all').textContent    = stats.total_items;
+    document.getElementById('sc-all-sub').textContent= stats.total_items + ' jenis barang';
+    document.getElementById('sc-cukup').textContent  = stats.cukup;
+    document.getElementById('sc-rendah').textContent = stats.rendah;
+    document.getElementById('sc-kritis').textContent = stats.kritis;
+    document.getElementById('sc-nilai').textContent  = formatRpK(stats.total_value);
+}
+
 /* =========================================================
    CHART
-========================================================= */
+   ========================================================= */
 let stockChart;
 function renderChart(){
     const chartEl = document.getElementById('stockChart');
@@ -295,32 +257,47 @@ function renderChart(){
 
 /* =========================================================
    FILTER & SORT
-========================================================= */
+   ========================================================= */
 function handleSearch(v){ document.getElementById('searchInput').value=v; applyFilters(); }
 
 function applyFilters(){
-    const q      = document.getElementById('searchInput').value.toLowerCase();
+    showSkeletonTable();
+    
+    const q      = document.getElementById('searchInput').value.trim();
     const cat    = document.getElementById('filterCat').value;
     const outlet = document.getElementById('filterOutlet').value;
     const status = document.getElementById('filterStatus').value;
 
-    filtered = allItems.filter(item => {
-        const mq = !q || item.name.toLowerCase().includes(q) || item.code.toLowerCase().includes(q) || item.brand.toLowerCase().includes(q);
-        const mc = !cat || item.category === cat;
-        const mo = !outlet || item.outlet === outlet;
-        const ms = !status || item.status === status;
-        const mst= activeStatFilter==='all' || (activeStatFilter==='cukup'&&(item.status==='cukup'||item.status==='lebih')) || (activeStatFilter==='rendah'&&item.status==='rendah') || (activeStatFilter==='kritis'&&(item.status==='kritis'||item.status==='habis'));
-        return mq && mc && mo && ms && mst;
+    $.ajax({
+        url: '/inventories',
+        type: 'GET',
+        dataType: 'json',
+        data: {
+            search: q,
+            category: cat,
+            outlet: outlet,
+            status: status,
+            stat_filter: activeStatFilter,
+            sort_col: sortCol,
+            sort_dir: sortDir
+        },
+        success: function(response) {
+            if (response.success) {
+                allItems = response.data.items;
+                filtered = [...allItems];
+                
+                updateStatsData(response.data.stats);
+                updateStats();
+                renderTable();
+                renderChart();
+            } else {
+                showToast('error', 'Error', response.message);
+            }
+        },
+        error: function() {
+            showToast('error', 'Error', 'Gagal memuat data inventaris');
+        }
     });
-
-    // sort
-    filtered.sort((a,b)=>{
-        let va=a[sortCol], vb=b[sortCol];
-        if(typeof va==='string') return sortDir==='asc'?va.localeCompare(vb):vb.localeCompare(va);
-        return sortDir==='asc'?va-vb:vb-va;
-    });
-
-    currentPage=1; selectedIds.clear(); updateBulkBar(); renderTable();
 }
 
 function filterByStat(stat, el){
@@ -338,7 +315,9 @@ function resetFilters(){
     activeStatFilter='all';
     document.querySelectorAll('.stat-card').forEach(c=>c.classList.remove('active-filter'));
     document.querySelector('.stat-card.c1').classList.add('active-filter');
-    filtered=[...allItems]; currentPage=1; selectedIds.clear(); updateBulkBar(); renderTable();
+    selectedIds.clear();
+    updateBulkBar();
+    applyFilters();
 }
 
 function sortBy(col){
@@ -353,7 +332,7 @@ function changePerPage(v){ perPage=parseInt(v); currentPage=1; renderTable(); }
 
 /* =========================================================
    PAGINATION
-========================================================= */
+   ========================================================= */
 function renderPagination(){
     const total=Math.ceil(filtered.length/perPage)||1;
     document.getElementById('currentPage').textContent=currentPage;
@@ -375,7 +354,7 @@ function goPage(p){
 
 /* =========================================================
    CHECKBOX / BULK
-========================================================= */
+   ========================================================= */
 function toggleAllCheck(){
     const checked=document.getElementById('checkAll').checked;
     const start=(currentPage-1)*perPage;
@@ -398,14 +377,35 @@ function updateBulkBar(){
 function bulkRestock(){ showToast('info','Restock Massal','Memproses restock untuk '+selectedIds.size+' barang'); }
 function bulkExport(){  showToast('info','Export','Mengekspor '+selectedIds.size+' data barang'); }
 function bulkDelete(){
-    if(!confirm('Hapus '+selectedIds.size+' barang yang dipilih?'))return;
-    selectedIds.forEach(id=>{const i=allItems.findIndex(x=>x.id===id);if(i>-1)allItems.splice(i,1);});
-    selectedIds.clear(); applyFilters(); updateStats(); showToast('success','Dihapus','Barang berhasil dihapus');
+    const n = selectedIds.size;
+    if(!n) return;
+    if(!confirm('Hapus '+n+' barang yang dipilih?'))return;
+
+    let promises = [];
+    selectedIds.forEach(id => {
+        promises.push(
+            $.ajax({
+                url: `/inventories/${id}`,
+                type: 'DELETE',
+                dataType: 'json'
+            })
+        );
+    });
+
+    $.when(...promises).done(function() {
+        selectedIds.clear();
+        applyFilters();
+        updateBulkBar();
+        showToast('success','Dihapus','Barang yang dipilih berhasil dihapus');
+    }).fail(function() {
+        showToast('error','Error','Beberapa barang gagal dihapus');
+        applyFilters();
+    });
 }
 
 /* =========================================================
    ADD / EDIT MODAL
-========================================================= */
+   ========================================================= */
 function openAddModal(){
     editMode=false; activeItem=null;
     document.getElementById('itemModalIcon').style.background='linear-gradient(135deg,var(--primary),var(--purple))';
@@ -420,93 +420,141 @@ function openAddModal(){
     openModal('itemModal');
 }
 function openEditModal(id){
-    const item=allItems.find(x=>x.id===id); if(!item)return;
-    editMode=true; activeItem=item;
-    document.getElementById('itemModalIcon').style.background=`linear-gradient(135deg,${item.color},${item.color}99)`;
-    document.getElementById('itemModalTitle').textContent='Edit Barang';
-    document.getElementById('itemModalSub').textContent='Perbarui data barang '+item.name;
-    document.getElementById('f-name').value=item.name;
-    document.getElementById('f-code').value=item.code;
-    document.getElementById('f-brand').value=item.brand;
-    document.getElementById('f-desc').value=item.desc||'';
-    document.getElementById('f-emoji').value=item.emoji;
-    document.getElementById('f-category').value=item.category;
-    document.getElementById('f-outlet').value=item.outlet;
-    document.getElementById('f-unit').value=item.unit;
-    document.getElementById('f-stock').value=item.stock;
-    document.getElementById('f-minStock').value=item.minStock;
-    document.getElementById('f-maxStock').value=item.maxStock;
-    document.getElementById('f-price').value=item.price;
-    document.getElementById('f-color').value=item.color;
-    openModal('itemModal');
+    $.ajax({
+        url: `/inventories/${id}`,
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            if (response.success) {
+                const item = response.data;
+                editMode=true; activeItem=item;
+                document.getElementById('itemModalIcon').style.background=`linear-gradient(135deg,${item.color},${item.color}99)`;
+                document.getElementById('itemModalTitle').textContent='Edit Barang';
+                document.getElementById('itemModalSub').textContent='Perbarui data barang '+item.name;
+                document.getElementById('f-name').value=item.name;
+                document.getElementById('f-code').value=item.code;
+                document.getElementById('f-brand').value=item.brand || '';
+                document.getElementById('f-desc').value=item.desc||'';
+                document.getElementById('f-emoji').value=item.emoji;
+                document.getElementById('f-category').value=item.category;
+                document.getElementById('f-outlet').value=item.outlet_id; // Set by ID!
+                document.getElementById('f-unit').value=item.unit;
+                document.getElementById('f-stock').value=item.stock;
+                document.getElementById('f-minStock').value=item.minStock;
+                document.getElementById('f-maxStock').value=item.maxStock;
+                document.getElementById('f-price').value=item.price;
+                document.getElementById('f-color').value=item.color;
+                openModal('itemModal');
+            } else {
+                showToast('error', 'Error', response.message);
+            }
+        },
+        error: function() {
+            showToast('error', 'Error', 'Gagal memuat data barang');
+        }
+    });
 }
+
 function saveItem(){
     const name=document.getElementById('f-name').value.trim();
     if(!name){showToast('error','Validasi','Nama barang wajib diisi');return;}
+    const code=document.getElementById('f-code').value.trim();
+    const brand=document.getElementById('f-brand').value.trim();
+    const category=document.getElementById('f-category').value;
+    const emoji=document.getElementById('f-emoji').value.trim() || '📦';
+    const color=document.getElementById('f-color').value;
+    const desc=document.getElementById('f-desc').value.trim();
     const stock=parseInt(document.getElementById('f-stock').value)||0;
-    const minS =parseInt(document.getElementById('f-minStock').value)||0;
-    const maxS =parseInt(document.getElementById('f-maxStock').value)||100;
+    const min_stock =parseInt(document.getElementById('f-minStock').value)||0;
+    const max_stock =parseInt(document.getElementById('f-maxStock').value)||100;
+    const unit=document.getElementById('f-unit').value;
     const price=parseInt(document.getElementById('f-price').value)||0;
-    const cat  =document.getElementById('f-category').value;
-    let status;
-    if(stock===0)status='habis';
-    else if(stock<minS*.5)status='kritis';
-    else if(stock<minS)status='rendah';
-    else if(stock>maxS*.8)status='lebih';
-    else status='cukup';
+    const outlet_id=document.getElementById('f-outlet').value;
 
-    if(editMode&&activeItem){
-        Object.assign(activeItem,{name,code:document.getElementById('f-code').value,brand:document.getElementById('f-brand').value,desc:document.getElementById('f-desc').value,emoji:document.getElementById('f-emoji').value,category:cat,outlet:document.getElementById('f-outlet').value,unit:document.getElementById('f-unit').value,stock,minStock:minS,maxStock:maxS,price,value:stock*price,status,color:document.getElementById('f-color').value});
-        showToast('success','Diperbarui',name+' berhasil diperbarui');
-    } else {
-        const newItem={
-            id:`INV-${String(2000+allItems.length).padStart(4,'0')}`,name,
-            code:document.getElementById('f-code').value||`${cat.slice(0,3).toUpperCase()}-${String(allItems.length).padStart(3,'0')}`,
-            brand:document.getElementById('f-brand').value,desc:document.getElementById('f-desc').value,
-            emoji:document.getElementById('f-emoji').value||CAT_ICONS[cat]||'📦',
-            color:document.getElementById('f-color').value||CAT_COLORS[cat]||'#6366F1',
-            category:cat,outlet:document.getElementById('f-outlet').value,
-            unit:document.getElementById('f-unit').value,stock,minStock:minS,maxStock:maxS,price,value:stock*price,status,
-            lastRestock:new Date().toISOString().slice(0,10),lastRestockQty:0,history:[],
-        };
-        allItems.unshift(newItem);
-        showToast('success','Ditambahkan',name+' berhasil ditambahkan');
-    }
-    closeModal('itemModal'); applyFilters(); updateStats(); renderChart();
+    const data = {
+        name, code, brand, category, emoji, color, desc, stock, min_stock, max_stock, unit, price, outlet_id
+    };
+
+    const url = editMode ? `/inventories/${activeItem.id}` : '/inventories';
+    const method = editMode ? 'PUT' : 'POST';
+
+    $.ajax({
+        url: url,
+        type: method,
+        dataType: 'json',
+        data: data,
+        success: function(response) {
+            if (response.success) {
+                showToast('success', editMode ? 'Diperbarui' : 'Ditambahkan', name + (editMode ? ' berhasil diperbarui' : ' berhasil ditambahkan'));
+                closeModal('itemModal');
+                applyFilters();
+            } else {
+                showToast('error', 'Error', response.message);
+            }
+        },
+        error: function(xhr) {
+            let msg = 'Gagal menyimpan data barang';
+            if (xhr.responseJSON && xhr.responseJSON.errors) {
+                const firstKey = Object.keys(xhr.responseJSON.errors)[0];
+                msg = xhr.responseJSON.errors[firstKey][0];
+            }
+            showToast('error', 'Validasi', msg);
+        }
+    });
 }
 
 /* =========================================================
    DETAIL MODAL
-========================================================= */
+   ========================================================= */
 function openDetail(id){
-    const item=allItems.find(x=>x.id===id); if(!item)return;
-    activeItem=item;
-    document.getElementById('dm-icon').textContent=item.emoji;
-    document.getElementById('dm-icon').style.background=item.color+'22';
-    document.getElementById('dm-icon').style.fontSize='1.75rem';
-    document.getElementById('dm-name').textContent=item.name;
-    document.getElementById('dm-code').textContent=item.code+' · '+item.brand;
-    document.getElementById('dm-cat').textContent=item.category;
-    document.getElementById('dm-brand').textContent=item.brand;
-    document.getElementById('dm-outlet').textContent=item.outlet;
-    document.getElementById('dm-unit').textContent=item.unit;
-    document.getElementById('dm-desc').textContent=item.desc||'Tidak ada deskripsi.';
-    document.getElementById('dm-stock').textContent=item.stock+' '+item.unit;
-    document.getElementById('dm-stock').style.color=item.status==='kritis'||item.status==='habis'?'var(--danger)':item.status==='rendah'?'var(--warning)':'var(--primary)';
-    document.getElementById('dm-status').innerHTML=`<span class="inv-status ${getStockStatusClass(item.status)}">${stockStatusLabel(item.status)}</span>`;
-    document.getElementById('dm-min').textContent=item.minStock+' '+item.unit;
-    document.getElementById('dm-max').textContent=item.maxStock+' '+item.unit;
-    document.getElementById('dm-price').textContent=formatRp(item.price)+' / '+item.unit;
-    document.getElementById('dm-value').textContent=formatRp(item.value);
-    document.getElementById('dm-last-restock').textContent=item.lastRestock;
-    document.getElementById('dm-last-qty').textContent=item.lastRestockQty+' '+item.unit;
-    document.getElementById('dm-restock-history').innerHTML=item.history.map(h=>`
-        <div class="restock-item">
-            <div class="restock-icon"><i class="fas fa-redo-alt"></i></div>
-            <div class="restock-info"><div class="restock-title">${h.invoice} · ${h.supplier}</div><div class="restock-date">${h.date}</div></div>
-            <div class="restock-qty">+${h.qty} ${item.unit}</div>
-        </div>`).join('')||'<div style="color:var(--gray-light);font-size:.875rem">Belum ada riwayat restock.</div>';
-    openModal('detailModal');
+    $.ajax({
+        url: `/inventories/${id}`,
+        type: 'GET',
+        dataType: 'json',
+        success: function(response) {
+            if (response.success) {
+                const item = response.data;
+                activeItem = item;
+                document.getElementById('dm-icon').textContent=item.emoji;
+                document.getElementById('dm-icon').style.background=item.color+'22';
+                document.getElementById('dm-icon').style.fontSize='1.75rem';
+                document.getElementById('dm-name').textContent=item.name;
+                document.getElementById('dm-code').textContent=item.code+' · '+(item.brand || '—');
+                document.getElementById('dm-cat').textContent=item.category;
+                document.getElementById('dm-brand').textContent=item.brand || '—';
+                document.getElementById('dm-outlet').textContent=item.outlet;
+                document.getElementById('dm-unit').textContent=item.unit;
+                document.getElementById('dm-desc').textContent=item.desc||'Tidak ada deskripsi.';
+                document.getElementById('dm-stock').textContent=item.stock+' '+item.unit;
+                document.getElementById('dm-stock').style.color=item.status==='kritis'||item.status==='habis'?'var(--danger)':item.status==='rendah'?'var(--warning)':'var(--primary)';
+                document.getElementById('dm-status').innerHTML=`<span class="inv-status ${getStockStatusClass(item.status)}">${stockStatusLabel(item.status)}</span>`;
+                document.getElementById('dm-min').textContent=item.minStock+' '+item.unit;
+                document.getElementById('dm-max').textContent=item.maxStock+' '+item.unit;
+                document.getElementById('dm-price').textContent=formatRp(item.price)+' / '+item.unit;
+                document.getElementById('dm-value').textContent=formatRp(item.value);
+                document.getElementById('dm-last-restock').textContent=item.lastRestock || 'Belum Pernah';
+                document.getElementById('dm-last-qty').textContent= (item.lastRestockQty || 0)+' '+item.unit;
+                
+                const historyHtml = item.history && item.history.length > 0 ? item.history.map(h=>`
+                    <div class="restock-item">
+                        <div class="restock-icon"><i class="fas fa-redo-alt"></i></div>
+                        <div class="restock-info">
+                            <div class="restock-title">${h.invoice || '—'} · ${h.supplier || '—'}</div>
+                            <div class="restock-date">${h.date}</div>
+                        </div>
+                        <div class="restock-qty">+${h.qty} ${item.unit}</div>
+                    </div>`).join('') : '<div style="color:var(--gray-light);font-size:.875rem">Belum ada riwayat restock.</div>';
+                
+                document.getElementById('dm-restock-history').innerHTML=historyHtml;
+                openModal('detailModal');
+            } else {
+                showToast('error', 'Error', response.message);
+            }
+        },
+        error: function() {
+            showToast('error', 'Error', 'Gagal memuat detail barang');
+        }
+    });
 }
 function deleteCurrentItem(){ if(!activeItem)return; deleteById(activeItem.id); closeModal('detailModal'); }
 function editCurrentItem(){   if(!activeItem)return; closeModal('detailModal'); openEditModal(activeItem.id); }
@@ -515,13 +563,28 @@ function restockCurrentItem(){ if(!activeItem)return; openRestock(activeItem.id)
 function deleteById(id){
     const item=allItems.find(x=>x.id===id); if(!item)return;
     if(!confirm('Hapus '+item.name+' dari inventaris?'))return;
-    allItems=allItems.filter(x=>x.id!==id); applyFilters(); updateStats(); renderChart();
-    showToast('success','Dihapus',item.name+' berhasil dihapus');
+
+    $.ajax({
+        url: `/inventories/${id}`,
+        type: 'DELETE',
+        dataType: 'json',
+        success: function(response) {
+            if (response.success) {
+                showToast('success','Dihapus',item.name+' berhasil dihapus');
+                applyFilters();
+            } else {
+                showToast('error', 'Error', response.message);
+            }
+        },
+        error: function() {
+            showToast('error', 'Error', 'Gagal menghapus barang');
+        }
+    });
 }
 
 /* =========================================================
    RESTOCK MODAL
-========================================================= */
+   ========================================================= */
 function openRestock(id){
     const item=allItems.find(x=>x.id===id); if(!item)return;
     activeItem=item;
@@ -533,12 +596,11 @@ function openRestock(id){
     document.getElementById('rs-unit').value=item.unit;
     document.getElementById('rs-price').value=item.price;
     document.getElementById('rs-qty').value='';
-    document.getElementById('rs-supplier').value=item.brand;
+    document.getElementById('rs-supplier').value=item.brand || '';
     document.getElementById('rs-invoice').value='';
     document.getElementById('rs-notes').value='';
     document.getElementById('rs-preview').textContent='—';
     
-    // remove previous listeners to avoid double binding
     const qtyInput = document.getElementById('rs-qty');
     const newQtyInput = qtyInput.cloneNode(true);
     qtyInput.parentNode.replaceChild(newQtyInput, qtyInput);
@@ -554,26 +616,44 @@ function confirmRestock(){
     const qty=parseInt(document.getElementById('rs-qty').value)||0;
     if(qty<=0){showToast('error','Validasi','Jumlah restock harus lebih dari 0');return;}
     if(!activeItem)return;
-    activeItem.stock+=qty;
-    activeItem.value=activeItem.stock*activeItem.price;
-    activeItem.lastRestock=new Date().toISOString().slice(0,10);
-    activeItem.lastRestockQty=qty;
-    activeItem.history.unshift({date:activeItem.lastRestock,qty,supplier:document.getElementById('rs-supplier').value,invoice:document.getElementById('rs-invoice').value||'—'});
-    // recalculate status
-    if(activeItem.stock===0)activeItem.status='habis';
-    else if(activeItem.stock<activeItem.minStock*.5)activeItem.status='kritis';
-    else if(activeItem.stock<activeItem.minStock)activeItem.status='rendah';
-    else if(activeItem.stock>activeItem.maxStock*.8)activeItem.status='lebih';
-    else activeItem.status='cukup';
-    closeModal('restockModal');
-    applyFilters(); updateStats(); renderChart();
-    showToast('success','Restock Berhasil',`${activeItem.name} berhasil di-restock +${qty} ${activeItem.unit}`);
+
+    const data = {
+        qty: qty,
+        supplier: document.getElementById('rs-supplier').value.trim(),
+        invoice: document.getElementById('rs-invoice').value.trim(),
+        price: parseInt(document.getElementById('rs-price').value)||null,
+        date: new Date().toISOString().slice(0, 10)
+    };
+
+    $.ajax({
+        url: `/inventories/${activeItem.id}/restock`,
+        type: 'POST',
+        dataType: 'json',
+        data: data,
+        success: function(response) {
+            if (response.success) {
+                closeModal('restockModal');
+                applyFilters();
+                showToast('success','Restock Berhasil',`${activeItem.name} berhasil di-restock +${qty} ${activeItem.unit}`);
+            } else {
+                showToast('error', 'Error', response.message);
+            }
+        },
+        error: function(xhr) {
+            let msg = 'Gagal melakukan restock';
+            if (xhr.responseJSON && xhr.responseJSON.errors) {
+                const firstKey = Object.keys(xhr.responseJSON.errors)[0];
+                msg = xhr.responseJSON.errors[firstKey][0];
+            }
+            showToast('error', 'Error', msg);
+        }
+    });
 }
 function openRestockAllModal(){ showToast('info','Restock Otomatis','Memproses restock otomatis untuk semua stok kritis...'); }
 
 /* =========================================================
    MODAL UTILS
-========================================================= */
+   ========================================================= */
 function openModal(id){ document.getElementById(id).classList.add('show'); }
 function closeModal(id){ document.getElementById(id).classList.remove('remove'); document.getElementById(id).classList.remove('show'); }
 function closeModalOut(e,id){ if(e.target===e.currentTarget)closeModal(id); }
@@ -581,9 +661,8 @@ function exportData(){ showToast('info','Export','Mengekspor data inventaris ke 
 
 /* =========================================================
    TOAST
-========================================================= */
+   ========================================================= */
 function showToast(type,title,msg){
-    // Try to use global showToast if available
     if (typeof window.showToast === 'function') {
         window.showToast(msg, type, title);
         return;
@@ -636,7 +715,7 @@ window.showToast = showToast;
 
 /* =========================================================
    FLOAT BUTTON
-========================================================= */
+   ========================================================= */
 window.addEventListener('scroll',()=>{ 
     const btn = document.getElementById('scrollTopBtn');
     if(btn) btn.classList.toggle('visible',window.scrollY>300); 
@@ -662,9 +741,7 @@ window.scrollToTop = function(event){
 
 /* =========================================================
    INIT
-========================================================= */
+   ========================================================= */
 document.addEventListener('DOMContentLoaded', () => {
-    updateStats();
     applyFilters();
-    renderChart();
 });

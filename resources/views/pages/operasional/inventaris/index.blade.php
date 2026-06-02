@@ -106,8 +106,9 @@
             <label class="filter-label">Outlet</label>
             <select class="filter-input" id="filterOutlet" onchange="applyFilters()">
                 <option value="">Semua Outlet</option>
-                <option>Outlet Pusat</option><option>Outlet Bandung</option>
-                <option>Outlet Surabaya</option><option>Outlet Yogyakarta</option>
+                @foreach($outlets as $outlet)
+                    <option value="{{ $outlet->id }}">{{ $outlet->name }}</option>
+                @endforeach
             </select>
         </div>
         <div class="filter-group" style="min-width:120px">
@@ -202,7 +203,11 @@
                     <div class="form-field"><label>Stok Maksimum</label><input class="form-control" id="f-maxStock" type="number" placeholder="0" min="0"></div>
                     <div class="form-field"><label>Satuan</label><select class="form-control" id="f-unit"><option>liter</option><option>kg</option><option>pcs</option><option>botol</option><option>dus</option><option>pack</option><option>roll</option><option>lembar</option></select></div>
                     <div class="form-field"><label>Harga Beli/Satuan</label><input class="form-control" id="f-price" type="number" placeholder="0" min="0"></div>
-                    <div class="form-field"><label>Outlet</label><select class="form-control" id="f-outlet"><option>Outlet Pusat</option><option>Outlet Bandung</option><option>Outlet Surabaya</option><option>Outlet Yogyakarta</option></select></div>
+                    <div class="form-field"><label>Outlet <span class="req">*</span></label><select class="form-control" id="f-outlet">
+                        @foreach($outlets as $outlet)
+                            <option value="{{ $outlet->id }}">{{ $outlet->name }}</option>
+                        @endforeach
+                    </select></div>
                 </div>
             </div>
             <div class="modal-footer">
