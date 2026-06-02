@@ -735,21 +735,28 @@ function confirmRestock(){
     });
 }
 function openRestockAllModal(){
-    const outlet = document.getElementById('filterOutlet').value;
+    document.getElementById('ar-outlet').value = '';
+    document.getElementById('ar-category').value = '';
+    openModal('autoRestockModal');
+}
+
+function confirmAutoRestock(){
+    const outlet = document.getElementById('ar-outlet').value;
     if (!outlet) {
-        showToast('warning', 'Pilih Outlet', 'Silakan pilih outlet terlebih dahulu sebelum melakukan restock otomatis.');
+        showToast('warning', 'Pilih Outlet', 'Silakan pilih outlet terlebih dahulu.');
         return;
     }
 
-    const q = document.getElementById('searchInput').value.trim();
-    const cat = document.getElementById('filterCat').value;
+    const cat = document.getElementById('ar-category').value;
 
-    const btn = document.querySelector('.btn-page-warning');
-    const originalHtml = btn ? btn.innerHTML : '';
+    const btn = document.getElementById('btnConfirmAutoRestock');
+    const btnText = btn ? btn.querySelector('.btn-text') : null;
+    const originalText = btnText ? btnText.textContent : 'Mulai Restock';
     
     if (btn) {
+        btn.classList.add('loading');
         btn.disabled = true;
-        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sedang proses...';
+        if (btnText) btnText.textContent = 'Sedang proses...';
     }
 
     $.ajax({
@@ -758,11 +765,11 @@ function openRestockAllModal(){
         dataType: 'json',
         data: {
             outlet: outlet,
-            category: cat,
-            search: q
+            category: cat
         },
         success: function(response) {
             if (response.success) {
+                closeModal('autoRestockModal');
                 showToast('success', 'Restock Otomatis', response.message);
                 applyFilters();
             } else {
@@ -778,8 +785,9 @@ function openRestockAllModal(){
         },
         complete: function() {
             if (btn) {
+                btn.classList.remove('loading');
                 btn.disabled = false;
-                btn.innerHTML = originalHtml;
+                if (btnText) btnText.textContent = originalText;
             }
         }
     });
@@ -842,6 +850,7 @@ window.deleteById = deleteById;
 window.openRestock = openRestock;
 window.confirmRestock = confirmRestock;
 window.openRestockAllModal = openRestockAllModal;
+window.confirmAutoRestock = confirmAutoRestock;
 window.closeModal = closeModal;
 window.closeModalOut = closeModalOut;
 window.exportData = exportData;

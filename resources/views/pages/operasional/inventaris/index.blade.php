@@ -314,6 +314,48 @@
                 <button class="modal-btn modal-btn-success" id="btnConfirmRestock" onclick="confirmRestock()"><i class="fas fa-check btn-icon"></i> <span class="btn-text">Konfirmasi Restock</span></button>
             </div>
         </div>
+    <!-- ====================== AUTO RESTOCK MODAL ====================== -->
+    <div class="modal-overlay" id="autoRestockModal" onclick="closeModalOut(event,'autoRestockModal')">
+        <div class="modal-box" style="max-width:480px">
+            <div class="modal-header">
+                <div class="modal-header-icon" style="background:linear-gradient(135deg,var(--orange),var(--warning))"><i class="fas fa-redo-alt"></i></div>
+                <div class="modal-title"><h3>Restock Otomatis</h3><p>Pilih outlet untuk restock otomatis</p></div>
+                <button class="modal-close" onclick="closeModal('autoRestockModal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid-2">
+                    <div class="form-field full">
+                        <label>Pilih Outlet <span class="req">*</span></label>
+                        <select class="form-control" id="ar-outlet">
+                            <option value="">-- Pilih Outlet --</option>
+                            @foreach($outlets as $outlet)
+                                <option value="{{ $outlet->id }}">{{ $outlet->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="form-field full">
+                        <label>Filter Kategori (Opsional)</label>
+                        <select class="form-control" id="ar-category">
+                            <option value="">Semua Kategori</option>
+                            <option>Deterjen & Kimia</option>
+                            <option>Pewangi & Softener</option>
+                            <option>Plastik & Kemasan</option>
+                            <option>Peralatan Cuci</option>
+                            <option>Peralatan Setrika</option>
+                            <option>Kebersihan Outlet</option>
+                            <option>ATK & Administrasi</option>
+                        </select>
+                    </div>
+                </div>
+                <p style="font-size: .8rem; color: var(--gray); margin-top: 1rem; line-height: 1.4;">
+                    * Sistem akan mendeteksi seluruh barang pada outlet terpilih yang jumlah stoknya di bawah batas minimum, lalu otomatis menambahkan stok hingga mencapai batas kapasitas maksimum.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-outline" onclick="closeModal('autoRestockModal')">Batal</button>
+                <button class="modal-btn modal-btn-warning" id="btnConfirmAutoRestock" onclick="confirmAutoRestock()"><i class="fas fa-check btn-icon"></i> <span class="btn-text">Mulai Restock</span></button>
+            </div>
+        </div>
     </div>
 
     <!-- Toast + Float btn -->
