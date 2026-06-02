@@ -38,7 +38,7 @@
                     @if($autofocus) autofocus @endif
                     {{ $attributes }}
                 >
-                <i class="{{ $icon }} icon"></i>
+                <i class="{{ $icon }} icon ic"></i>
             </div>
         @else
             <input 

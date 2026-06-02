@@ -32,7 +32,7 @@
                     {{ $required ? 'required' : '' }} 
                     {{ $attributes }}
                 ></textarea>
-                <i class="{{ $icon }} icon" style="top:1rem;transform:none"></i>
+                <i class="{{ $icon }} icon ic" style="top:1rem;transform:none"></i>
             </div>
         @else
             <textarea 
