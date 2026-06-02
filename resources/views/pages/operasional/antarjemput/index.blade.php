@@ -27,36 +27,46 @@
     </div>
 
     <!-- Stats Filter Cards -->
-    <div class="stats-grid">
-        <div class="stat-card c1 fade-in d1 active-stat" onclick="filterByStatus('all', this)">
-            <div class="stat-hdr"><div class="stat-icon c1"><i class="fas fa-layer-group"></i></div></div>
-            <div class="stat-value" id="sc-all">0</div>
-            <div class="stat-label">Semua Trip</div>
-            <div class="stat-sub">Hari ini</div>
+    <div class="row row-cols-2 row-cols-sm-3 row-cols-lg-5 g-3 mb-4">
+        <div class="col">
+            <div class="stat-card c1 fade-in d1 active-stat h-100" onclick="filterByStatus('all', this)">
+                <div class="stat-hdr"><div class="stat-icon c1"><i class="fas fa-layer-group"></i></div></div>
+                <div class="stat-value" id="sc-all">0</div>
+                <div class="stat-label">Semua Trip</div>
+                <div class="stat-sub">Hari ini</div>
+            </div>
         </div>
-        <div class="stat-card c2 fade-in d2" onclick="filterByStatus('menunggu', this)">
-            <div class="stat-hdr"><div class="stat-icon c2"><i class="fas fa-clock"></i></div></div>
-            <div class="stat-value" id="sc-menunggu">0</div>
-            <div class="stat-label">Menunggu</div>
-            <div class="stat-sub">Belum dijadwalkan</div>
+        <div class="col">
+            <div class="stat-card c2 fade-in d2 h-100" onclick="filterByStatus('menunggu', this)">
+                <div class="stat-hdr"><div class="stat-icon c2"><i class="fas fa-clock"></i></div></div>
+                <div class="stat-value" id="sc-menunggu">0</div>
+                <div class="stat-label">Menunggu</div>
+                <div class="stat-sub">Belum dijadwalkan</div>
+            </div>
         </div>
-        <div class="stat-card c3 fade-in d3" onclick="filterByStatus('jemput', this)">
-            <div class="stat-hdr"><div class="stat-icon c3"><i class="fas fa-motorcycle"></i></div></div>
-            <div class="stat-value" id="sc-jemput">0</div>
-            <div class="stat-label">Sedang Jemput</div>
-            <div class="stat-sub">Dalam perjalanan</div>
+        <div class="col">
+            <div class="stat-card c3 fade-in d3 h-100" onclick="filterByStatus('jemput', this)">
+                <div class="stat-hdr"><div class="stat-icon c3"><i class="fas fa-motorcycle"></i></div></div>
+                <div class="stat-value" id="sc-jemput">0</div>
+                <div class="stat-label">Sedang Jemput</div>
+                <div class="stat-sub">Dalam perjalanan</div>
+            </div>
         </div>
-        <div class="stat-card c4 fade-in d4" onclick="filterByStatus('proses', this)">
-            <div class="stat-hdr"><div class="stat-icon c4"><i class="fas fa-spinner"></i></div></div>
-            <div class="stat-value" id="sc-proses">0</div>
-            <div class="stat-label">Sedang Diproses</div>
-            <div class="stat-sub">Di outlet laundry</div>
+        <div class="col">
+            <div class="stat-card c4 fade-in d4 h-100" onclick="filterByStatus('proses', this)">
+                <div class="stat-hdr"><div class="stat-icon c4"><i class="fas fa-spinner"></i></div></div>
+                <div class="stat-value" id="sc-proses">0</div>
+                <div class="stat-label">Sedang Diproses</div>
+                <div class="stat-sub">Di outlet laundry</div>
+            </div>
         </div>
-        <div class="stat-card c5 fade-in d5" onclick="filterByStatus('antar', this)">
-            <div class="stat-hdr"><div class="stat-icon c5"><i class="fas fa-shipping-fast"></i></div></div>
-            <div class="stat-value" id="sc-antar">0</div>
-            <div class="stat-label">Sedang Antar</div>
-            <div class="stat-sub">Menuju ke pelanggan</div>
+        <div class="col">
+            <div class="stat-card c5 fade-in d5 h-100" onclick="filterByStatus('antar', this)">
+                <div class="stat-hdr"><div class="stat-icon c5"><i class="fas fa-shipping-fast"></i></div></div>
+                <div class="stat-value" id="sc-antar">0</div>
+                <div class="stat-label">Sedang Antar</div>
+                <div class="stat-sub">Menuju ke pelanggan</div>
+            </div>
         </div>
     </div>
 
@@ -93,9 +103,9 @@
     </div>
 
     <!-- Content: Card list grid + Side Panel -->
-    <div class="content-layout fade-in">
+    <div class="row fade-in">
         <!-- Left Section: Trip cards and pagination -->
-        <div>
+        <div class="col-12 col-xl-8 col-xxl-9 mb-4">
             <div class="trip-cards-grid" id="tripCardsGrid">
                 <!-- Trip cards injected dynamically -->
             </div>
@@ -107,43 +117,45 @@
         </div>
 
         <!-- Right Section: Side Panel -->
-        <div class="side-panel">
-            <!-- Live stats -->
-            <div class="live-stats">
-                <div class="live-badge"><i class="fas fa-circle"></i> Live Monitor</div>
-                <div class="live-stat-grid">
-                    <div class="live-stat-item"><div class="live-stat-val" id="ls-kurir-aktif">{{ count($drivers) }}</div><div class="live-stat-lbl">Kurir Aktif</div></div>
-                    <div class="live-stat-item"><div class="live-stat-val" id="ls-trip-hari">0</div><div class="live-stat-lbl">Trip Hari Ini</div></div>
-                    <div class="live-stat-item"><div class="live-stat-val">5.8 km</div><div class="live-stat-lbl">Jarak Avg</div></div>
-                    <div class="live-stat-item"><div class="live-stat-val">28m</div><div class="live-stat-lbl">Waktu Avg</div></div>
-                </div>
-            </div>
-
-            <!-- Driver Status -->
-            <div class="panel-card">
-                <div class="panel-card-header">
-                    <div class="panel-card-title">
-                        <div class="panel-card-title-icon" style="background:linear-gradient(135deg,rgba(16,185,129,.12),rgba(6,182,212,.12));color:var(--secondary)"><i class="fas fa-user-astronaut"></i></div>
-                        Status Kurir
+        <div class="col-12 col-xl-4 col-xxl-3">
+            <div class="side-panel">
+                <!-- Live stats -->
+                <div class="live-stats">
+                    <div class="live-badge"><i class="fas fa-circle"></i> Live Monitor</div>
+                    <div class="live-stat-grid">
+                        <div class="live-stat-item"><div class="live-stat-val" id="ls-kurir-aktif">{{ count($drivers) }}</div><div class="live-stat-lbl">Kurir Aktif</div></div>
+                        <div class="live-stat-item"><div class="live-stat-val" id="ls-trip-hari">0</div><div class="live-stat-lbl">Trip Hari Ini</div></div>
+                        <div class="live-stat-item"><div class="live-stat-val">5.8 km</div><div class="live-stat-lbl">Jarak Avg</div></div>
+                        <div class="live-stat-item"><div class="live-stat-val">28m</div><div class="live-stat-lbl">Waktu Avg</div></div>
                     </div>
                 </div>
-                <div class="panel-card-body" id="driverList">
-                    <!-- Status kurir injected dynamically -->
-                </div>
-            </div>
 
-            <!-- Today Schedule -->
-            <div class="panel-card">
-                <div class="panel-card-header">
-                    <div class="panel-card-title">
-                        <div class="panel-card-title-icon" style="background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(249,115,22,.12));color:var(--warning)"><i class="fas fa-calendar-alt"></i></div>
-                        Jadwal Hari Ini
+                <!-- Driver Status -->
+                <div class="panel-card">
+                    <div class="panel-card-header">
+                        <div class="panel-card-title">
+                            <div class="panel-card-title-icon" style="background:linear-gradient(135deg,rgba(16,185,129,.12),rgba(6,182,212,.12));color:var(--secondary)"><i class="fas fa-user-astronaut"></i></div>
+                            Status Kurir
+                        </div>
                     </div>
-                    <span style="font-size:.75rem;color:var(--gray);position:relative;z-index:1" id="scheduleDate"></span>
+                    <div class="panel-card-body" id="driverList">
+                        <!-- Status kurir injected dynamically -->
+                    </div>
                 </div>
-                <div class="panel-card-body">
-                    <div class="schedule-list" id="scheduleList">
-                        <!-- Today schedule list injected dynamically -->
+
+                <!-- Today Schedule -->
+                <div class="panel-card">
+                    <div class="panel-card-header">
+                        <div class="panel-card-title">
+                            <div class="panel-card-title-icon" style="background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(249,115,22,.12));color:var(--warning)"><i class="fas fa-calendar-alt"></i></div>
+                            Jadwal Hari Ini
+                        </div>
+                        <span style="font-size:.75rem;color:var(--gray);position:relative;z-index:1" id="scheduleDate"></span>
+                    </div>
+                    <div class="panel-card-body">
+                        <div class="schedule-list" id="scheduleList">
+                            <!-- Today schedule list injected dynamically -->
+                        </div>
                     </div>
                 </div>
             </div>
