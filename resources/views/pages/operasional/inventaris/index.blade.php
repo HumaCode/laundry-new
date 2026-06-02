@@ -228,7 +228,7 @@
             </div>
             <div class="modal-footer">
                 <button class="modal-btn modal-btn-outline" onclick="closeModal('itemModal')"><i class="fas fa-times"></i> Batal</button>
-                <button class="modal-btn modal-btn-primary" onclick="saveItem()"><i class="fas fa-save"></i> Simpan</button>
+                <button class="modal-btn modal-btn-primary" id="btnSaveItem" onclick="saveItem()"><i class="fas fa-save btn-icon"></i> <span class="btn-text">Simpan</span></button>
             </div>
         </div>
     </div>
@@ -311,7 +311,7 @@
             </div>
             <div class="modal-footer">
                 <button class="modal-btn modal-btn-outline" onclick="closeModal('restockModal')">Batal</button>
-                <button class="modal-btn modal-btn-success" onclick="confirmRestock()"><i class="fas fa-check"></i> Konfirmasi Restock</button>
+                <button class="modal-btn modal-btn-success" id="btnConfirmRestock" onclick="confirmRestock()"><i class="fas fa-check btn-icon"></i> <span class="btn-text">Konfirmasi Restock</span></button>
             </div>
         </div>
     </div>

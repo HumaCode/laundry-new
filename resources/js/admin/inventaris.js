@@ -478,6 +478,16 @@ function saveItem(){
     const url = editMode ? `/inventories/${activeItem.id}` : '/inventories';
     const method = editMode ? 'PUT' : 'POST';
 
+    const btn = document.getElementById('btnSaveItem');
+    const btnText = btn ? btn.querySelector('.btn-text') : null;
+    const originalText = btnText ? btnText.textContent : 'Simpan';
+    
+    if (btn) {
+        btn.classList.add('loading');
+        btn.disabled = true;
+        if (btnText) btnText.textContent = 'Sedang proses...';
+    }
+
     $.ajax({
         url: url,
         type: method,
@@ -499,6 +509,13 @@ function saveItem(){
                 msg = xhr.responseJSON.errors[firstKey][0];
             }
             showToast('error', 'Validasi', msg);
+        },
+        complete: function() {
+            if (btn) {
+                btn.classList.remove('loading');
+                btn.disabled = false;
+                if (btnText) btnText.textContent = originalText;
+            }
         }
     });
 }
@@ -625,6 +642,16 @@ function confirmRestock(){
         date: new Date().toISOString().slice(0, 10)
     };
 
+    const btn = document.getElementById('btnConfirmRestock');
+    const btnText = btn ? btn.querySelector('.btn-text') : null;
+    const originalText = btnText ? btnText.textContent : 'Konfirmasi Restock';
+
+    if (btn) {
+        btn.classList.add('loading');
+        btn.disabled = true;
+        if (btnText) btnText.textContent = 'Sedang proses...';
+    }
+
     $.ajax({
         url: `/inventories/${activeItem.id}/restock`,
         type: 'POST',
@@ -646,6 +673,13 @@ function confirmRestock(){
                 msg = xhr.responseJSON.errors[firstKey][0];
             }
             showToast('error', 'Error', msg);
+        },
+        complete: function() {
+            if (btn) {
+                btn.classList.remove('loading');
+                btn.disabled = false;
+                if (btnText) btnText.textContent = originalText;
+            }
         }
     });
 }
