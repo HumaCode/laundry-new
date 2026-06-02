@@ -8,61 +8,100 @@
         </div>
         <div class="modal-body">
             <div class="form-grid-2">
-                <div class="form-field">
-                    <label>Nama Lengkap <span class="req">*</span></label>
-                    <div class="input-icon-wrap"><input class="form-control" id="f-name" type="text" placeholder="Masukkan nama lengkap"><i class="fas fa-user icon"></i></div>
-                </div>
-                <div class="form-field">
-                    <label>No. Telepon <span class="req">*</span></label>
-                    <div class="input-icon-wrap"><input class="form-control" id="f-phone" type="tel" placeholder="08xxxxxxxxxx"><i class="fas fa-phone icon"></i></div>
-                </div>
-                <div class="form-field">
-                    <label>Email</label>
-                    <div class="input-icon-wrap"><input class="form-control" id="f-email" type="email" placeholder="email@contoh.com"><i class="fas fa-envelope icon"></i></div>
-                </div>
-                <div class="form-field">
-                    <label>Tanggal Lahir</label>
-                    <div class="input-icon-wrap"><input class="form-control" id="f-dob" type="date"><i class="fas fa-birthday-cake icon"></i></div>
-                </div>
-                <div class="form-field">
-                    <label>Jenis Kelamin</label>
-                    <select class="form-control" id="f-gender">
-                        <option value="">-- Pilih --</option>
-                        <option>Laki-laki</option>
-                        <option>Perempuan</option>
-                    </select>
-                </div>
-                <div class="form-field">
-                    <label>Outlet Favorit</label>
-                    <select class="form-control" id="f-outlet">
-                        <option value="">-- Pilih --</option>
-                        @foreach($outlets as $o)
-                            <option value="{{ $o->id }}">{{ $o->name }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div class="form-field full">
-                    <label>Alamat</label>
-                    <div class="input-icon-wrap"><textarea class="form-control" id="f-address" rows="3" placeholder="Alamat lengkap pelanggan" style="padding-left:2.75rem;resize:vertical"></textarea><i class="fas fa-map-marker-alt icon" style="top:1rem;transform:none"></i></div>
-                </div>
-                <div class="form-field">
-                    <label>Tier</label>
-                    <select class="form-control" id="f-tier">
-                        <option value="Baru">Baru</option>
-                        <option value="Reguler">Reguler</option>
-                        <option value="Premium">Premium</option>
-                        <option value="VIP">VIP</option>
-                    </select>
-                </div>
-                <div class="form-field">
-                    <label>Catatan</label>
-                    <input class="form-control" id="f-notes" type="text" placeholder="Catatan khusus (opsional)">
-                </div>
+                <x-form.input 
+                    formField 
+                    label="Nama Lengkap" 
+                    id="f-name" 
+                    name="name" 
+                    placeholder="Masukkan nama lengkap" 
+                    icon="fas fa-user" 
+                    required 
+                />
+
+                <x-form.input 
+                    formField 
+                    label="No. Telepon" 
+                    type="tel"
+                    id="f-phone" 
+                    name="phone" 
+                    placeholder="08xxxxxxxxxx" 
+                    icon="fas fa-phone" 
+                    required 
+                />
+
+                <x-form.input 
+                    formField 
+                    label="Email" 
+                    type="email"
+                    id="f-email" 
+                    name="email" 
+                    placeholder="email@contoh.com" 
+                    icon="fas fa-envelope" 
+                />
+
+                <x-form.input 
+                    formField 
+                    label="Tanggal Lahir" 
+                    type="date"
+                    id="f-dob" 
+                    name="dob" 
+                    icon="fas fa-birthday-cake" 
+                />
+
+                <x-form.select 
+                    label="Jenis Kelamin" 
+                    id="f-gender" 
+                    name="gender"
+                >
+                    <option value="">-- Pilih --</option>
+                    <option>Laki-laki</option>
+                    <option>Perempuan</option>
+                </x-form.select>
+
+                <x-form.select 
+                    label="Outlet Favorit" 
+                    id="f-outlet" 
+                    name="outlet_id"
+                >
+                    <option value="">-- Pilih --</option>
+                    @foreach($outlets as $o)
+                        <option value="{{ $o->id }}">{{ $o->name }}</option>
+                    @endforeach
+                </x-form.select>
+
+                <x-form.textarea 
+                    label="Alamat" 
+                    id="f-address" 
+                    name="address" 
+                    rows="3" 
+                    placeholder="Alamat lengkap pelanggan" 
+                    icon="fas fa-map-marker-alt" 
+                    fullWidth 
+                />
+
+                <x-form.select 
+                    label="Tier" 
+                    id="f-tier" 
+                    name="tier"
+                >
+                    <option value="Baru">Baru</option>
+                    <option value="Reguler">Reguler</option>
+                    <option value="Premium">Premium</option>
+                    <option value="VIP">VIP</option>
+                </x-form.select>
+
+                <x-form.input 
+                    formField 
+                    label="Catatan" 
+                    id="f-notes" 
+                    name="notes" 
+                    placeholder="Catatan khusus (opsional)" 
+                />
             </div>
         </div>
         <div class="modal-footer">
-            <button class="modal-btn modal-btn-outline" onclick="closeModal('custModal')"><i class="fas fa-times"></i> Batal</button>
-            <button class="modal-btn modal-btn-primary" onclick="saveCustomer()"><i class="fas fa-save"></i> Simpan</button>
+            <x-form.button variant="outline" onclick="closeModal('custModal')" icon="fas fa-times"> Batal</x-form.button>
+            <x-form.button variant="primary" onclick="saveCustomer()" icon="fas fa-save"> Simpan</x-form.button>
         </div>
     </div>
 </div>
