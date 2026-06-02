@@ -316,7 +316,7 @@ function buildPageControls(containerId, total, fnName) {
     if (e-s<4) s = Math.max(1, e-4);
     if (s>1) { html += `<button class="page-link" onclick="window.${fnName}(1)">1</button>`; if(s>2) html += `<span style="padding:0 .5rem;color:var(--gray-light)">…</span>`; }
     for (let i=s; i<=e; i++) html += `<button class="page-link ${i===currentPage?'active':''}" onclick="window.${fnName}(${i})">${i}</button>`;
-    if (e<total) { if(e<total-1) html += `<span style="padding:0 .5rem;color:var(--gray-light)">…</span>`; html += `<button class="page-link" onclick="window.${fnName}(total)">${total}</button>`; }
+    if (e<total) { if(e<total-1) html += `<span style="padding:0 .5rem;color:var(--gray-light)">…</span>`; html += `<button class="page-link" onclick="window.${fnName}(${total})">${total}</button>`; }
     html += `<button class="page-link" onclick="window.${fnName}(${currentPage+1})" ${currentPage>=total?'disabled':''}><i class="fas fa-chevron-right"></i></button>`;
     el.innerHTML = html;
 }
