@@ -55,7 +55,8 @@ class LaporanService implements LaporanServiceInterface
         $dailyRevenue = $dailyRevenueRaw->map(function ($item) {
             return [
                 'date' => Carbon::parse($item->date)->format('d M'),
-                'total' => intval($item->total)
+                'total' => intval($item->total),
+                'count' => intval($item->count ?? 0)
             ];
         });
 

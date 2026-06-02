@@ -1,9 +1,26 @@
+@php
+    if (!function_exists('formatRupiahK')) {
+        function formatRupiahK($n) {
+            if ($n >= 1000000000) return 'Rp ' . number_format($n / 1000000000, 1) . 'M';
+            if ($n >= 1000000) return 'Rp ' . number_format($n / 1000000, 1) . 'jt';
+            if ($n >= 1000) return 'Rp ' . number_format($n / 1000, 0) . 'rb';
+            return 'Rp ' . $n;
+        }
+    }
+@endphp
+
 <x-app-layout>
     @push('styles')
         @vite(['resources/css/admin/dashboard.css'])
     @endpush
 
     @push('scripts')
+        <script>
+            window.dashboardChartData = {
+                revenueTrend: @json($laporanData['dailyRevenue'] ?? []),
+                serviceDist: @json($laporanData['serviceDist'] ?? [])
+            };
+        </script>
         @vite(['resources/js/admin/dashboard.js'])
     @endpush
 
@@ -13,12 +30,12 @@
         <div class="col-12 col-sm-6 col-xl-3">
             <x-dashboard.stat-card 
                 title="Pendapatan Bulan Ini"
-                value="Rp 84.2jt"
+                value="{{ formatRupiahK($totalRevenue ?? 0) }}"
                 icon="wallet"
-                trend="12.5%"
-                trendType="up"
-                footerText="vs bulan lalu: Rp 74.8jt"
-                progress="72%"
+                trend="{{ number_format(abs($revenueGrowth ?? 0), 1) }}%"
+                trendType="{{ ($revenueGrowth ?? 0) >= 0 ? 'up' : 'down' }}"
+                footerText="vs bulan lalu: {{ formatRupiahK($prevRevenueSum ?? 0) }}"
+                progress="{{ min(100, intval(($prevRevenueSum ?? 0) > 0 ? (($totalRevenue ?? 0) / ($prevRevenueSum ?? 0)) * 100 : 100)) }}%"
                 theme="blue"
                 delayClass="d1"
             />
@@ -28,12 +45,12 @@
         <div class="col-12 col-sm-6 col-xl-3">
             <x-dashboard.stat-card 
                 title="Total Order Bulan Ini"
-                value="1,248"
+                value="{{ number_format($totalOrders ?? 0) }}"
                 icon="box-open"
                 trend="8.3%"
                 trendType="up"
-                footerText="Rata-rata 41 order/hari"
-                progress="83%"
+                footerText="Rata-rata {{ ($totalOrders ?? 0) > 0 ? number_format(($totalOrders ?? 0) / 30, 1) : 0 }} order/hari"
+                progress="{{ min(100, intval((($totalOrders ?? 0) / 1500) * 100)) }}%"
                 theme="green"
                 delayClass="d2"
             />
@@ -43,12 +60,12 @@
         <div class="col-12 col-sm-6 col-xl-3">
             <x-dashboard.stat-card 
                 title="Pelanggan Aktif"
-                value="3,891"
+                value="{{ number_format($totalCustomers ?? 0) }}"
                 icon="users"
                 trend="5.7%"
                 trendType="up"
-                footerText="284 pelanggan baru"
-                progress="60%"
+                footerText="{{ App\Models\User::role('customer')->whereMonth('created_at', Carbon\Carbon::now()->month)->count() }} pelanggan baru"
+                progress="{{ min(100, intval((($totalCustomers ?? 0) / 5000) * 100)) }}%"
                 theme="purple"
                 delayClass="d3"
             />
@@ -58,11 +75,11 @@
         <div class="col-12 col-sm-6 col-xl-3">
             <x-dashboard.stat-card 
                 title="Rating Rata-rata"
-                value="4.87"
+                value="{{ number_format($avgRating ?? 4.87, 2) }}"
                 icon="star"
                 trend="0.2"
                 trendType="down"
-                footerText="Dari 1,248 ulasan"
+                footerText="Dari {{ number_format($totalOrders ?? 0) }} ulasan"
                 progress="97%"
                 theme="orange"
                 delayClass="d4"
@@ -91,15 +108,15 @@
                 </div>
                 <div class="chart-summary">
                     <div class="chart-summary-item">
-                        <div class="chart-summary-value">Rp 84.2jt</div>
+                        <div class="chart-summary-value">{{ formatRupiahK($totalRevenue ?? 0) }}</div>
                         <div class="chart-summary-label"><span class="chart-summary-dot" style="background:var(--primary)"></span>Pendapatan</div>
                     </div>
                     <div class="chart-summary-item">
-                        <div class="chart-summary-value">1,248</div>
+                        <div class="chart-summary-value">{{ number_format($totalOrders ?? 0) }}</div>
                         <div class="chart-summary-label"><span class="chart-summary-dot" style="background:var(--secondary)"></span>Order</div>
                     </div>
                     <div class="chart-summary-item">
-                        <div class="chart-summary-value">Rp 67.4rb</div>
+                        <div class="chart-summary-value">{{ formatRupiahK(($totalOrders ?? 0) > 0 ? ($totalRevenue ?? 0) / ($totalOrders ?? 0) : 0) }}</div>
                         <div class="chart-summary-label"><span class="chart-summary-dot" style="background:var(--orange)"></span>Rata-rata</div>
                     </div>
                 </div>
@@ -117,66 +134,35 @@
                 </x-slot:headerAction>
 
                 <div class="outlet-list">
+                    @php $rank = 1; @endphp
+                    @forelse(collect($laporanData['outletRevenues'] ?? [])->sortByDesc('current') as $outletRev)
                     <div class="outlet-item">
-                        <div class="outlet-rank r1">1</div>
+                        <div class="outlet-rank r{{ $rank <= 5 ? $rank : 'other' }}">{{ $rank }}</div>
                         <div class="outlet-info">
-                            <div class="outlet-name">Outlet Pusat</div>
-                            <div class="outlet-city">Jakarta Pusat</div>
-                            <div class="outlet-progress"><div class="outlet-progress-fill" style="width:90%"></div></div>
+                            <div class="outlet-name">{{ $outletRev['name'] }}</div>
+                            <div class="outlet-city">Cabang</div>
+                            @php
+                                $maxVal = collect($laporanData['outletRevenues'] ?? [])->max('current') ?: 1;
+                                $widthPct = min(100, intval(($outletRev['current'] / $maxVal) * 100));
+                            @endphp
+                            <div class="outlet-progress"><div class="outlet-progress-fill" style="width:{{ $widthPct }}%"></div></div>
                         </div>
                         <div class="outlet-perf">
-                            <div class="outlet-revenue">Rp 28.4jt</div>
-                            <div class="outlet-growth" style="color:var(--secondary)"><i class="fas fa-arrow-up"></i> 14.2%</div>
+                            <div class="outlet-revenue">{{ formatRupiahK($outletRev['current']) }}</div>
+                            @php
+                                $growth = $outletRev['previous'] > 0 
+                                    ? (($outletRev['current'] - $outletRev['previous']) / $outletRev['previous']) * 100 
+                                    : 0;
+                            @endphp
+                            <div class="outlet-growth" style="color:{{ $growth >= 0 ? 'var(--secondary)' : 'var(--danger)' }}">
+                                <i class="fas fa-arrow-{{ $growth >= 0 ? 'up' : 'down' }}"></i> {{ number_format(abs($growth), 1) }}%
+                            </div>
                         </div>
                     </div>
-                    <div class="outlet-item">
-                        <div class="outlet-rank r2">2</div>
-                        <div class="outlet-info">
-                            <div class="outlet-name">Outlet Bandung</div>
-                            <div class="outlet-city">Bandung Kota</div>
-                            <div class="outlet-progress"><div class="outlet-progress-fill" style="width:70%"></div></div>
-                        </div>
-                        <div class="outlet-perf">
-                            <div class="outlet-revenue">Rp 22.1jt</div>
-                            <div class="outlet-growth" style="color:var(--secondary)"><i class="fas fa-arrow-up"></i> 9.8%</div>
-                        </div>
-                    </div>
-                    <div class="outlet-item">
-                        <div class="outlet-rank r3">3</div>
-                        <div class="outlet-info">
-                            <div class="outlet-name">Outlet Surabaya</div>
-                            <div class="outlet-city">Surabaya Barat</div>
-                            <div class="outlet-progress"><div class="outlet-progress-fill" style="width:58%"></div></div>
-                        </div>
-                        <div class="outlet-perf">
-                            <div class="outlet-revenue">Rp 18.7jt</div>
-                            <div class="outlet-growth" style="color:var(--warning)"><i class="fas fa-arrow-up"></i> 3.1%</div>
-                        </div>
-                    </div>
-                    <div class="outlet-item">
-                        <div class="outlet-rank r4">4</div>
-                        <div class="outlet-info">
-                            <div class="outlet-name">Outlet Yogyakarta</div>
-                            <div class="outlet-city">Yogyakarta</div>
-                            <div class="outlet-progress"><div class="outlet-progress-fill" style="width:45%"></div></div>
-                        </div>
-                        <div class="outlet-perf">
-                            <div class="outlet-revenue">Rp 10.2jt</div>
-                            <div class="outlet-growth" style="color:var(--danger)"><i class="fas fa-arrow-down"></i> 2.4%</div>
-                        </div>
-                    </div>
-                    <div class="outlet-item">
-                        <div class="outlet-rank r5">5</div>
-                        <div class="outlet-info">
-                            <div class="outlet-name">Outlet Semarang</div>
-                            <div class="outlet-city">Semarang Tengah</div>
-                            <div class="outlet-progress"><div class="outlet-progress-fill" style="width:30%"></div></div>
-                        </div>
-                        <div class="outlet-perf">
-                            <div class="outlet-revenue">Rp 4.8jt</div>
-                            <div class="outlet-growth" style="color:var(--secondary)"><i class="fas fa-arrow-up"></i> 6.5%</div>
-                        </div>
-                    </div>
+                    @php $rank++; @endphp
+                    @empty
+                    <div style="padding: 1.5rem; text-align: center; color: var(--gray);">Belum ada data performa outlet</div>
+                    @endforelse
                 </div>
             </x-dashboard.card>
         </div>
@@ -192,7 +178,7 @@
                 iconStyle="background:linear-gradient(135deg,rgba(59,130,246,0.12),rgba(99,102,241,0.12));color:var(--info)"
                 :noPadding="true">
                 <x-slot:headerAction>
-                    <a href="#" style="font-size:0.8rem;color:var(--primary);text-decoration:none;font-weight:600;position:relative;z-index:1">
+                    <a href="{{ route('operasional.order.index') }}" style="font-size:0.8rem;color:var(--primary);text-decoration:none;font-weight:600;position:relative;z-index:1">
                         Lihat Semua <i class="fas fa-arrow-right" style="font-size:0.7rem"></i>
                     </a>
                 </x-slot:headerAction>
@@ -210,54 +196,43 @@
                             </tr>
                         </thead>
                         <tbody>
+                            @forelse($recentOrders ?? [] as $order)
                             <tr>
-                                <td><div class="order-id">#ORD-2024-1248</div><div class="order-sub">24 Des, 13:45</div></td>
-                                <td><div class="order-customer">Budi Santoso</div><div class="order-sub">081234567890</div></td>
-                                <td><div>Cuci Setrika</div><div class="order-sub">3.5 kg · Kiloan</div></td>
-                                <td><div class="order-outlet">Outlet Pusat</div></td>
-                                <td><span class="order-badge badge-proses">Diproses</span></td>
-                                <td><div class="order-amount">Rp 35.000</div></td>
+                                <td>
+                                    <div class="order-id">#{{ $order->order_code }}</div>
+                                    <div class="order-sub">{{ $order->created_at->format('d M, H:i') }}</div>
+                                </td>
+                                <td>
+                                    <div class="order-customer">{{ $order->customer->name ?? '-' }}</div>
+                                    <div class="order-sub">{{ $order->customer->phone ?? '-' }}</div>
+                                </td>
+                                <td>
+                                    <div>{{ $order->service_type }}</div>
+                                    <div class="order-sub">{{ $order->weight }} kg</div>
+                                </td>
+                                <td>
+                                    <div class="order-outlet">{{ $order->outlet->name ?? '-' }}</div>
+                                </td>
+                                <td>
+                                    @php
+                                        $statusClass = [
+                                            'Baru' => 'badge-diterima',
+                                            'Proses' => 'badge-proses',
+                                            'Selesai' => 'badge-siap',
+                                            'Diambil' => 'badge-selesai'
+                                        ][$order->order_status] ?? 'badge-proses';
+                                    @endphp
+                                    <span class="order-badge {{ $statusClass }}">{{ $order->order_status }}</span>
+                                </td>
+                                <td>
+                                    <div class="order-amount">Rp {{ number_format($order->total_price, 0, ',', '.') }}</div>
+                                </td>
                             </tr>
+                            @empty
                             <tr>
-                                <td><div class="order-id">#ORD-2024-1247</div><div class="order-sub">24 Des, 13:20</div></td>
-                                <td><div class="order-customer">Siti Rahayu</div><div class="order-sub">089876543210</div></td>
-                                <td><div>Express</div><div class="order-sub">2 kg · Kiloan</div></td>
-                                <td><div class="order-outlet">Outlet Bandung</div></td>
-                                <td><span class="order-badge badge-siap">Siap Diambil</span></td>
-                                <td><div class="order-amount">Rp 30.000</div></td>
+                                <td colspan="6" style="text-align: center; padding: 2rem; color: var(--gray);">Belum ada order terbaru</td>
                             </tr>
-                            <tr>
-                                <td><div class="order-id">#ORD-2024-1246</div><div class="order-sub">24 Des, 12:55</div></td>
-                                <td><div class="order-customer">Ahmad Fauzi</div><div class="order-sub">081398765432</div></td>
-                                <td><div>Jas & Blazer</div><div class="order-sub">2 pcs · Satuan</div></td>
-                                <td><div class="order-outlet">Outlet Pusat</div></td>
-                                <td><span class="order-badge badge-diterima">Diterima</span></td>
-                                <td><div class="order-amount">Rp 70.000</div></td>
-                            </tr>
-                            <tr>
-                                <td><div class="order-id">#ORD-2024-1245</div><div class="order-sub">24 Des, 12:30</div></td>
-                                <td><div class="order-customer">Maya Anggraini</div><div class="order-sub">087812345678</div></td>
-                                <td><div>Bed Cover</div><div class="order-sub">1 set · Satuan</div></td>
-                                <td><div class="order-outlet">Outlet Surabaya</div></td>
-                                <td><span class="order-badge badge-selesai">Selesai</span></td>
-                                <td><div class="order-amount">Rp 25.000</div></td>
-                            </tr>
-                            <tr>
-                                <td><div class="order-id">#ORD-2024-1244</div><div class="order-sub">24 Des, 11:50</div></td>
-                                <td><div class="order-customer">Rizki Pratama</div><div class="order-sub">082312345678</div></td>
-                                <td><div>Cuci Kering</div><div class="order-sub">5 kg · Kiloan</div></td>
-                                <td><div class="order-outlet">Outlet Bandung</div></td>
-                                <td><span class="order-badge badge-siap">Siap Diambil</span></td>
-                                <td><div class="order-amount">Rp 40.000</div></td>
-                            </tr>
-                            <tr>
-                                <td><div class="order-id">#ORD-2024-1243</div><div class="order-sub">24 Des, 11:10</div></td>
-                                <td><div class="order-customer">Dewi Lestari</div><div class="order-sub">081556677889</div></td>
-                                <td><div>Sepatu</div><div class="order-sub">2 pair · Satuan</div></td>
-                                <td><div class="order-outlet">Outlet Yogyakarta</div></td>
-                                <td><span class="order-badge badge-proses">Diproses</span></td>
-                                <td><div class="order-amount">Rp 80.000</div></td>
-                            </tr>
+                            @endforelse
                         </tbody>
                     </table>
                 </div>
@@ -275,36 +250,25 @@
                     <div class="donut-container">
                         <canvas id="donutChart"></canvas>
                         <div class="donut-center">
-                            <div class="donut-center-value">1,248</div>
+                            <div class="donut-center-value">{{ number_format($totalOrders ?? 0) }}</div>
                             <div class="donut-center-label">Total Order</div>
                         </div>
                     </div>
                     <div class="donut-legend">
+                        @php
+                            $colors = ['#6366F1','#10B981','#F59E0B','#EC4899','#9CA3AF'];
+                            $serviceDist = collect($laporanData['serviceDist'] ?? []);
+                            $totalCount = $serviceDist->sum('count') ?: 1;
+                        @endphp
+                        @forelse($serviceDist->take(5) as $index => $sd)
                         <div class="legend-item">
-                            <div class="legend-dot" style="background:var(--primary)"></div>
-                            <span class="legend-name">Cuci Setrika</span>
-                            <span class="legend-pct">38%</span>
+                            <div class="legend-dot" style="background:{{ $colors[$index] ?? '#9CA3AF' }}"></div>
+                            <span class="legend-name">{{ $sd->service_type }}</span>
+                            <span class="legend-pct">{{ number_format(($sd->count / $totalCount) * 100, 1) }}%</span>
                         </div>
-                        <div class="legend-item">
-                            <div class="legend-dot" style="background:var(--secondary)"></div>
-                            <span class="legend-name">Cuci Kering</span>
-                            <span class="legend-pct">27%</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-dot" style="background:var(--warning)"></div>
-                            <span class="legend-name">Express</span>
-                            <span class="legend-pct">18%</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-dot" style="background:var(--pink)"></div>
-                            <span class="legend-name">Satuan</span>
-                            <span class="legend-pct">11%</span>
-                        </div>
-                        <div class="legend-item">
-                            <div class="legend-dot" style="background:var(--gray-light)"></div>
-                            <span class="legend-name">Setrika Saja</span>
-                            <span class="legend-pct">6%</span>
-                        </div>
+                        @empty
+                        <div style="text-align: center; color: var(--gray); font-size: 0.8rem;">Tidak ada data distribusi</div>
+                        @endforelse
                     </div>
                 </x-dashboard.card>
 
@@ -314,25 +278,25 @@
                     icon="bolt" 
                     iconStyle="background:linear-gradient(135deg,rgba(245,158,11,0.12),rgba(249,115,22,0.12));color:var(--warning)">
                     <div class="quick-actions">
-                        <a href="#" class="quick-action-btn">
+                        <a href="{{ route('operasional.order.index') }}" class="quick-action-btn">
                             <div class="quick-action-icon" style="background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(139,92,246,0.1));color:var(--primary)">
                                 <i class="fas fa-plus-circle"></i>
                             </div>
                             <span class="quick-action-label">Order Baru</span>
                         </a>
-                        <a href="#" class="quick-action-btn">
+                        <a href="{{ route('master.pelanggan.index') }}" class="quick-action-btn">
                             <div class="quick-action-icon" style="background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(6,182,212,0.1));color:var(--secondary)">
                                 <i class="fas fa-user-plus"></i>
                             </div>
                             <span class="quick-action-label">Tambah Pelanggan</span>
                         </a>
-                        <a href="#" class="quick-action-btn">
+                        <a href="{{ route('keuangan.laporan.index') }}" class="quick-action-btn">
                             <div class="quick-action-icon" style="background:linear-gradient(135deg,rgba(245,158,11,0.1),rgba(249,115,22,0.1));color:var(--warning)">
                                 <i class="fas fa-file-export"></i>
                             </div>
                             <span class="quick-action-label">Export Laporan</span>
                         </a>
-                        <a href="#" class="quick-action-btn">
+                        <a href="{{ route('master.outlet.index') }}" class="quick-action-btn">
                             <div class="quick-action-icon" style="background:linear-gradient(135deg,rgba(139,92,246,0.1),rgba(236,72,153,0.1));color:var(--purple)">
                                 <i class="fas fa-tags"></i>
                             </div>

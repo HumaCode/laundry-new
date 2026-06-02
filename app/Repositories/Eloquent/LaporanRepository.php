@@ -65,7 +65,7 @@ class LaporanRepository implements LaporanRepositoryInterface
         $dateRaw = $isSqlite ? "strftime('%Y-%m-%d', created_at) as date" : 'DATE(created_at) as date';
 
         return (clone $baseQuery)
-            ->select(DB::raw($dateRaw), DB::raw('SUM(total_price) as total'))
+            ->select(DB::raw($dateRaw), DB::raw('SUM(total_price) as total'), DB::raw('COUNT(*) as count'))
             ->where('payment_status', 'Lunas')
             ->groupBy('date')
             ->orderBy('date')

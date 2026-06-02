@@ -11,14 +11,36 @@ document.addEventListener('DOMContentLoaded', () => {
         const revenueData = [52, 61, 58, 67, 72, 69, 75, 78, 71, 80, 76, 84];
         const orderData   = [820,910,870,980,1050,990,1100,1140,1020,1180,1120,1248];
 
+        let labels = monthLabels;
+        let revenueValues = revenueData;
+        let orderValues = orderData;
+        let revenueUnit = 'jt';
+        let revenueDivisor = 1000000;
+
+        if (window.dashboardChartData && window.dashboardChartData.revenueTrend && window.dashboardChartData.revenueTrend.length > 0) {
+            labels = window.dashboardChartData.revenueTrend.map(item => item.date);
+            
+            const maxVal = Math.max(...window.dashboardChartData.revenueTrend.map(item => item.total));
+            if (maxVal < 1000000) {
+                revenueUnit = 'rb';
+                revenueDivisor = 1000;
+            } else if (maxVal >= 1000000000) {
+                revenueUnit = 'M';
+                revenueDivisor = 1000000000;
+            }
+
+            revenueValues = window.dashboardChartData.revenueTrend.map(item => item.total / revenueDivisor);
+            orderValues = window.dashboardChartData.revenueTrend.map(item => item.count);
+        }
+
         revenueChart = new Chart(revenueCtx, {
             type: 'bar',
             data: {
-                labels: monthLabels,
+                labels: labels,
                 datasets: [
                     {
-                        label: 'Pendapatan (jt)',
-                        data: revenueData,
+                        label: 'Pendapatan',
+                        data: revenueValues,
                         backgroundColor: function(ctx) {
                             const chart = ctx.chart;
                             const {ctx: c, chartArea} = chart;
@@ -35,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     },
                     {
                         label: 'Order',
-                        data: orderData,
+                        data: orderValues,
                         type: 'line',
                         borderColor: '#10B981',
                         backgroundColor: 'rgba(16,185,129,0.1)',
@@ -63,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         cornerRadius: 10,
                         callbacks: {
                             label: function(ctx) {
-                                if (ctx.datasetIndex === 0) return ' Pendapatan: Rp ' + ctx.parsed.y + 'jt';
+                                if (ctx.datasetIndex === 0) return ' Pendapatan: Rp ' + ctx.parsed.y.toFixed(1) + revenueUnit;
                                 return ' Order: ' + ctx.parsed.y.toLocaleString();
                             }
                         }
@@ -81,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         border: { display: false, dash: [4,4] },
                         ticks: {
                             color: '#9CA3AF', font: { size: 11 },
-                            callback: v => 'Rp ' + v + 'jt'
+                            callback: v => 'Rp ' + v.toFixed(1) + revenueUnit
                         }
                     },
                     y1: {
@@ -101,12 +123,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const donutCanvas = document.getElementById('donutChart');
     if (donutCanvas) {
         const donutCtx = donutCanvas.getContext('2d');
+        
+        let donutLabels = ['Cuci Setrika', 'Cuci Kering', 'Express', 'Satuan', 'Setrika Saja'];
+        let donutValues = [38, 27, 18, 11, 6];
+
+        if (window.dashboardChartData && window.dashboardChartData.serviceDist && window.dashboardChartData.serviceDist.length > 0) {
+            const topServices = window.dashboardChartData.serviceDist.slice(0, 5);
+            const totalCount = topServices.reduce((sum, item) => sum + item.count, 0) || 1;
+            donutLabels = topServices.map(item => item.service_type);
+            donutValues = topServices.map(item => Math.round((item.count / totalCount) * 100));
+        }
+
         new Chart(donutCtx, {
             type: 'doughnut',
             data: {
-                labels: ['Cuci Setrika', 'Cuci Kering', 'Express', 'Satuan', 'Setrika Saja'],
+                labels: donutLabels,
                 datasets: [{
-                    data: [38, 27, 18, 11, 6],
+                    data: donutValues,
                     backgroundColor: ['#6366F1','#10B981','#F59E0B','#EC4899','#9CA3AF'],
                     borderWidth: 0,
                     hoverOffset: 8,
@@ -133,7 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Period Switcher
+// Period Switcher (fallback logic for demo)
 const monthLabels = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des'];
 const revenueData = [52, 61, 58, 67, 72, 69, 75, 78, 71, 80, 76, 84];
 const weekData    = [8.2, 9.1, 7.8, 10.4, 9.8, 11.2, 10.6];
@@ -144,14 +177,41 @@ function switchPeriod(btn, period) {
     btn.classList.add('active');
 
     let labels, data;
-    if (period === 'week') { labels = weekLabels; data = weekData; }
-    else if (period === 'month') { labels = monthLabels; data = revenueData; }
-    else { labels = ['2019','2020','2021','2022','2023','2024']; data = [420,380,510,640,720,840]; }
+    let unit = 'jt';
+    if (period === 'week') { 
+        labels = weekLabels; 
+        data = weekData; 
+    } else if (period === 'month') { 
+        if (window.dashboardChartData && window.dashboardChartData.revenueTrend && window.dashboardChartData.revenueTrend.length > 0) {
+            labels = window.dashboardChartData.revenueTrend.map(item => item.date);
+            const maxVal = Math.max(...window.dashboardChartData.revenueTrend.map(item => item.total));
+            let divisor = 1000000;
+            if (maxVal < 1000000) { unit = 'rb'; divisor = 1000; }
+            else if (maxVal >= 1000000000) { unit = 'M'; divisor = 1000000000; }
+            data = window.dashboardChartData.revenueTrend.map(item => item.total / divisor);
+        } else {
+            labels = monthLabels; 
+            data = revenueData; 
+        }
+    } else { 
+        labels = ['2019','2020','2021','2022','2023','2024']; 
+        data = [420,380,510,640,720,840]; 
+        unit = 'jt';
+    }
 
     if (revenueChart) {
         revenueChart.data.labels = labels;
         revenueChart.data.datasets[0].data = data;
-        revenueChart.data.datasets[1].data = data.map(v => Math.round(v * 14.5));
+        
+        // Match line chart order values
+        if (period === 'month' && window.dashboardChartData && window.dashboardChartData.revenueTrend && window.dashboardChartData.revenueTrend.length > 0) {
+            revenueChart.data.datasets[1].data = window.dashboardChartData.revenueTrend.map(item => item.count);
+        } else {
+            revenueChart.data.datasets[1].data = data.map(v => Math.round(v * 14.5));
+        }
+
+        // Update scales tooltip formatting
+        revenueChart.options.scales.y.ticks.callback = v => 'Rp ' + v.toFixed(1) + unit;
         revenueChart.update('active');
     }
 }
