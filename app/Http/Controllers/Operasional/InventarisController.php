@@ -104,14 +104,20 @@ class InventarisController extends Controller
     /**
      * Automatically restock all items below minimum stock.
      */
-    public function autoRestock(): JsonResponse
+    public function autoRestock(Request $request): JsonResponse
     {
-        $count = $this->inventoryService->autoRestock();
+        $filters = $request->only(['outlet', 'category', 'search']);
+
+        if (empty($filters['outlet'])) {
+            return ResponseHelper::jsonResponse(false, 'Silakan pilih outlet terlebih dahulu sebelum melakukan restock otomatis.', null, 400);
+        }
+
+        $count = $this->inventoryService->autoRestock($filters);
 
         if ($count > 0) {
             return ResponseHelper::jsonResponse(true, $count . ' barang berhasil di-restock otomatis', null, 200);
         }
 
-        return ResponseHelper::jsonResponse(true, 'Semua stok barang masih aman, tidak ada barang yang perlu di-restock', null, 200);
+        return ResponseHelper::jsonResponse(true, 'Semua stok barang pada outlet/filter ini masih aman', null, 200);
     }
 }

@@ -78,9 +78,9 @@ class InventoryService
         return $this->inventoryRepository->update($id, $updateData);
     }
 
-    public function autoRestock()
+    public function autoRestock(array $filters = [])
     {
-        $items = $this->inventoryRepository->getBelowMinStock();
+        $items = $this->inventoryRepository->getBelowMinStock($filters);
         $count = 0;
 
         foreach ($items as $item) {

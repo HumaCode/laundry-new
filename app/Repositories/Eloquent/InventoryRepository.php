@@ -125,9 +125,28 @@ class InventoryRepository implements InventoryRepositoryInterface
         return $item->delete();
     }
 
-    public function getBelowMinStock()
+    public function getBelowMinStock(array $filters = [])
     {
-        return Inventory::whereRaw('stock < min_stock')->get();
+        $query = Inventory::query()->whereRaw('stock < min_stock');
+
+        if (!empty($filters['outlet'])) {
+            $query->where('outlet_id', $filters['outlet']);
+        }
+
+        if (!empty($filters['category'])) {
+            $query->where('category', $filters['category']);
+        }
+
+        if (!empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('code', 'like', "%{$search}%")
+                    ->orWhere('brand', 'like', "%{$search}%");
+            });
+        }
+
+        return $query->get();
     }
 
     private function applyStatusFilter($q, $status)

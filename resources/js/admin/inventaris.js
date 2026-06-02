@@ -735,6 +735,15 @@ function confirmRestock(){
     });
 }
 function openRestockAllModal(){
+    const outlet = document.getElementById('filterOutlet').value;
+    if (!outlet) {
+        showToast('warning', 'Pilih Outlet', 'Silakan pilih outlet terlebih dahulu sebelum melakukan restock otomatis.');
+        return;
+    }
+
+    const q = document.getElementById('searchInput').value.trim();
+    const cat = document.getElementById('filterCat').value;
+
     const btn = document.querySelector('.btn-page-warning');
     const originalHtml = btn ? btn.innerHTML : '';
     
@@ -747,6 +756,11 @@ function openRestockAllModal(){
         url: '/inventories/auto-restock',
         type: 'POST',
         dataType: 'json',
+        data: {
+            outlet: outlet,
+            category: cat,
+            search: q
+        },
         success: function(response) {
             if (response.success) {
                 showToast('success', 'Restock Otomatis', response.message);
@@ -755,8 +769,12 @@ function openRestockAllModal(){
                 showToast('error', 'Error', response.message);
             }
         },
-        error: function() {
-            showToast('error', 'Error', 'Gagal melakukan restock otomatis');
+        error: function(xhr) {
+            let msg = 'Gagal melakukan restock otomatis';
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                msg = xhr.responseJSON.message;
+            }
+            showToast('error', 'Error', msg);
         },
         complete: function() {
             if (btn) {

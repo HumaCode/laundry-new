@@ -245,8 +245,24 @@ test('inventory item can be deleted', function () {
     ]);
 });
 
-test('inventories can be automatically restocked', function () {
-    // Create an item below min stock (needs restock)
+test('inventories can be automatically restocked by outlet', function () {
+    // 1. Without outlet parameter, it should fail
+    $response = $this
+        ->actingAs($this->user)
+        ->postJson('/inventories/auto-restock');
+
+    $response->assertStatus(400);
+    $response->assertJsonPath('success', false);
+
+    // Create another outlet
+    $outlet2 = Outlet::create([
+        'name' => 'Outlet Cabang Test',
+        'code' => 'OCT-002',
+        'phone' => '08122334466',
+        'is_active' => true,
+    ]);
+
+    // Create an item below min stock for outlet 1 (needs restock)
     $item1 = Inventory::create([
         'name' => 'Deterjen Kritis',
         'code' => 'DET-KRI-01',
@@ -259,22 +275,25 @@ test('inventories can be automatically restocked', function () {
         'history' => []
     ]);
 
-    // Create an item above min stock (does not need restock)
+    // Create an item below min stock for outlet 2 (needs restock but shouldn't be touched when restocking outlet 1)
     $item2 = Inventory::create([
-        'name' => 'Sabun Aman',
-        'code' => 'SBN-AMN-02',
+        'name' => 'Sabun Kritis Outlet 2',
+        'code' => 'SBN-OCT-02',
         'category' => 'Deterjen & Kimia',
-        'stock' => 40,
+        'stock' => 1,
         'min_stock' => 10,
-        'max_stock' => 100,
+        'max_stock' => 50,
         'price' => 5000,
-        'outlet_id' => $this->outlet->id,
+        'outlet_id' => $outlet2->id,
         'history' => []
     ]);
 
+    // 2. Restock only outlet 1
     $response = $this
         ->actingAs($this->user)
-        ->postJson('/inventories/auto-restock');
+        ->postJson('/inventories/auto-restock', [
+            'outlet' => $this->outlet->id,
+        ]);
 
     $response->assertSuccessful();
     $response->assertJsonPath('success', true);
@@ -286,9 +305,9 @@ test('inventories can be automatically restocked', function () {
         'stock' => 100,
     ]);
 
-    // Assert item2 stock remains unchanged (40)
+    // Assert item2 (outlet 2) stock remains unchanged (1)
     $this->assertDatabaseHas('inventories', [
         'id' => $item2->id,
-        'stock' => 40,
+        'stock' => 1,
     ]);
 });
