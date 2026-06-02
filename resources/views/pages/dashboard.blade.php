@@ -178,7 +178,7 @@
                 iconStyle="background:linear-gradient(135deg,rgba(59,130,246,0.12),rgba(99,102,241,0.12));color:var(--info)"
                 :noPadding="true">
                 <x-slot:headerAction>
-                    <a href="{{ route('operasional.order.index') }}" style="font-size:0.8rem;color:var(--primary);text-decoration:none;font-weight:600;position:relative;z-index:1">
+                    <a href="{{ route('orders') }}" style="font-size:0.8rem;color:var(--primary);text-decoration:none;font-weight:600;position:relative;z-index:1">
                         Lihat Semua <i class="fas fa-arrow-right" style="font-size:0.7rem"></i>
                     </a>
                 </x-slot:headerAction>
@@ -278,25 +278,25 @@
                     icon="bolt" 
                     iconStyle="background:linear-gradient(135deg,rgba(245,158,11,0.12),rgba(249,115,22,0.12));color:var(--warning)">
                     <div class="quick-actions">
-                        <a href="{{ route('operasional.order.index') }}" class="quick-action-btn">
+                        <a href="{{ route('orders') }}" class="quick-action-btn">
                             <div class="quick-action-icon" style="background:linear-gradient(135deg,rgba(99,102,241,0.1),rgba(139,92,246,0.1));color:var(--primary)">
                                 <i class="fas fa-plus-circle"></i>
                             </div>
                             <span class="quick-action-label">Order Baru</span>
                         </a>
-                        <a href="{{ route('master.pelanggan.index') }}" class="quick-action-btn">
+                        <a href="{{ route('customers') }}" class="quick-action-btn">
                             <div class="quick-action-icon" style="background:linear-gradient(135deg,rgba(16,185,129,0.1),rgba(6,182,212,0.1));color:var(--secondary)">
                                 <i class="fas fa-user-plus"></i>
                             </div>
                             <span class="quick-action-label">Tambah Pelanggan</span>
                         </a>
-                        <a href="{{ route('keuangan.laporan.index') }}" class="quick-action-btn">
-                            <div class="quick-action-icon" style="background:linear-gradient(135deg,rgba(245,158,11,0.1),rgba(249,115,22,0.1));color:var(--warning)">
+                        <a href="{{ route('reports') }}" class="quick-action-btn">
+                            <div class="quick-action-icon" style="background:linear-gradient(135deg,rgba(245,158,11,0.1),rgba(249,115,22,0.12));color:var(--warning)">
                                 <i class="fas fa-file-export"></i>
                             </div>
                             <span class="quick-action-label">Export Laporan</span>
                         </a>
-                        <a href="{{ route('master.outlet.index') }}" class="quick-action-btn">
+                        <a href="{{ route('outlets') }}" class="quick-action-btn">
                             <div class="quick-action-icon" style="background:linear-gradient(135deg,rgba(139,92,246,0.1),rgba(236,72,153,0.1));color:var(--purple)">
                                 <i class="fas fa-tags"></i>
                             </div>
