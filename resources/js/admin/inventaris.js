@@ -379,28 +379,53 @@ function bulkExport(){  showToast('info','Export','Mengekspor '+selectedIds.size
 function bulkDelete(){
     const n = selectedIds.size;
     if(!n) return;
-    if(!confirm('Hapus '+n+' barang yang dipilih?'))return;
 
-    let promises = [];
-    selectedIds.forEach(id => {
-        promises.push(
-            $.ajax({
-                url: `/inventories/${id}`,
-                type: 'DELETE',
-                dataType: 'json'
-            })
-        );
-    });
+    if (typeof window.showConfirm === 'function') {
+        window.showConfirm('Konfirmasi Hapus', `Apakah Anda yakin ingin menghapus ${n} barang yang dipilih?`, () => {
+            let promises = [];
+            selectedIds.forEach(id => {
+                promises.push(
+                    $.ajax({
+                        url: `/inventories/${id}`,
+                        type: 'DELETE',
+                        dataType: 'json'
+                    })
+                );
+            });
+            return $.when(...promises).done(function() {
+                selectedIds.clear();
+                applyFilters();
+                updateBulkBar();
+                showToast('success','Dihapus','Barang yang dipilih berhasil dihapus');
+            }).fail(function() {
+                showToast('error','Error','Beberapa barang gagal dihapus');
+                applyFilters();
+                throw new Error();
+            });
+        });
+    } else {
+        if(!confirm('Hapus '+n+' barang yang dipilih?'))return;
+        let promises = [];
+        selectedIds.forEach(id => {
+            promises.push(
+                $.ajax({
+                    url: `/inventories/${id}`,
+                    type: 'DELETE',
+                    dataType: 'json'
+                })
+            );
+        });
 
-    $.when(...promises).done(function() {
-        selectedIds.clear();
-        applyFilters();
-        updateBulkBar();
-        showToast('success','Dihapus','Barang yang dipilih berhasil dihapus');
-    }).fail(function() {
-        showToast('error','Error','Beberapa barang gagal dihapus');
-        applyFilters();
-    });
+        $.when(...promises).done(function() {
+            selectedIds.clear();
+            applyFilters();
+            updateBulkBar();
+            showToast('success','Dihapus','Barang yang dipilih berhasil dihapus');
+        }).fail(function() {
+            showToast('error','Error','Beberapa barang gagal dihapus');
+            applyFilters();
+        });
+    }
 }
 
 /* =========================================================
@@ -579,24 +604,50 @@ function restockCurrentItem(){ if(!activeItem)return; openRestock(activeItem.id)
 
 function deleteById(id){
     const item=allItems.find(x=>x.id===id); if(!item)return;
-    if(!confirm('Hapus '+item.name+' dari inventaris?'))return;
-
-    $.ajax({
-        url: `/inventories/${id}`,
-        type: 'DELETE',
-        dataType: 'json',
-        success: function(response) {
-            if (response.success) {
-                showToast('success','Dihapus',item.name+' berhasil dihapus');
-                applyFilters();
-            } else {
-                showToast('error', 'Error', response.message);
+    
+    if (typeof window.showConfirm === 'function') {
+        window.showConfirm('Konfirmasi Hapus', 'Apakah Anda yakin ingin menghapus '+item.name+' dari inventaris?', () => {
+            return new Promise((resolve, reject) => {
+                $.ajax({
+                    url: `/inventories/${id}`,
+                    type: 'DELETE',
+                    dataType: 'json',
+                    success: function(response) {
+                        if (response.success) {
+                            showToast('success','Dihapus',item.name+' berhasil dihapus');
+                            applyFilters();
+                            resolve();
+                        } else {
+                            showToast('error', 'Error', response.message);
+                            reject();
+                        }
+                    },
+                    error: function() {
+                        showToast('error', 'Error', 'Gagal menghapus barang');
+                        reject();
+                    }
+                });
+            });
+        });
+    } else {
+        if(!confirm('Hapus '+item.name+' dari inventaris?'))return;
+        $.ajax({
+            url: `/inventories/${id}`,
+            type: 'DELETE',
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    showToast('success','Dihapus',item.name+' berhasil dihapus');
+                    applyFilters();
+                } else {
+                    showToast('error', 'Error', response.message);
+                }
+            },
+            error: function() {
+                showToast('error', 'Error', 'Gagal menghapus barang');
             }
-        },
-        error: function() {
-            showToast('error', 'Error', 'Gagal menghapus barang');
-        }
-    });
+        });
+    }
 }
 
 /* =========================================================
