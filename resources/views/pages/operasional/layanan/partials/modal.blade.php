@@ -26,13 +26,15 @@
                     </div>
                     
                     <!-- Row 1: Nama Layanan -->
-                    <div class="form-field" style="margin-bottom: 1rem;">
-                        <label>Nama Layanan <span class="req">*</span></label>
-                        <div class="input-icon-wrap" style="position: relative;">
-                            <input class="form-control" id="f-name" type="text" placeholder="cth. Cuci Setrika" style="padding-left: 2.5rem;" required>
-                            <i class="fas fa-tag" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--gray-light); font-size: 0.85rem;"></i>
-                        </div>
-                    </div>
+                    <x-form.input 
+                        formField 
+                        label="Nama Layanan" 
+                        id="f-name" 
+                        name="name" 
+                        placeholder="cth. Cuci Setrika" 
+                        icon="fas fa-tag" 
+                        required 
+                    />
 
                     <!-- Row 2: Emoji Selection Grid (Inline, no dropdown overflow) -->
                     <div class="form-field" style="margin-bottom: 1.25rem;">
@@ -87,29 +89,37 @@
 
                     <!-- Row 3: Kategori & Estimasi -->
                     <div class="form-grid-2">
-                        <div class="form-field">
-                            <label>Kategori <span class="req">*</span></label>
-                            <select class="form-control" id="f-category" required>
-                                <option value="kiloan">Kiloan</option>
-                                <option value="satuan">Satuan</option>
-                                <option value="paket">Paket</option>
-                                <option value="antar">Antar Jemput</option>
-                            </select>
-                        </div>
-                        <div class="form-field">
-                            <label>Estimasi Waktu</label>
-                            <div class="input-icon-wrap" style="position: relative;">
-                                <input class="form-control" id="f-eta" type="text" placeholder="cth. 1-2 hari" style="padding-left: 2.5rem;">
-                                <i class="fas fa-clock" style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--gray-light); font-size: 0.85rem;"></i>
-                            </div>
-                        </div>
+                        <x-form.select 
+                            label="Kategori" 
+                            id="f-category" 
+                            name="category"
+                            required
+                        >
+                            <option value="kiloan">Kiloan</option>
+                            <option value="satuan">Satuan</option>
+                            <option value="paket">Paket</option>
+                            <option value="antar">Antar Jemput</option>
+                        </x-form.select>
+
+                        <x-form.input 
+                            formField 
+                            label="Estimasi Waktu" 
+                            id="f-eta" 
+                            name="eta" 
+                            placeholder="cth. 1-2 hari" 
+                            icon="fas fa-clock" 
+                        />
                     </div>
                     
                     <!-- Row 4: Deskripsi -->
-                    <div class="form-field full" style="margin-top: 1rem;">
-                        <label>Deskripsi</label>
-                        <textarea class="form-control" id="f-desc" placeholder="Deskripsi singkat layanan ini..." rows="3"></textarea>
-                    </div>
+                    <x-form.textarea 
+                        label="Deskripsi" 
+                        id="f-desc" 
+                        name="description" 
+                        placeholder="Deskripsi singkat layanan ini..." 
+                        rows="3" 
+                        fullWidth 
+                    />
                 </div>
 
                 <!-- Section 2: Pricing -->
@@ -118,25 +128,32 @@
                         <i class="fas fa-money-bill-wave" style="color: var(--secondary)"></i> Pengaturan Harga
                     </div>
                     <div class="form-grid-2" style="margin-bottom: 1rem;">
-                        <div class="form-field">
-                            <label>Harga Dasar <span class="req">*</span></label>
-                            <div class="input-icon-wrap" style="position: relative;">
-                                <span style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: var(--gray); font-size: 0.8rem; font-weight: 700;">Rp</span>
-                                <input class="form-control" id="f-price" type="number" placeholder="0" min="0" style="padding-left: 2.5rem;" required>
-                            </div>
-                        </div>
-                        <div class="form-field">
-                            <label>Satuan Harga <span class="req">*</span></label>
-                            <select class="form-control" id="f-unit" required>
-                                <option value="/kg">per kg</option>
-                                <option value="/pcs">per pcs</option>
-                                <option value="/set">per set</option>
-                                <option value="/pair">per pair</option>
-                                <option value="/m²">per m²</option>
-                                <option value="/trip">per trip</option>
-                                <option value="/bulan">per bulan</option>
-                            </select>
-                        </div>
+                        <x-form.input 
+                            formField 
+                            label="Harga Dasar" 
+                            type="number"
+                            id="f-price" 
+                            name="price" 
+                            placeholder="0" 
+                            min="0"
+                            icon="fas fa-money-bill-wave" 
+                            required 
+                        />
+
+                        <x-form.select 
+                            label="Satuan Harga" 
+                            id="f-unit" 
+                            name="unit"
+                            required
+                        >
+                            <option value="/kg">per kg</option>
+                            <option value="/pcs">per pcs</option>
+                            <option value="/set">per set</option>
+                            <option value="/pair">per pair</option>
+                            <option value="/m²">per m²</option>
+                            <option value="/trip">per trip</option>
+                            <option value="/bulan">per bulan</option>
+                        </x-form.select>
                     </div>
                     
                     <label style="font-size: 0.75rem; margin-bottom: 0.6rem; color: var(--gray); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; display: block;">Tingkatan Harga (Opsional)</label>
@@ -150,27 +167,37 @@
                         <i class="fas fa-chart-bar" style="color: var(--orange)"></i> Target & Kustomisasi
                     </div>
                     <div class="form-grid-3">
-                        <div class="form-field">
-                            <label>Target Order/Bulan</label>
-                            <input class="form-control" id="f-target" type="number" placeholder="cth. 200">
-                        </div>
-                        <div class="form-field">
-                            <label>Min. Berat/Qty</label>
-                            <input class="form-control" id="f-min" type="text" placeholder="cth. 1 kg">
-                        </div>
-                        <div class="form-field">
-                            <label>Warna Kartu</label>
-                            <select class="form-control" id="f-color">
-                                <option value="sc-purple">Ungu</option>
-                                <option value="sc-green">Hijau</option>
-                                <option value="sc-orange">Oranye</option>
-                                <option value="sc-pink">Pink</option>
-                                <option value="sc-blue">Biru</option>
-                                <option value="sc-teal">Teal</option>
-                                <option value="sc-red">Merah</option>
-                                <option value="sc-indigo">Indigo</option>
-                            </select>
-                        </div>
+                        <x-form.input 
+                            formField 
+                            label="Target Order/Bulan" 
+                            type="number"
+                            id="f-target" 
+                            name="target" 
+                            placeholder="cth. 200" 
+                        />
+
+                        <x-form.input 
+                            formField 
+                            label="Min. Berat/Qty" 
+                            id="f-min" 
+                            name="min_qty" 
+                            placeholder="cth. 1 kg" 
+                        />
+
+                        <x-form.select 
+                            label="Warna Kartu" 
+                            id="f-color" 
+                            name="color"
+                        >
+                            <option value="sc-purple">Ungu</option>
+                            <option value="sc-green">Hijau</option>
+                            <option value="sc-orange">Oranye</option>
+                            <option value="sc-pink">Pink</option>
+                            <option value="sc-blue">Biru</option>
+                            <option value="sc-teal">Teal</option>
+                            <option value="sc-red">Merah</option>
+                            <option value="sc-indigo">Indigo</option>
+                        </x-form.select>
                     </div>
                 </div>
 
@@ -226,13 +253,11 @@
 
             <!-- Modal Footer -->
             <div class="modal-footer">
-                <button type="button" class="modal-btn modal-btn-outline" onclick="closeModal('serviceModal')">
-                    Batal
-                </button>
-                <button type="submit" class="modal-btn modal-btn-primary" id="btnSaveService">
+                <x-form.button type="button" variant="outline" onclick="closeModal('serviceModal')">Batal</x-form.button>
+                <x-form.button type="submit" variant="primary" id="btnSaveService">
                     <div class="spinner"></div>
                     <span class="btn-text"><i class="fas fa-save" style="margin-right: 0.35rem;"></i> Simpan Layanan</span>
-                </button>
+                </x-form.button>
             </div>
         </form>
     </div>

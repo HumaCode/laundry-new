@@ -19,51 +19,65 @@
             <!-- Modal Body -->
             <div class="modal-body">
                 <!-- Kategori -->
-                <div class="form-field" style="margin-bottom: 1.25rem;">
-                    <label style="font-size: 0.75rem; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 0.4px;">Pilih Kategori Layanan <span class="req" style="color: var(--danger);">*</span></label>
-                    <select class="form-control" id="bp-category" required style="padding: 0.75rem 1rem; border: 2px solid var(--border); border-radius: 12px; font-size: 0.9375rem; width: 100%;">
-                        <option value="all">Semua Kategori</option>
-                        <option value="kiloan">Kiloan</option>
-                        <option value="satuan">Satuan</option>
-                        <option value="paket">Paket</option>
-                        <option value="antar">Antar Jemput</option>
-                    </select>
-                </div>
+                <x-form.select 
+                    label="Pilih Kategori Layanan" 
+                    id="bp-category" 
+                    name="category"
+                    required
+                    fullWidth
+                >
+                    <option value="all">Semua Kategori</option>
+                    <option value="kiloan">Kiloan</option>
+                    <option value="satuan">Satuan</option>
+                    <option value="paket">Paket</option>
+                    <option value="antar">Antar Jemput</option>
+                </x-form.select>
 
                 <!-- Tipe Aksi -->
-                <div class="form-field" style="margin-bottom: 1.25rem;">
-                    <label style="font-size: 0.75rem; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 0.4px;">Aksi Penyesuaian <span class="req" style="color: var(--danger);">*</span></label>
-                    <select class="form-control" id="bp-type" required style="padding: 0.75rem 1rem; border: 2px solid var(--border); border-radius: 12px; font-size: 0.9375rem; width: 100%;">
-                        <option value="up">Naikkan Harga</option>
-                        <option value="down">Turunkan Harga</option>
-                    </select>
-                </div>
+                <x-form.select 
+                    label="Aksi Penyesuaian" 
+                    id="bp-type" 
+                    name="type"
+                    required
+                    fullWidth
+                >
+                    <option value="up">Naikkan Harga</option>
+                    <option value="down">Turunkan Harga</option>
+                </x-form.select>
 
                 <!-- Tipe Penyesuaian -->
-                <div class="form-field" style="margin-bottom: 1.25rem;">
-                    <label style="font-size: 0.75rem; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 0.4px;">Jenis Penyesuaian <span class="req" style="color: var(--danger);">*</span></label>
-                    <select class="form-control" id="bp-adjustment-type" required style="padding: 0.75rem 1rem; border: 2px solid var(--border); border-radius: 12px; font-size: 0.9375rem; width: 100%;">
-                        <option value="percentage">Persentase (%)</option>
-                        <option value="nominal">Nominal Rupiah (Rp)</option>
-                    </select>
-                </div>
+                <x-form.select 
+                    label="Jenis Penyesuaian" 
+                    id="bp-adjustment-type" 
+                    name="adjustment_type"
+                    required
+                    fullWidth
+                >
+                    <option value="percentage">Persentase (%)</option>
+                    <option value="nominal">Nominal Rupiah (Rp)</option>
+                </x-form.select>
 
                 <!-- Nilai -->
-                <div class="form-field" style="margin-bottom: 0.5rem;">
-                    <label style="font-size: 0.75rem; font-weight: 600; color: var(--gray); text-transform: uppercase; letter-spacing: 0.4px;">Nilai Penyesuaian <span class="req" style="color: var(--danger);">*</span></label>
-                    <input class="form-control" id="bp-value" type="number" placeholder="cth. 10 atau 2000" min="1" required style="padding: 0.75rem 1rem; border: 2px solid var(--border); border-radius: 12px; font-size: 0.9375rem; width: 100%;">
-                </div>
+                <x-form.input 
+                    formField 
+                    label="Nilai Penyesuaian" 
+                    type="number"
+                    id="bp-value" 
+                    name="value" 
+                    placeholder="cth. 10 atau 2000" 
+                    min="1"
+                    required 
+                    fullWidth
+                />
             </div>
 
             <!-- Modal Footer -->
-            <div class="modal-footer" style="padding: 1.25rem 1.5rem; border-top: 1px solid var(--border); display: flex; gap: 0.75rem; justify-content: flex-end;">
-                <button type="button" class="modal-btn modal-btn-outline" onclick="closeModal('bulkPriceModal')">
-                    Batal
-                </button>
-                <button type="submit" class="modal-btn modal-btn-primary" id="btnSaveBulkPrice">
+            <div class="modal-footer">
+                <x-form.button type="button" variant="outline" onclick="closeModal('bulkPriceModal')">Batal</x-form.button>
+                <x-form.button type="submit" variant="primary" id="btnSaveBulkPrice">
                     <div class="spinner"></div>
                     <span class="btn-text"><i class="fas fa-check" style="margin-right: 0.35rem;"></i> Terapkan</span>
-                </button>
+                </x-form.button>
             </div>
         </form>
     </div>
