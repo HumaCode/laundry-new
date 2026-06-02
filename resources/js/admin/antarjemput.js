@@ -18,6 +18,39 @@ let selectedDriver = null;
 
 // Initialize
 $(document).ready(function() {
+    // Initialize Select2 dropdowns
+    if ($.fn.select2) {
+        $('#filterOutlet').select2({
+            placeholder: 'Semua Outlet',
+            allowClear: true
+        }).on('change', function() {
+            updateDriverFilterOptions();
+            applyFilters();
+        });
+
+        $('#filterDriver').select2({
+            placeholder: 'Semua Kurir',
+            allowClear: true
+        }).on('change', function() {
+            applyFilters();
+        });
+
+        $('#a-outlet').select2({
+            dropdownParent: $('#addModal'),
+            placeholder: 'Pilih Outlet',
+            allowClear: true
+        }).on('change', function() {
+            updateAddModalDriverOptions();
+        });
+
+        $('#a-driver').select2({
+            dropdownParent: $('#addModal'),
+            placeholder: 'Pilih Kurir',
+            allowClear: true
+        });
+    }
+
+    updateDriverFilterOptions();
     loadPickups();
 
     // Hook search inputs
@@ -301,8 +334,52 @@ function goPage(p) {
 }
 
 /* ============================================================
-   FILTERS
+   FILTERS & DYNAMIC DROPDOWNS
 ============================================================ */
+function updateCourierDropdown(outletSelectId, courierSelectId, defaultText) {
+    const outletSelect = document.getElementById(outletSelectId);
+    const courierSelect = document.getElementById(courierSelectId);
+    if (!outletSelect || !courierSelect) return;
+
+    const selectedOutletId = outletSelect.value;
+    const currentCourierId = courierSelect.value;
+
+    // Filter drivers
+    let filteredDrivers = window.driversData || [];
+    if (selectedOutletId) {
+        filteredDrivers = filteredDrivers.filter(d => d.outlet_id === selectedOutletId);
+    }
+
+    // Generate HTML
+    let html = `<option value="">${defaultText}</option>`;
+    filteredDrivers.forEach(d => {
+        html += `<option value="${d.id}">${d.name}</option>`;
+    });
+
+    courierSelect.innerHTML = html;
+
+    // Retain previous value if it's still available in filtered list, else reset
+    const stillExists = filteredDrivers.some(d => d.id === currentCourierId);
+    if (stillExists) {
+        courierSelect.value = currentCourierId;
+    } else {
+        courierSelect.value = "";
+    }
+
+    // Trigger Select2 update if initialized
+    if ($.fn.select2 && $(courierSelect).data('select2')) {
+        $(courierSelect).trigger('change.select2');
+    }
+}
+
+function updateDriverFilterOptions() {
+    updateCourierDropdown('filterOutlet', 'filterDriver', 'Semua Kurir');
+}
+
+function updateAddModalDriverOptions() {
+    updateCourierDropdown('a-outlet', 'a-driver', '-- Pilih Kurir --');
+}
+
 function filterByStatus(status, el) {
     activeStatus = status;
     document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active-stat'));
@@ -318,8 +395,18 @@ function applyFilters() {
 
 function resetFilters() {
     if (document.getElementById('searchInput')) document.getElementById('searchInput').value = '';
-    if (document.getElementById('filterOutlet')) document.getElementById('filterOutlet').value = '';
-    if (document.getElementById('filterDriver')) document.getElementById('filterDriver').value = '';
+    
+    // Reset values and update Select2 UI
+    if ($.fn.select2) {
+        $('#filterOutlet').val('').trigger('change.select2');
+        $('#filterDriver').val('').trigger('change.select2');
+    } else {
+        if (document.getElementById('filterOutlet')) document.getElementById('filterOutlet').value = '';
+        if (document.getElementById('filterDriver')) document.getElementById('filterDriver').value = '';
+    }
+    
+    updateDriverFilterOptions();
+    
     if (document.getElementById('filterDate')) document.getElementById('filterDate').value = '';
     activeStatus = 'all';
     document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('active-stat'));
@@ -521,7 +608,18 @@ function renderDriverOptions() {
         return;
     }
 
-    el.innerHTML = window.driversData.map(d => `
+    // Filter drivers by activeTrip's outlet
+    let drivers = window.driversData;
+    if (activeTrip && activeTrip.outlet_id) {
+        drivers = window.driversData.filter(d => d.outlet_id === activeTrip.outlet_id);
+    }
+
+    if (drivers.length === 0) {
+        el.innerHTML = `<div style="text-align:center;padding:1.5rem;color:var(--gray-light);font-size:.9rem">Tidak ada kurir yang terdaftar di outlet ini</div>`;
+        return;
+    }
+
+    el.innerHTML = drivers.map(d => `
         <div class="driver-option" onclick="window.selectDriver(this,'${d.id}')">
             <div class="driver-option-avatar" style="background:#6366F1">${getInitials(d.name)}</div>
             <div class="driver-option-info">
@@ -596,6 +694,20 @@ function openAddModal() {
     if (document.getElementById('a-time')) {
         document.getElementById('a-time').value = now.toISOString().slice(0, 16);
     }
+    
+    // Reset form inputs
+    ['a-cust', 'a-phone', 'a-from', 'a-to', 'a-order', 'a-weight', 'a-notes'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+    });
+
+    if ($.fn.select2) {
+        $('#a-outlet').val('').trigger('change.select2');
+        $('#a-driver').val('').trigger('change.select2');
+    }
+
+    // Update driver dropdown options based on selected outlet in modal
+    updateAddModalDriverOptions();
     openModal('addModal');
 }
 
@@ -749,3 +861,5 @@ window.filterByStatus = filterByStatus;
 window.goPage = goPage;
 window.showToast = showToast;
 window.scrollToTop = scrollToTop;
+window.updateDriverFilterOptions = updateDriverFilterOptions;
+window.updateAddModalDriverOptions = updateAddModalDriverOptions;

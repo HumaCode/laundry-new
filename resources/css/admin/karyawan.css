@@ -394,13 +394,30 @@
     color: var(--dark) !important;
     font-size: 0.9375rem !important;
     padding-left: 1rem !important;
-    padding-right: 2rem !important;
+    padding-right: 3.5rem !important;
     line-height: 46px !important;
     display: block !important;
     width: 100% !important;
     white-space: nowrap !important;
     overflow: hidden !important;
     text-overflow: ellipsis !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__clear {
+    position: absolute !important;
+    right: 32px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    font-size: 1.25rem !important;
+    color: #9CA3AF !important;
+    cursor: pointer !important;
+    transition: color 0.2s ease !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    z-index: 10 !important;
+}
+.select2-container--default .select2-selection--single .select2-selection__clear:hover {
+    color: var(--danger) !important;
 }
 .select2-container--default .select2-selection--single .select2-selection__placeholder {
     color: #9CA3AF !important;

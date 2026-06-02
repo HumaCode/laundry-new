@@ -1,9 +1,11 @@
 <x-app-layout>
     @push('styles')
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
         @vite(['resources/css/admin/antarjemput.css'])
     @endpush
 
     @push('scripts')
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
         <script>
             window.driversData = @json($drivers);
             window.outletsData = @json($outlets);
@@ -66,7 +68,7 @@
         </div>
         <div class="filter-group" style="min-width:140px">
             <label class="filter-label">Outlet</label>
-            <select class="filter-input" id="filterOutlet" onchange="applyFilters()">
+            <select class="filter-input" id="filterOutlet">
                 <option value="">Semua Outlet</option>
                 @foreach($outlets as $outlet)
                     <option value="{{ $outlet->id }}">{{ $outlet->name }}</option>
@@ -75,7 +77,7 @@
         </div>
         <div class="filter-group" style="min-width:130px">
             <label class="filter-label">Kurir</label>
-            <select class="filter-input" id="filterDriver" onchange="applyFilters()">
+            <select class="filter-input" id="filterDriver">
                 <option value="">Semua Kurir</option>
                 @foreach($drivers as $driver)
                     <option value="{{ $driver->id }}">{{ $driver->name }}</option>
