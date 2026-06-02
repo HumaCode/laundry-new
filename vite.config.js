@@ -29,7 +29,9 @@ export default defineConfig({
                 'resources/css/admin/services.css',
                 'resources/js/admin/services.js',
                 'resources/css/admin/antarjemput.css',
-                'resources/js/admin/antarjemput.js'
+                'resources/js/admin/antarjemput.js',
+                'resources/css/admin/inventaris.css',
+                'resources/js/admin/inventaris.js'
             ],
             refresh: true,
         }),

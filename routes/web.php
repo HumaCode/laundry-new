@@ -70,6 +70,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/shuttles/{id}', [\App\Http\Controllers\Operasional\AntarJemputController::class, 'show'])->name('shuttles.show');
     Route::put('/shuttles/{id}', [\App\Http\Controllers\Operasional\AntarJemputController::class, 'update'])->name('shuttles.update');
     Route::delete('/shuttles/{id}', [\App\Http\Controllers\Operasional\AntarJemputController::class, 'destroy'])->name('shuttles.destroy');
+
+    // Inventaris (Inventory)
+    Route::get('/inventories', [\App\Http\Controllers\Operasional\InventarisController::class, 'index'])->name('inventories');
 });
 
 require __DIR__.'/auth.php';

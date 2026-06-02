@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LaundryPro Admin - Inventaris</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <style>
+        :root{
+            --primary:#6366F1;--primary-dark:#4F46E5;--secondary:#10B981;--success:#059669;
+            --warning:#F59E0B;--danger:#EF4444;--info:#3B82F6;--dark:#1F2937;--gray:#6B7280;
+            --gray-light:#9CA3AF;--border:#E5E7EB;--purple:#8B5CF6;--pink:#EC4899;
+            --cyan:#06B6D4;--orange:#F97316;--sidebar-w:260px;--sidebar-collapsed:72px;
+            --topbar-h:64px;--shadow:0 1px 3px 0 rgba(0,0,0,.1);
+            --shadow-lg:0 10px 15px -3px rgba(0,0,0,.1);--radius:16px
+        }
+        *{margin:0;padding:0;box-sizing:border-box}
+        html{scroll-behavior:smooth}
+        body{font-family:'Plus Jakarta Sans','Segoe UI',system-ui,sans-serif;background:#F3F4F6;color:var(--dark);min-height:100vh;overflow-x:hidden}
+
+        /* ============ SIDEBAR ============ */
+        .sidebar{position:fixed;top:0;left:0;bottom:0;width:var(--sidebar-w);background:linear-gradient(180deg,#1E1B4B 0%,#2D1B69 40%,#1E1B4B 100%);z-index:1000;display:flex;flex-direction:column;transition:width .35s cubic-bezier(.4,0,.2,1);overflow:hidden}
+        .sidebar.collapsed{width:var(--sidebar-collapsed)}
+        .sidebar::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle at 20% 20%,rgba(99,102,241,.25) 0%,transparent 50%),radial-gradient(circle at 80% 80%,rgba(139,92,246,.2) 0%,transparent 50%);pointer-events:none}
+        .sidebar::after{content:'';position:absolute;inset:0;background-image:radial-gradient(rgba(255,255,255,.03) 1px,transparent 1px);background-size:24px 24px;pointer-events:none}
+        .sidebar-brand{padding:1.25rem 1rem;display:flex;align-items:center;gap:.875rem;border-bottom:1px solid rgba(255,255,255,.08);flex-shrink:0;position:relative;z-index:1}
+        .brand-icon{width:44px;height:44px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--purple));display:flex;align-items:center;justify-content:center;color:white;font-size:1.25rem;flex-shrink:0;box-shadow:0 4px 12px rgba(99,102,241,.4)}
+        .brand-text{overflow:hidden;white-space:nowrap}
+        .brand-name{font-size:1.125rem;font-weight:800;background:linear-gradient(135deg,#fff,#C4B5FD);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;display:block}
+        .brand-sub{font-size:.7rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px}
+        .sidebar-toggle{position:absolute;right:-14px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:var(--primary);border:3px solid #F3F4F6;color:white;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.65rem;transition:all .3s;z-index:10;box-shadow:0 2px 8px rgba(99,102,241,.4)}
+        .sidebar-toggle:hover{background:var(--primary-dark);transform:translateY(-50%) scale(1.1)}
+        .sidebar.collapsed .sidebar-toggle i{transform:rotate(180deg)}
+        .sidebar-nav{flex:1;padding:1rem .75rem;overflow-y:auto;overflow-x:hidden;position:relative;z-index:1}
+        .sidebar-nav::-webkit-scrollbar{width:4px}
+        .sidebar-nav::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:4px}
+        .nav-section-label{font-size:.65rem;font-weight:700;color:rgba(255,255,255,.25);text-transform:uppercase;letter-spacing:1.5px;padding:.5rem .75rem;white-space:nowrap;overflow:hidden;margin-top:.5rem}
+        .sidebar.collapsed .nav-section-label{opacity:0}
+        .nav-item{display:flex;align-items:center;gap:.875rem;padding:.75rem;border-radius:12px;color:rgba(255,255,255,.55);text-decoration:none;transition:all .3s;cursor:pointer;position:relative;overflow:hidden;white-space:nowrap;margin-bottom:.25rem}
+        .nav-item::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(99,102,241,.15),rgba(139,92,246,.1));opacity:0;transition:opacity .3s;border-radius:12px}
+        .nav-item:hover::before{opacity:1}
+        .nav-item:hover{color:white;transform:translateX(4px)}
+        .nav-item.active{background:linear-gradient(135deg,rgba(99,102,241,.3),rgba(139,92,246,.2));color:white;box-shadow:0 4px 12px rgba(99,102,241,.2)}
+        .nav-item.active::after{content:'';position:absolute;right:0;top:20%;bottom:20%;width:3px;background:linear-gradient(180deg,var(--primary),var(--purple));border-radius:3px}
+        .nav-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;background:rgba(255,255,255,.05);transition:all .3s}
+        .nav-item.active .nav-icon{background:linear-gradient(135deg,var(--primary),var(--purple));box-shadow:0 4px 10px rgba(99,102,241,.4)}
+        .nav-item:hover .nav-icon{background:rgba(255,255,255,.1)}
+        .nav-label{font-size:.875rem;font-weight:500;transition:opacity .3s}
+        .sidebar.collapsed .nav-label{opacity:0;width:0;overflow:hidden}
+        .nav-badge{margin-left:auto;background:var(--danger);color:white;font-size:.65rem;font-weight:700;padding:.15rem .45rem;border-radius:20px;flex-shrink:0}
+        .sidebar.collapsed .nav-badge{display:none}
+        .sidebar-user{padding:1rem .75rem;border-top:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:.875rem;position:relative;z-index:1;flex-shrink:0}
+        .sidebar-user-avatar{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--purple));display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:.9rem;flex-shrink:0}
+        .sidebar-user-info{overflow:hidden;flex:1}
+        .sidebar-user-name{font-size:.875rem;font-weight:600;color:white;white-space:nowrap}
+        .sidebar-user-role{font-size:.7rem;color:rgba(255,255,255,.4);white-space:nowrap}
+        .sidebar.collapsed .sidebar-user-info,.sidebar.collapsed .sidebar-user-btn{display:none}
+        .sidebar-user-btn{background:transparent;border:none;color:rgba(255,255,255,.4);cursor:pointer;padding:.25rem;transition:color .3s}
+        .sidebar-user-btn:hover{color:white}
+
+        /* ============ TOPBAR ============ */
+        .topbar{position:fixed;top:0;left:var(--sidebar-w);right:0;height:var(--topbar-h);background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 1.5rem;gap:1rem;z-index:900;transition:left .35s cubic-bezier(.4,0,.2,1)}
+        .topbar.sidebar-collapsed{left:var(--sidebar-collapsed)}
+        .topbar-title{flex:1}
+        .topbar-title h2{font-size:1.125rem;font-weight:700;color:var(--dark);display:flex;align-items:center;gap:.75rem;margin:0}
+        .topbar-title h2 span{background:linear-gradient(135deg,var(--primary),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+        .breadcrumb-custom{display:flex;align-items:center;gap:.5rem;font-size:.8rem;color:var(--gray)}
+        .breadcrumb-custom a{color:var(--primary);text-decoration:none}
+        .breadcrumb-custom i{font-size:.6rem}
+        .topbar-actions{display:flex;align-items:center;gap:.75rem}
+        .topbar-search{display:flex;align-items:center;gap:.5rem;background:#F3F4F6;border:2px solid var(--border);border-radius:12px;padding:.5rem 1rem;transition:all .3s}
+        .topbar-search:focus-within{background:white;border-color:var(--primary);box-shadow:0 0 0 4px rgba(99,102,241,.1)}
+        .topbar-search input{border:none;background:transparent;outline:none;font-size:.875rem;color:var(--dark);width:200px}
+        .topbar-search input::placeholder{color:var(--gray-light)}
+        .topbar-search i{color:var(--gray-light)}
+        .topbar-btn{width:40px;height:40px;border-radius:12px;border:2px solid var(--border);background:white;color:var(--gray);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .3s;position:relative;font-size:.9rem}
+        .topbar-btn:hover{border-color:var(--primary);color:var(--primary);background:rgba(99,102,241,.05)}
+        .topbar-badge{position:absolute;top:-4px;right:-4px;width:18px;height:18px;border-radius:50%;background:var(--danger);color:white;font-size:.55rem;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid white}
+        .topbar-outlet{display:flex;align-items:center;gap:.5rem;padding:.5rem .875rem;background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(139,92,246,.08));border:1px solid rgba(99,102,241,.15);border-radius:10px;font-size:.8rem;font-weight:600;color:var(--primary);cursor:pointer}
+        .topbar-user{display:flex;align-items:center;gap:.75rem;padding:.5rem 1rem;background:white;border:2px solid var(--border);border-radius:12px;cursor:pointer;transition:all .3s}
+        .topbar-user:hover{border-color:var(--primary)}
+        .topbar-avatar{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--primary),var(--purple));display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:.75rem}
+        .topbar-user-name{font-size:.875rem;font-weight:600;color:var(--dark)}
+        .topbar-user-role{font-size:.7rem;color:var(--gray)}
+
+        /* ============ MAIN ============ */
+        .main-content{margin-left:var(--sidebar-w);margin-top:var(--topbar-h);padding:1.5rem;transition:margin-left .35s cubic-bezier(.4,0,.2,1);min-height:calc(100vh - var(--topbar-h))}
+        .main-content.sidebar-collapsed{margin-left:var(--sidebar-collapsed)}
+
+        /* ============ PAGE HEADER ============ */
+        .page-header-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem}
+        .page-header-left h2{font-size:1.5rem;font-weight:800;color:var(--dark);margin:0}
+        .page-header-left p{font-size:.875rem;color:var(--gray);margin:.25rem 0 0}
+        .page-header-actions{display:flex;gap:.75rem;flex-wrap:wrap;align-items:center}
+        .btn-page{display:flex;align-items:center;gap:.5rem;padding:.75rem 1.25rem;border-radius:12px;font-size:.875rem;font-weight:600;border:none;cursor:pointer;transition:all .3s;text-decoration:none;white-space:nowrap}
+        .btn-page-outline{background:white;border:2px solid var(--border);color:var(--gray)}
+        .btn-page-outline:hover{border-color:var(--primary);color:var(--primary)}
+        .btn-page-primary{background:linear-gradient(135deg,var(--primary),var(--purple));color:white;box-shadow:0 4px 15px rgba(99,102,241,.3)}
+        .btn-page-primary:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(99,102,241,.4)}
+        .btn-page-warning{background:linear-gradient(135deg,var(--warning),var(--orange));color:white;box-shadow:0 4px 15px rgba(245,158,11,.3)}
+        .btn-page-warning:hover{transform:translateY(-2px)}
+        .btn-page-danger{background:linear-gradient(135deg,var(--danger),var(--pink));color:white;box-shadow:0 4px 15px rgba(239,68,68,.3)}
+        .btn-page-danger:hover{transform:translateY(-2px)}
+
+        /* ============ STAT CARDS ============ */
+        .stats-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1.25rem;margin-bottom:1.5rem}
+        .stat-card{background:white;border-radius:var(--radius);padding:1.25rem;border:1px solid var(--border);transition:all .4s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden;cursor:pointer}
+        .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;opacity:0;transition:opacity .3s}
+        .stat-card:hover::before,.stat-card.active-filter::before{opacity:1}
+        .stat-card:hover,.stat-card.active-filter{transform:translateY(-4px);box-shadow:var(--shadow-lg)}
+        .stat-card.active-filter{border-color:rgba(99,102,241,.2)}
+        .stat-card.c1::before{background:linear-gradient(90deg,var(--primary),var(--purple))}
+        .stat-card.c2::before{background:linear-gradient(90deg,var(--secondary),var(--cyan))}
+        .stat-card.c3::before{background:linear-gradient(90deg,var(--warning),var(--orange))}
+        .stat-card.c4::before{background:linear-gradient(90deg,var(--danger),var(--pink))}
+        .stat-card.c5::before{background:linear-gradient(90deg,var(--info),var(--cyan))}
+        .stat-card::after{content:'';position:absolute;top:-20px;right:-20px;width:80px;height:80px;border-radius:50%;opacity:.05;transition:all .4s}
+        .stat-card.c1::after{background:var(--primary)}.stat-card.c2::after{background:var(--secondary)}.stat-card.c3::after{background:var(--warning)}.stat-card.c4::after{background:var(--danger)}.stat-card.c5::after{background:var(--info)}
+        .stat-card:hover::after,.stat-card.active-filter::after{transform:scale(3);opacity:.08}
+        .stat-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:.875rem}
+        .stat-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
+        .stat-icon.c1{background:linear-gradient(135deg,rgba(99,102,241,.12),rgba(139,92,246,.12));color:var(--primary)}
+        .stat-icon.c2{background:linear-gradient(135deg,rgba(16,185,129,.12),rgba(6,182,212,.12));color:var(--secondary)}
+        .stat-icon.c3{background:linear-gradient(135deg,rgba(245,158,11,.12),rgba(249,115,22,.12));color:var(--warning)}
+        .stat-icon.c4{background:linear-gradient(135deg,rgba(239,68,68,.12),rgba(236,72,153,.12));color:var(--danger)}
+        .stat-icon.c5{background:linear-gradient(135deg,rgba(59,130,246,.12),rgba(6,182,212,.12));color:var(--info)}
+        .stat-value{font-size:1.75rem;font-weight:800;color:var(--dark);line-height:1;margin-bottom:.2rem}
+        .stat-label{font-size:.8rem;color:var(--gray);font-weight:500}
+        .stat-sub{font-size:.72rem;margin-top:.35rem}
+        .stat-sub.warn{color:var(--danger);font-weight:600}
+        .stat-sub.ok{color:var(--secondary);font-weight:600}
+
+        /* ============ DASHBOARD GRID ============ */
+        .dash-grid{display:grid;grid-template-columns:1fr 340px;gap:1.5rem;margin-bottom:1.5rem}
+
+        /* Stock Usage Chart */
+        .card{background:white;border-radius:var(--radius);border:1px solid var(--border);overflow:hidden}
+        .card-header{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,rgba(99,102,241,.02),rgba(139,92,246,.02));position:relative}
+        .card-header::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%236366f1' fill-opacity='0.025'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");pointer-events:none}
+        .card-title{font-size:1rem;font-weight:700;color:var(--dark);display:flex;align-items:center;gap:.5rem;position:relative;z-index:1}
+        .card-title-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.875rem}
+        .card-body{padding:1.5rem}
+
+        .chart-area{height:260px;position:relative}
+
+        /* Low Stock List */
+        .low-stock-list{display:flex;flex-direction:column;gap:.625rem}
+        .low-stock-item{display:flex;align-items:center;gap:.875rem;padding:.875rem 1rem;border-radius:12px;border:1px solid var(--border);transition:all .3s;cursor:pointer;position:relative;overflow:hidden}
+        .low-stock-item::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px;border-radius:4px 0 0 4px}
+        .low-stock-item.critical::before{background:var(--danger)}
+        .low-stock-item.warning::before{background:var(--warning)}
+        .low-stock-item:hover{transform:translateX(4px);box-shadow:var(--shadow)}
+        .low-stock-item.critical{border-color:rgba(239,68,68,.2);background:rgba(239,68,68,.02)}
+        .low-stock-item.warning{border-color:rgba(245,158,11,.2);background:rgba(245,158,11,.02)}
+        .ls-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.875rem;flex-shrink:0}
+        .ls-icon.critical{background:rgba(239,68,68,.1);color:var(--danger)}
+        .ls-icon.warning{background:rgba(245,158,11,.1);color:var(--warning)}
+        .ls-info{flex:1}
+        .ls-name{font-size:.875rem;font-weight:600;color:var(--dark)}
+        .ls-outlet{font-size:.72rem;color:var(--gray-light)}
+        .ls-right{text-align:right;flex-shrink:0}
+        .ls-stock{font-size:.875rem;font-weight:700}
+        .ls-stock.critical{color:var(--danger)}
+        .ls-stock.warning{color:var(--warning)}
+        .ls-min{font-size:.7rem;color:var(--gray-light)}
+        .ls-reorder-btn{margin-top:.3rem;padding:.2rem .6rem;border-radius:6px;border:none;font-size:.68rem;font-weight:600;cursor:pointer;background:var(--danger);color:white;transition:all .2s}
+        .ls-reorder-btn.warning{background:var(--warning)}
+        .ls-reorder-btn:hover{opacity:.85;transform:scale(1.05)}
+
+        /* ============ FILTER BAR ============ */
+        .filter-bar{background:white;border-radius:var(--radius);border:1px solid var(--border);padding:1.25rem 1.5rem;margin-bottom:1.25rem;display:flex;gap:1rem;align-items:flex-end;flex-wrap:wrap}
+        .filter-group{display:flex;flex-direction:column;gap:.4rem;flex:1;min-width:140px}
+        .filter-label{font-size:.72rem;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.4px}
+        .filter-input{padding:.6rem .875rem;border:2px solid var(--border);border-radius:10px;font-size:.875rem;color:var(--dark);background:white;transition:all .3s;width:100%}
+        .filter-input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 3px rgba(99,102,241,.1)}
+        .filter-search{position:relative;flex:2;min-width:220px}
+        .filter-search .filter-input{padding-left:2.5rem}
+        .filter-search-icon{position:absolute;left:.875rem;top:50%;transform:translateY(-50%);color:var(--gray-light)}
+        .filter-btn{display:flex;align-items:center;gap:.5rem;padding:.65rem 1.25rem;border-radius:10px;font-size:.875rem;font-weight:600;border:none;cursor:pointer;transition:all .3s;flex-shrink:0;height:42px;align-self:flex-end}
+        .filter-btn-primary{background:linear-gradient(135deg,var(--primary),var(--purple));color:white}
+        .filter-btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(99,102,241,.3)}
+        .filter-btn-reset{background:white;border:2px solid var(--border);color:var(--gray)}
+        .filter-btn-reset:hover{border-color:var(--danger);color:var(--danger)}
+
+        /* ============ TABLE CARD ============ */
+        .table-card{background:white;border-radius:var(--radius);border:1px solid var(--border);overflow:hidden}
+        .table-card-header{padding:1.25rem 1.5rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:linear-gradient(135deg,rgba(99,102,241,.02),rgba(139,92,246,.02));position:relative}
+        .table-card-header::before{content:'';position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none'%3E%3Cg fill='%236366f1' fill-opacity='0.025'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");pointer-events:none}
+        .table-card-title{font-size:1rem;font-weight:700;color:var(--dark);display:flex;align-items:center;gap:.5rem;position:relative;z-index:1}
+        .table-card-title-icon{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,rgba(99,102,241,.12),rgba(139,92,246,.12));color:var(--primary);display:flex;align-items:center;justify-content:center;font-size:.875rem}
+        .table-meta{font-size:.8rem;color:var(--gray);position:relative;z-index:1;display:flex;align-items:center;gap:1rem}
+        .per-page-select{padding:.35rem .7rem;border:2px solid var(--border);border-radius:8px;font-size:.8rem;color:var(--dark);outline:none;cursor:pointer}
+        .per-page-select:focus{border-color:var(--primary)}
+
+        /* Table */
+        .inv-table{width:100%;border-collapse:collapse}
+        .inv-table th{font-size:.75rem;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.5px;padding:.875rem 1rem;text-align:left;background:#F9FAFB;border-bottom:2px solid var(--border);white-space:nowrap;cursor:pointer;user-select:none}
+        .inv-table th:hover{color:var(--primary)}
+        .sort-icon{margin-left:.35rem;font-size:.6rem;opacity:.35;transition:opacity .2s}
+        .sort-icon.active{opacity:1;color:var(--primary)}
+        .inv-table td{padding:.875rem 1rem;border-bottom:1px solid #F3F4F6;font-size:.875rem;vertical-align:middle}
+        .inv-table tr:last-child td{border-bottom:none}
+        .inv-table tbody tr{transition:background .15s}
+        .inv-table tbody tr:hover td{background:rgba(99,102,241,.02)}
+
+        /* CB */
+        .cb-cell{width:44px;padding-left:1.25rem !important}
+        .custom-cb{width:18px;height:18px;border:2px solid var(--border);border-radius:5px;cursor:pointer;appearance:none;-webkit-appearance:none;transition:all .2s;position:relative;background:white}
+        .custom-cb:checked{background:linear-gradient(135deg,var(--primary),var(--purple));border-color:transparent}
+        .custom-cb:checked::after{content:'✓';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);color:white;font-size:.7rem;font-weight:700}
+        .custom-cb:hover:not(:checked){border-color:var(--primary)}
+
+        /* Item cell */
+        .item-icon-cell{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
+        .item-name{font-weight:700;color:var(--dark);font-size:.875rem}
+        .item-id{font-size:.72rem;color:var(--gray-light);font-family:monospace}
+        .item-category{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .6rem;border-radius:6px;font-size:.72rem;font-weight:600}
+
+        /* Stock cell */
+        .stock-bar-wrap{margin-top:.35rem}
+        .stock-bar{height:5px;border-radius:3px;background:var(--border);overflow:hidden;width:100px}
+        .stock-bar-fill{height:100%;border-radius:3px;transition:width .6s ease}
+        .stock-val{font-size:.875rem;font-weight:700;color:var(--dark)}
+        .stock-val.critical{color:var(--danger)}
+        .stock-val.warning{color:var(--warning)}
+        .stock-val.ok{color:var(--dark)}
+
+        /* Status badge */
+        .inv-status{display:inline-flex;align-items:center;gap:.35rem;padding:.3rem .7rem;border-radius:7px;font-size:.75rem;font-weight:600}
+        .inv-status::before{content:'';width:6px;height:6px;border-radius:50%}
+        .inv-status.habis{background:rgba(239,68,68,.1);color:var(--danger)}
+        .inv-status.habis::before{background:var(--danger);animation:pdot 1.5s infinite}
+        .inv-status.kritis{background:rgba(239,68,68,.1);color:var(--danger)}
+        .inv-status.kritis::before{background:var(--danger)}
+        .inv-status.rendah{background:rgba(245,158,11,.1);color:var(--warning)}
+        .inv-status.rendah::before{background:var(--warning)}
+        .inv-status.cukup{background:rgba(16,185,129,.1);color:var(--secondary)}
+        .inv-status.cukup::before{background:var(--secondary)}
+        .inv-status.lebih{background:rgba(99,102,241,.1);color:var(--primary)}
+        .inv-status.lebih::before{background:var(--primary)}
+        @keyframes pdot{0%,100%{transform:scale(1)}50%{transform:scale(1.6)}}
+
+        /* Action btns */
+        .act-cell{display:flex;align-items:center;gap:.35rem}
+        .act-btn{width:32px;height:32px;border-radius:8px;border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.8rem;transition:all .25s}
+        .act-btn-view{background:rgba(59,130,246,.1);color:var(--info)}
+        .act-btn-view:hover{background:var(--info);color:white;transform:scale(1.1)}
+        .act-btn-edit{background:rgba(245,158,11,.1);color:var(--warning)}
+        .act-btn-edit:hover{background:var(--warning);color:white;transform:scale(1.1)}
+        .act-btn-restock{background:rgba(16,185,129,.1);color:var(--secondary)}
+        .act-btn-restock:hover{background:var(--secondary);color:white;transform:scale(1.1)}
+        .act-btn-delete{background:rgba(239,68,68,.1);color:var(--danger)}
+        .act-btn-delete:hover{background:var(--danger);color:white;transform:scale(1.1)}
+
+        /* Bulk bar */
+        .bulk-bar{position:sticky;bottom:0;padding:1rem 1.5rem;background:linear-gradient(135deg,var(--primary),var(--purple));display:flex;align-items:center;gap:1rem;transform:translateY(100%);opacity:0;transition:all .4s cubic-bezier(.4,0,.2,1);z-index:50;border-radius:0 0 var(--radius) var(--radius)}
+        .bulk-bar.show{transform:translateY(0);opacity:1}
+        .bulk-count{color:white;font-weight:700;font-size:.9rem;flex:1}
+        .bulk-btn{display:flex;align-items:center;gap:.4rem;padding:.5rem 1rem;border-radius:8px;font-size:.8rem;font-weight:600;border:none;cursor:pointer;transition:all .2s;white-space:nowrap}
+        .bulk-btn-white{background:rgba(255,255,255,.2);color:white;border:1px solid rgba(255,255,255,.3)}
+        .bulk-btn-white:hover{background:rgba(255,255,255,.35)}
+        .bulk-btn-danger{background:rgba(239,68,68,.25);color:white;border:1px solid rgba(239,68,68,.4)}
+        .bulk-btn-danger:hover{background:rgba(239,68,68,.45)}
+        .bulk-close{background:none;border:none;color:rgba(255,255,255,.7);cursor:pointer;padding:.25rem;font-size:1rem}
+        .bulk-close:hover{color:white}
+
+        /* Pagination */
+        .pagination-bar{display:flex;justify-content:space-between;align-items:center;padding:1rem 1.5rem;border-top:1px solid var(--border);flex-wrap:wrap;gap:.75rem}
+        .pagination-info{font-size:.875rem;color:var(--gray)}
+        .pagination-info strong{color:var(--dark)}
+        .pagination-controls{display:flex;gap:.35rem}
+        .page-btn{width:36px;height:36px;border-radius:8px;border:2px solid var(--border);background:white;color:var(--gray);font-size:.8rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
+        .page-btn:hover{border-color:var(--primary);color:var(--primary)}
+        .page-btn.active{background:linear-gradient(135deg,var(--primary),var(--purple));border-color:transparent;color:white;box-shadow:0 2px 8px rgba(99,102,241,.3)}
+        .page-btn:disabled{opacity:.4;cursor:not-allowed}
+
+        /* ============ MODALS ============ */
+        .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:2000;display:flex;align-items:center;justify-content:center;padding:1rem;opacity:0;visibility:hidden;transition:all .3s}
+        .modal-overlay.show{opacity:1;visibility:visible}
+        .modal-box{background:white;border-radius:24px;width:100%;max-width:640px;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;transform:scale(.9) translateY(20px);transition:all .3s cubic-bezier(.4,0,.2,1);box-shadow:0 25px 60px rgba(0,0,0,.2)}
+        .modal-overlay.show .modal-box{transform:scale(1) translateY(0)}
+        .modal-header{padding:1.5rem;display:flex;align-items:center;gap:1rem;border-bottom:1px solid var(--border);background:linear-gradient(135deg,rgba(99,102,241,.04),rgba(139,92,246,.04));flex-shrink:0;position:relative;overflow:hidden}
+        .modal-header::after{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.06),transparent 70%)}
+        .modal-header-icon{width:48px;height:48px;border-radius:14px;display:flex;align-items:center;justify-content:center;color:white;font-size:1.25rem;position:relative;z-index:1}
+        .modal-title{flex:1;position:relative;z-index:1}
+        .modal-title h3{font-size:1.125rem;font-weight:700;color:var(--dark);margin:0}
+        .modal-title p{font-size:.8rem;color:var(--gray);margin:.15rem 0 0}
+        .modal-close{width:36px;height:36px;border-radius:10px;border:2px solid var(--border);background:white;color:var(--gray);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;position:relative;z-index:1}
+        .modal-close:hover{border-color:var(--danger);color:var(--danger)}
+        .modal-body{padding:1.5rem;overflow-y:auto;flex:1}
+        .modal-body::-webkit-scrollbar{width:4px}
+        .modal-body::-webkit-scrollbar-thumb{background:var(--border);border-radius:4px}
+        .modal-footer{padding:1.25rem 1.5rem;border-top:1px solid var(--border);display:flex;gap:.75rem;justify-content:flex-end;flex-shrink:0}
+
+        /* Form inside modal */
+        .form-section-title{font-size:.72rem;font-weight:700;color:var(--gray);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.875rem;display:flex;align-items:center;gap:.5rem}
+        .form-section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+        .form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem}
+        .form-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1.25rem}
+        .form-field{display:flex;flex-direction:column;gap:.4rem}
+        .form-field.full{grid-column:span 2}
+        .form-field.full3{grid-column:span 3}
+        .form-field label{font-size:.75rem;font-weight:600;color:var(--gray);text-transform:uppercase;letter-spacing:.4px}
+        .form-field label .req{color:var(--danger)}
+        .form-control{padding:.75rem 1rem;border:2px solid var(--border);border-radius:12px;font-size:.9375rem;transition:all .3s;background:rgba(255,255,255,.8);width:100%}
+        .form-control:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 4px rgba(99,102,241,.1)}
+        .input-wrap{position:relative}
+        .input-wrap .form-control{padding-left:2.75rem}
+        .input-wrap .ic{position:absolute;left:1rem;top:50%;transform:translateY(-50%);color:var(--gray-light);font-size:.875rem}
+        textarea.form-control{resize:vertical;min-height:72px}
+        .form-control.emoji-input{font-size:1.5rem;text-align:center}
+
+        /* Detail modal info grid */
+        .detail-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:.875rem}
+        .detail-field label{font-size:.7rem;font-weight:600;color:var(--gray-light);text-transform:uppercase;letter-spacing:.3px;display:block;margin-bottom:.25rem}
+        .detail-field .val{font-size:.9rem;font-weight:600;color:var(--dark)}
+
+        /* Restock history in detail */
+        .restock-list{display:flex;flex-direction:column;gap:.5rem}
+        .restock-item{display:flex;align-items:center;gap:.875rem;padding:.75rem;border-radius:10px;background:#F9FAFB;border:1px solid var(--border)}
+        .restock-icon{width:32px;height:32px;border-radius:8px;background:rgba(16,185,129,.1);color:var(--secondary);display:flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0}
+        .restock-info{flex:1}
+        .restock-title{font-size:.8rem;font-weight:600;color:var(--dark)}
+        .restock-date{font-size:.7rem;color:var(--gray-light)}
+        .restock-qty{font-weight:700;color:var(--secondary);font-size:.875rem}
+
+        /* Restock modal */
+        .restock-current{background:linear-gradient(135deg,rgba(99,102,241,.04),rgba(139,92,246,.06));border-radius:14px;padding:1.25rem;margin-bottom:1.25rem;display:flex;align-items:center;gap:1rem}
+        .restock-current-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;background:rgba(255,255,255,.8)}
+        .restock-item-name{font-size:1rem;font-weight:700;color:var(--dark)}
+        .restock-item-stock{font-size:.875rem;color:var(--gray)}
+        .restock-item-stock strong{font-weight:700}
+        .restock-item-stock strong.critical{color:var(--danger)}
+
+        /* Modal btn */
+        .modal-btn{display:flex;align-items:center;gap:.5rem;padding:.75rem 1.25rem;border-radius:10px;font-size:.875rem;font-weight:600;border:none;cursor:pointer;transition:all .3s}
+        .modal-btn-primary{background:linear-gradient(135deg,var(--primary),var(--purple));color:white}
+        .modal-btn-primary:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(99,102,241,.3)}
+        .modal-btn-success{background:linear-gradient(135deg,var(--secondary),var(--success));color:white}
+        .modal-btn-success:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(16,185,129,.3)}
+        .modal-btn-outline{background:white;border:2px solid var(--border);color:var(--gray)}
+        .modal-btn-outline:hover{border-color:var(--primary);color:var(--primary)}
+        .modal-btn-danger{background:white;border:2px solid rgba(239,68,68,.2);color:var(--danger)}
+        .modal-btn-danger:hover{background:var(--danger);color:white}
+
+        /* ============ TOAST ============ */
+        .toast-wrap{position:fixed;top:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:.75rem}
+        .toast{padding:1rem 1.25rem;border-radius:14px;background:white;box-shadow:0 10px 30px rgba(0,0,0,.12);display:flex;align-items:center;gap:.75rem;transform:translateX(120%);transition:transform .4s cubic-bezier(.4,0,.2,1);border:1px solid var(--border);min-width:280px}
+        .toast.show{transform:translateX(0)}
+        .toast-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center}
+        .toast-icon.success{background:rgba(16,185,129,.1);color:var(--secondary)}
+        .toast-icon.error{background:rgba(239,68,68,.1);color:var(--danger)}
+        .toast-icon.info{background:rgba(99,102,241,.1);color:var(--primary)}
+        .toast-icon.warning{background:rgba(245,158,11,.1);color:var(--warning)}
+        .toast-title{font-size:.875rem;font-weight:700;color:var(--dark)}
+        .toast-msg{font-size:.78rem;color:var(--gray);margin-top:.1rem}
+        .toast-x{background:none;border:none;color:var(--gray-light);cursor:pointer;margin-left:auto}
+
+        /* ============ FLOAT BUTTON ============ */
+        .float-btn-container{position:fixed;bottom:2rem;right:2rem;z-index:1000}
+        .float-btn{width:52px;height:52px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.1rem;color:white;background:linear-gradient(135deg,var(--primary),var(--purple));box-shadow:0 4px 20px rgba(99,102,241,.4);transition:all .4s cubic-bezier(.4,0,.2,1);position:relative;overflow:hidden;opacity:0;visibility:hidden;transform:scale(0) translateY(20px)}
+        .float-btn.visible{opacity:1;visibility:visible;transform:scale(1) translateY(0);animation:floatAppear .6s cubic-bezier(.68,-.55,.265,1.55),floatHover 3s ease-in-out .6s infinite}
+        @keyframes floatAppear{0%{transform:scale(0) translateY(50px);opacity:0}50%{transform:scale(1.2) translateY(-10px)}70%{transform:scale(.9) translateY(5px)}100%{transform:scale(1) translateY(0);opacity:1}}
+        @keyframes floatHover{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+        .float-btn::before{content:'';position:absolute;inset:0;border-radius:50%;background:inherit;animation:pulseBig 2s cubic-bezier(.4,0,.6,1) infinite;z-index:-1}
+        @keyframes pulseBig{0%{transform:scale(1);opacity:.5}50%,100%{transform:scale(1.5);opacity:0}}
+        .float-btn::after{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:linear-gradient(45deg,transparent 40%,rgba(255,255,255,.3) 50%,transparent 60%);animation:shimmer 3s infinite}
+        @keyframes shimmer{0%{transform:translateX(-100%) rotate(45deg)}100%{transform:translateX(100%) rotate(45deg)}}
+        .float-btn:hover{transform:translateY(-5px) scale(1.1) !important;box-shadow:0 8px 30px rgba(99,102,241,.5);animation:none !important}
+        .float-btn i{position:relative;z-index:1}
+        .float-btn-ring{position:absolute;width:calc(100% + 8px);height:calc(100% + 8px);border-radius:50%;z-index:-2;opacity:0;background:conic-gradient(from 0deg,var(--primary),var(--purple),var(--pink),var(--cyan),var(--secondary),var(--primary));animation:ringRotate 4s linear infinite;transition:opacity .3s}
+        @keyframes ringRotate{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+        .float-btn:hover .float-btn-ring{opacity:1}
+        .float-btn-tooltip{position:absolute;right:calc(100% + 14px);top:50%;transform:translateY(-50%) translateX(8px);background:var(--dark);color:white;padding:.4rem .875rem;border-radius:8px;font-size:.78rem;font-weight:500;white-space:nowrap;opacity:0;visibility:hidden;transition:all .3s;pointer-events:none}
+        .float-btn-tooltip::after{content:'';position:absolute;left:100%;top:50%;transform:translateY(-50%);border:5px solid transparent;border-left-color:var(--dark)}
+        .float-btn:hover .float-btn-tooltip{opacity:1;visibility:visible;transform:translateY(-50%) translateX(0)}
+
+        /* Empty state */
+        .empty-state{padding:4rem 2rem;text-align:center}
+        .empty-icon{width:80px;height:80px;border-radius:24px;background:linear-gradient(135deg,rgba(99,102,241,.08),rgba(139,92,246,.08));display:flex;align-items:center;justify-content:center;font-size:2rem;color:var(--gray-light);margin:0 auto 1rem}
+
+        /* Responsive */
+        @media(max-width:1400px){.stats-grid{grid-template-columns:repeat(3,1fr)}}
+        @media(max-width:1200px){.dash-grid{grid-template-columns:1fr}.stats-grid{grid-template-columns:repeat(3,1fr)}}
+        @media(max-width:768px){.sidebar{transform:translateX(-100%)}.sidebar.mobile-open{transform:translateX(0)}.topbar{left:0 !important}.main-content{margin-left:0 !important;padding:1rem}.topbar-search,.topbar-outlet{display:none}.stats-grid{grid-template-columns:1fr 1fr}.page-header-bar{flex-direction:column;align-items:stretch}.float-btn-tooltip{display:none}}
+        @media(max-width:576px){.stats-grid{grid-template-columns:1fr}.form-grid-2,.form-grid-3,.detail-info-grid{grid-template-columns:1fr}.form-field.full,.form-field.full3{grid-column:span 1}}
+
+        .fade-in{animation:fadeUp .45s ease both}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+        .d1{animation-delay:.05s}.d2{animation-delay:.1s}.d3{animation-delay:.15s}.d4{animation-delay:.2s}.d5{animation-delay:.25s}
+    </style>
+</head>
+<body>
+
+<!-- ====================== SIDEBAR ====================== -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-toggle" onclick="toggleSidebar()"><i class="fas fa-chevron-left"></i></div>
+    <div class="sidebar-brand">
+        <div class="brand-icon"><i class="fas fa-tshirt"></i></div>
+        <div class="brand-text"><span class="brand-name">LaundryPro</span><span class="brand-sub">Admin Panel</span></div>
+    </div>
+    <nav class="sidebar-nav">
+        <div class="nav-section-label">Utama</div>
+        <a href="laundry-admin-dashboard.html"  class="nav-item"><div class="nav-icon"><i class="fas fa-th-large"></i></div><span class="nav-label">Dashboard</span></a>
+        <a href="laundry-admin-orders.html"     class="nav-item"><div class="nav-icon"><i class="fas fa-receipt"></i></div><span class="nav-label">Semua Order</span><span class="nav-badge">12</span></a>
+        <a href="laundry-admin-customers.html"  class="nav-item"><div class="nav-icon"><i class="fas fa-users"></i></div><span class="nav-label">Pelanggan</span></a>
+        <a href="#"                             class="nav-item"><div class="nav-icon"><i class="fas fa-store"></i></div><span class="nav-label">Outlet</span></a>
+        <div class="nav-section-label">Operasional</div>
+        <a href="laundry-admin-services.html"   class="nav-item"><div class="nav-icon"><i class="fas fa-concierge-bell"></i></div><span class="nav-label">Layanan & Harga</span></a>
+        <a href="laundry-admin-pickup.html"     class="nav-item"><div class="nav-icon"><i class="fas fa-truck"></i></div><span class="nav-label">Antar Jemput</span><span class="nav-badge">3</span></a>
+        <a href="#"                             class="nav-item"><div class="nav-icon"><i class="fas fa-user-tie"></i></div><span class="nav-label">Karyawan</span></a>
+        <a href="#"                             class="nav-item active"><div class="nav-icon"><i class="fas fa-boxes"></i></div><span class="nav-label">Inventaris</span></a>
+        <div class="nav-section-label">Keuangan</div>
+        <a href="#" class="nav-item"><div class="nav-icon"><i class="fas fa-chart-line"></i></div><span class="nav-label">Laporan</span></a>
+        <a href="#" class="nav-item"><div class="nav-icon"><i class="fas fa-file-invoice-dollar"></i></div><span class="nav-label">Pembayaran</span></a>
+        <a href="#" class="nav-item"><div class="nav-icon"><i class="fas fa-percent"></i></div><span class="nav-label">Promo & Diskon</span></a>
+        <div class="nav-section-label">Sistem</div>
+        <a href="#" class="nav-item"><div class="nav-icon"><i class="fas fa-cog"></i></div><span class="nav-label">Pengaturan</span></a>
+    </nav>
+    <div class="sidebar-user">
+        <div class="sidebar-user-avatar">SA</div>
+        <div class="sidebar-user-info"><div class="sidebar-user-name">Sari Admin</div><div class="sidebar-user-role">Super Admin</div></div>
+        <button class="sidebar-user-btn" onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i></button>
+    </div>
+</aside>
+
+<!-- ====================== TOPBAR ====================== -->
+<header class="topbar" id="topbar">
+    <div class="topbar-title">
+        <h2><i class="fas fa-boxes" style="color:var(--primary);font-size:1rem"></i><span>Inventaris</span></h2>
+        <div class="breadcrumb-custom"><a href="laundry-admin-dashboard.html">Home</a><i class="fas fa-chevron-right"></i><span>Inventaris</span></div>
+    </div>
+    <div class="topbar-actions">
+        <div class="topbar-search"><i class="fas fa-search"></i><input type="text" placeholder="Cari barang inventaris..." id="topbarSearch" oninput="handleSearch(this.value)"></div>
+        <button class="topbar-btn"><i class="fas fa-bell"></i><span class="topbar-badge">5</span></button>
+        <button class="topbar-btn"><i class="fas fa-comment-alt"></i><span class="topbar-badge">2</span></button>
+        <div class="topbar-outlet"><i class="fas fa-store"></i><span>Semua Outlet</span><i class="fas fa-chevron-down" style="font-size:.65rem;opacity:.6"></i></div>
+        <div class="topbar-user"><div class="topbar-avatar">SA</div><div><div class="topbar-user-name">Sari Admin</div><div class="topbar-user-role">Super Admin</div></div></div>
+    </div>
+</header>
+
+<!-- ====================== MAIN CONTENT ====================== -->
+<main class="main-content" id="mainContent">
+
+    <!-- Page Header -->
+    <div class="page-header-bar fade-in">
+        <div class="page-header-left">
+            <h2>Manajemen Inventaris</h2>
+            <p>Kelola stok bahan baku, perlengkapan, dan peralatan di seluruh outlet LaundryPro</p>
+        </div>
+        <div class="page-header-actions">
+            <button class="btn-page btn-page-outline" onclick="exportData()"><i class="fas fa-file-export"></i> Export</button>
+            <button class="btn-page btn-page-warning" onclick="openRestockAllModal()"><i class="fas fa-redo-alt"></i> Restock Otomatis</button>
+            <button class="btn-page btn-page-primary" onclick="openAddModal()"><i class="fas fa-plus"></i> Tambah Barang</button>
+        </div>
+    </div>
+
+    <!-- Stat Cards -->
+    <div class="stats-grid">
+        <div class="stat-card c1 active-filter fade-in d1" onclick="filterByStat('all',this)">
+            <div class="stat-hdr"><div class="stat-icon c1"><i class="fas fa-boxes"></i></div></div>
+            <div class="stat-value" id="sc-all">0</div>
+            <div class="stat-label">Total Jenis Barang</div>
+            <div class="stat-sub ok" id="sc-all-sub">—</div>
+        </div>
+        <div class="stat-card c2 fade-in d2" onclick="filterByStat('cukup',this)">
+            <div class="stat-hdr"><div class="stat-icon c2"><i class="fas fa-check-circle"></i></div></div>
+            <div class="stat-value" id="sc-cukup">0</div>
+            <div class="stat-label">Stok Aman</div>
+            <div class="stat-sub ok">Di atas batas minimum</div>
+        </div>
+        <div class="stat-card c3 fade-in d3" onclick="filterByStat('rendah',this)">
+            <div class="stat-hdr"><div class="stat-icon c3"><i class="fas fa-exclamation-triangle"></i></div></div>
+            <div class="stat-value" id="sc-rendah">0</div>
+            <div class="stat-label">Stok Rendah</div>
+            <div class="stat-sub warn">Segera restock</div>
+        </div>
+        <div class="stat-card c4 fade-in d4" onclick="filterByStat('kritis',this)">
+            <div class="stat-hdr"><div class="stat-icon c4"><i class="fas fa-fire"></i></div></div>
+            <div class="stat-value" id="sc-kritis">0</div>
+            <div class="stat-label">Stok Kritis / Habis</div>
+            <div class="stat-sub warn">Butuh restock segera!</div>
+        </div>
+        <div class="stat-card c5 fade-in d5">
+            <div class="stat-hdr"><div class="stat-icon c5"><i class="fas fa-dollar-sign"></i></div></div>
+            <div class="stat-value" id="sc-nilai">0</div>
+            <div class="stat-label">Nilai Inventaris</div>
+            <div class="stat-sub ok">Total keseluruhan outlet</div>
+        </div>
+    </div>
+
+    <!-- Dashboard Grid: Chart + Low Stock -->
+    <div class="dash-grid fade-in d3">
+        <!-- Stock Usage Bar Chart -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="card-title-icon" style="background:linear-gradient(135deg,rgba(99,102,241,.12),rgba(139,92,246,.12));color:var(--primary)"><i class="fas fa-chart-bar"></i></div>
+                    Penggunaan Stok per Kategori
+                </div>
+                <span style="font-size:.78rem;color:var(--gray);position:relative;z-index:1">Bulan Desember 2024</span>
+            </div>
+            <div class="card-body">
+                <div class="chart-area"><canvas id="stockChart"></canvas></div>
+            </div>
+        </div>
+
+        <!-- Low / Critical Stock Alert -->
+        <div class="card">
+            <div class="card-header">
+                <div class="card-title">
+                    <div class="card-title-icon" style="background:rgba(239,68,68,.1);color:var(--danger)"><i class="fas fa-bell"></i></div>
+                    Peringatan Stok
+                </div>
+                <span style="font-size:.78rem;font-weight:600;color:var(--danger);position:relative;z-index:1" id="alertCount">0 item</span>
+            </div>
+            <div class="card-body" style="max-height:360px;overflow-y:auto" id="alertList"></div>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar fade-in d4">
+        <div class="filter-search">
+            <span class="filter-search-icon"><i class="fas fa-search"></i></span>
+            <input class="filter-input" type="text" id="searchInput" placeholder="Cari nama barang, kode, merek..." oninput="applyFilters()">
+        </div>
+        <div class="filter-group" style="min-width:140px">
+            <label class="filter-label">Kategori</label>
+            <select class="filter-input" id="filterCat" onchange="applyFilters()">
+                <option value="">Semua Kategori</option>
+                <option>Deterjen & Kimia</option>
+                <option>Pewangi & Softener</option>
+                <option>Plastik & Kemasan</option>
+                <option>Peralatan Cuci</option>
+                <option>Peralatan Setrika</option>
+                <option>Kebersihan Outlet</option>
+                <option>ATK & Administrasi</option>
+            </select>
+        </div>
+        <div class="filter-group" style="min-width:130px">
+            <label class="filter-label">Outlet</label>
+            <select class="filter-input" id="filterOutlet" onchange="applyFilters()">
+                <option value="">Semua Outlet</option>
+                <option>Outlet Pusat</option><option>Outlet Bandung</option>
+                <option>Outlet Surabaya</option><option>Outlet Yogyakarta</option>
+            </select>
+        </div>
+        <div class="filter-group" style="min-width:120px">
+            <label class="filter-label">Status Stok</label>
+            <select class="filter-input" id="filterStatus" onchange="applyFilters()">
+                <option value="">Semua Status</option>
+                <option value="lebih">Lebih</option>
+                <option value="cukup">Cukup</option>
+                <option value="rendah">Rendah</option>
+                <option value="kritis">Kritis</option>
+                <option value="habis">Habis</option>
+            </select>
+        </div>
+        <button class="filter-btn filter-btn-reset" onclick="resetFilters()"><i class="fas fa-undo"></i> Reset</button>
+        <button class="filter-btn filter-btn-primary" onclick="applyFilters()"><i class="fas fa-filter"></i> Filter</button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-card fade-in d5">
+        <div class="table-card-header">
+            <div class="table-card-title">
+                <div class="table-card-title-icon"><i class="fas fa-boxes"></i></div>
+                Daftar Inventaris
+            </div>
+            <div class="table-meta">
+                <span>Tampil <strong id="showCount">10</strong> dari <strong id="totalCount">0</strong></span>
+                <select class="per-page-select" id="perPageSel" onchange="changePerPage(this.value)">
+                    <option value="10">10/hal</option><option value="25">25/hal</option><option value="50">50/hal</option>
+                </select>
+            </div>
+        </div>
+        <div style="overflow-x:auto">
+            <table class="inv-table">
+                <thead>
+                    <tr>
+                        <th class="cb-cell"><input type="checkbox" class="custom-cb" id="checkAll" onchange="toggleAllCheck()"></th>
+                        <th onclick="sortBy('name')">Barang <i class="fas fa-sort sort-icon active" id="si-name"></i></th>
+                        <th onclick="sortBy('category')">Kategori <i class="fas fa-sort sort-icon" id="si-category"></i></th>
+                        <th onclick="sortBy('outlet')">Outlet <i class="fas fa-sort sort-icon" id="si-outlet"></i></th>
+                        <th onclick="sortBy('stock')">Stok <i class="fas fa-sort sort-icon" id="si-stock"></i></th>
+                        <th onclick="sortBy('stockStatus')">Status <i class="fas fa-sort sort-icon" id="si-stockStatus"></i></th>
+                        <th onclick="sortBy('price')">Harga Satuan <i class="fas fa-sort sort-icon" id="si-price"></i></th>
+                        <th onclick="sortBy('value')">Nilai Stok <i class="fas fa-sort sort-icon" id="si-value"></i></th>
+                        <th onclick="sortBy('lastRestock')">Restock Terakhir <i class="fas fa-sort sort-icon" id="si-lastRestock"></i></th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="invTableBody"></tbody>
+            </table>
+        </div>
+        <div class="empty-state" id="emptyState" style="display:none">
+            <div class="empty-icon"><i class="fas fa-boxes"></i></div>
+            <div style="font-size:1.125rem;font-weight:700;color:var(--dark);margin-bottom:.5rem">Tidak ada barang ditemukan</div>
+            <div style="font-size:.875rem;color:var(--gray)">Coba ubah kata kunci atau filter pencarian</div>
+        </div>
+        <div class="bulk-bar" id="bulkBar">
+            <span class="bulk-count"><i class="fas fa-check-square"></i> <span id="bulkCountText">0</span> dipilih</span>
+            <button class="bulk-btn bulk-btn-white" onclick="bulkRestock()"><i class="fas fa-redo-alt"></i> Restock Semua</button>
+            <button class="bulk-btn bulk-btn-white" onclick="bulkExport()"><i class="fas fa-file-export"></i> Export</button>
+            <button class="bulk-btn bulk-btn-danger" onclick="bulkDelete()"><i class="fas fa-trash-alt"></i> Hapus</button>
+            <button class="bulk-close" onclick="clearSelection()"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="pagination-bar">
+            <div class="pagination-info">Halaman <strong id="currentPage">1</strong> dari <strong id="totalPages">1</strong></div>
+            <div class="pagination-controls" id="paginationControls"></div>
+        </div>
+    </div>
+</main>
+
+<!-- ====================== ADD / EDIT MODAL ====================== -->
+<div class="modal-overlay" id="itemModal" onclick="closeModalOut(event,'itemModal')">
+    <div class="modal-box">
+        <div class="modal-header">
+            <div class="modal-header-icon" id="itemModalIcon" style="background:linear-gradient(135deg,var(--primary),var(--purple))"><i class="fas fa-boxes"></i></div>
+            <div class="modal-title"><h3 id="itemModalTitle">Tambah Barang</h3><p id="itemModalSub">Isi detail barang inventaris baru</p></div>
+            <button class="modal-close" onclick="closeModal('itemModal')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="form-section-title"><i class="fas fa-info-circle"></i> Informasi Barang</div>
+            <div class="form-grid-2">
+                <div class="form-field"><label>Nama Barang <span class="req">*</span></label><div class="input-wrap"><input class="form-control" id="f-name" type="text" placeholder="cth. Deterjen Attack Cair"><i class="fas fa-tag ic"></i></div></div>
+                <div class="form-field"><label>Kode Barang</label><div class="input-wrap"><input class="form-control" id="f-code" type="text" placeholder="cth. DTJ-001"><i class="fas fa-barcode ic"></i></div></div>
+                <div class="form-field"><label>Kategori <span class="req">*</span></label><select class="form-control" id="f-category"><option>Deterjen & Kimia</option><option>Pewangi & Softener</option><option>Plastik & Kemasan</option><option>Peralatan Cuci</option><option>Peralatan Setrika</option><option>Kebersihan Outlet</option><option>ATK & Administrasi</option></select></div>
+                <div class="form-field"><label>Merek / Supplier</label><div class="input-wrap"><input class="form-control" id="f-brand" type="text" placeholder="cth. Attack / CV Maju Jaya"><i class="fas fa-building ic"></i></div></div>
+                <div class="form-field"><label>Ikon (Emoji)</label><input class="form-control emoji-input" id="f-emoji" type="text" placeholder="📦" maxlength="2"></div>
+                <div class="form-field"><label>Warna Ikon</label><select class="form-control" id="f-color"><option value="#6366F1">Ungu (Deterjen)</option><option value="#10B981">Hijau (Kimia)</option><option value="#F59E0B">Kuning (Peralatan)</option><option value="#EC4899">Pink (Pewangi)</option><option value="#3B82F6">Biru (Kemasan)</option><option value="#F97316">Oranye (ATK)</option></select></div>
+                <div class="form-field full"><label>Deskripsi</label><textarea class="form-control" id="f-desc" placeholder="Deskripsi singkat atau spesifikasi barang..."></textarea></div>
+            </div>
+            <div class="form-section-title"><i class="fas fa-layer-group"></i> Stok & Harga</div>
+            <div class="form-grid-3">
+                <div class="form-field"><label>Stok Awal <span class="req">*</span></label><input class="form-control" id="f-stock" type="number" placeholder="0" min="0"></div>
+                <div class="form-field"><label>Stok Minimum</label><input class="form-control" id="f-minStock" type="number" placeholder="0" min="0"></div>
+                <div class="form-field"><label>Stok Maksimum</label><input class="form-control" id="f-maxStock" type="number" placeholder="0" min="0"></div>
+                <div class="form-field"><label>Satuan</label><select class="form-control" id="f-unit"><option>liter</option><option>kg</option><option>pcs</option><option>botol</option><option>dus</option><option>pack</option><option>roll</option><option>lembar</option></select></div>
+                <div class="form-field"><label>Harga Beli/Satuan</label><input class="form-control" id="f-price" type="number" placeholder="0" min="0"></div>
+                <div class="form-field"><label>Outlet</label><select class="form-control" id="f-outlet"><option>Outlet Pusat</option><option>Outlet Bandung</option><option>Outlet Surabaya</option><option>Outlet Yogyakarta</option></select></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn modal-btn-outline" onclick="closeModal('itemModal')"><i class="fas fa-times"></i> Batal</button>
+            <button class="modal-btn modal-btn-primary" onclick="saveItem()"><i class="fas fa-save"></i> Simpan</button>
+        </div>
+    </div>
+</div>
+
+<!-- ====================== DETAIL MODAL ====================== -->
+<div class="modal-overlay" id="detailModal" onclick="closeModalOut(event,'detailModal')">
+    <div class="modal-box">
+        <div class="modal-header">
+            <div class="modal-header-icon" id="dm-icon" style="background:linear-gradient(135deg,var(--primary),var(--purple));font-size:1.5rem">📦</div>
+            <div class="modal-title"><h3 id="dm-name">—</h3><p id="dm-code">—</p></div>
+            <button class="modal-close" onclick="closeModal('detailModal')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div style="margin-bottom:1.25rem">
+                <div class="form-section-title"><i class="fas fa-info-circle"></i> Informasi Barang</div>
+                <div class="detail-info-grid">
+                    <div class="detail-field"><label>Kategori</label><div class="val" id="dm-cat">—</div></div>
+                    <div class="detail-field"><label>Merek / Supplier</label><div class="val" id="dm-brand">—</div></div>
+                    <div class="detail-field"><label>Outlet</label><div class="val" id="dm-outlet">—</div></div>
+                    <div class="detail-field"><label>Satuan</label><div class="val" id="dm-unit">—</div></div>
+                    <div class="detail-field"><label>Deskripsi</label><div class="val" id="dm-desc" style="grid-column:span 2;font-weight:400;color:var(--gray)">—</div></div>
+                </div>
+            </div>
+            <div style="margin-bottom:1.25rem">
+                <div class="form-section-title"><i class="fas fa-layer-group"></i> Detail Stok</div>
+                <div class="detail-info-grid">
+                    <div class="detail-field"><label>Stok Saat Ini</label><div class="val" id="dm-stock" style="font-size:1.5rem;color:var(--primary)">—</div></div>
+                    <div class="detail-field"><label>Status</label><div id="dm-status">—</div></div>
+                    <div class="detail-field"><label>Stok Minimum</label><div class="val" id="dm-min">—</div></div>
+                    <div class="detail-field"><label>Stok Maksimum</label><div class="val" id="dm-max">—</div></div>
+                    <div class="detail-field"><label>Harga Beli</label><div class="val" id="dm-price">—</div></div>
+                    <div class="detail-field"><label>Nilai Stok</label><div class="val" id="dm-value" style="color:var(--primary);font-weight:800">—</div></div>
+                    <div class="detail-field"><label>Restock Terakhir</label><div class="val" id="dm-last-restock">—</div></div>
+                    <div class="detail-field"><label>Jumlah Restock Terakhir</label><div class="val" id="dm-last-qty">—</div></div>
+                </div>
+            </div>
+            <div>
+                <div class="form-section-title"><i class="fas fa-history"></i> Riwayat Restock</div>
+                <div class="restock-list" id="dm-restock-history"></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn modal-btn-danger"  onclick="deleteCurrentItem()"><i class="fas fa-trash-alt"></i> Hapus</button>
+            <button class="modal-btn modal-btn-outline" onclick="closeModal('detailModal')"><i class="fas fa-times"></i> Tutup</button>
+            <button class="modal-btn modal-btn-primary" onclick="editCurrentItem()"><i class="fas fa-pen"></i> Edit</button>
+            <button class="modal-btn modal-btn-success" onclick="restockCurrentItem()"><i class="fas fa-redo-alt"></i> Restock</button>
+        </div>
+    </div>
+</div>
+
+<!-- ====================== RESTOCK MODAL ====================== -->
+<div class="modal-overlay" id="restockModal" onclick="closeModalOut(event,'restockModal')">
+    <div class="modal-box" style="max-width:480px">
+        <div class="modal-header">
+            <div class="modal-header-icon" style="background:linear-gradient(135deg,var(--secondary),var(--success))"><i class="fas fa-redo-alt"></i></div>
+            <div class="modal-title"><h3>Restock Barang</h3><p>Tambah stok untuk barang ini</p></div>
+            <button class="modal-close" onclick="closeModal('restockModal')"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="modal-body">
+            <div class="restock-current">
+                <div class="restock-current-icon" id="rs-icon">📦</div>
+                <div>
+                    <div class="restock-item-name" id="rs-name">—</div>
+                    <div class="restock-item-stock">Stok sekarang: <strong id="rs-stock" class="critical">—</strong></div>
+                    <div class="restock-item-stock">Stok minimum: <strong id="rs-min">—</strong></div>
+                </div>
+            </div>
+            <div class="form-grid-2" style="margin-bottom:1rem">
+                <div class="form-field"><label>Jumlah Restock <span class="req">*</span></label><input class="form-control" id="rs-qty" type="number" placeholder="0" min="1"></div>
+                <div class="form-field"><label>Satuan</label><input class="form-control" id="rs-unit" type="text" readonly style="background:#F9FAFB;color:var(--gray)"></div>
+                <div class="form-field"><label>Harga Beli/Satuan</label><input class="form-control" id="rs-price" type="number" placeholder="0"></div>
+                <div class="form-field"><label>Supplier</label><input class="form-control" id="rs-supplier" type="text" placeholder="Nama supplier"></div>
+                <div class="form-field full"><label>Nomor Faktur</label><input class="form-control" id="rs-invoice" type="text" placeholder="cth. INV-2024-001"></div>
+                <div class="form-field full"><label>Catatan</label><textarea class="form-control" id="rs-notes" placeholder="Catatan restock..." style="min-height:60px"></textarea></div>
+            </div>
+            <div style="padding:.875rem 1rem;background:linear-gradient(135deg,rgba(16,185,129,.05),rgba(6,182,212,.05));border-radius:12px;border:1px solid rgba(16,185,129,.15)">
+                <div style="font-size:.8rem;color:var(--gray);margin-bottom:.25rem">Stok setelah restock:</div>
+                <div style="font-size:1.25rem;font-weight:800;color:var(--secondary)" id="rs-preview">—</div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn modal-btn-outline" onclick="closeModal('restockModal')">Batal</button>
+            <button class="modal-btn modal-btn-success" onclick="confirmRestock()"><i class="fas fa-check"></i> Konfirmasi Restock</button>
+        </div>
+    </div>
+</div>
+
+<!-- Toast + Float btn -->
+<div class="toast-wrap" id="toastWrap"></div>
+<div class="float-btn-container">
+    <button class="float-btn" id="scrollTopBtn" onclick="scrollToTop(event)">
+        <div class="float-btn-ring"></div>
+        <i class="fas fa-arrow-up"></i>
+        <span class="float-btn-tooltip">Kembali ke Atas</span>
+    </button>
+</div>
+
+<script>
+/* =========================================================
+   DATA — 32 inventory items
+========================================================= */
+const CATEGORIES = ['Deterjen & Kimia','Pewangi & Softener','Plastik & Kemasan','Peralatan Cuci','Peralatan Setrika','Kebersihan Outlet','ATK & Administrasi'];
+const OUTLETS    = ['Outlet Pusat','Outlet Bandung','Outlet Surabaya','Outlet Yogyakarta'];
+const CAT_ICONS  = {'Deterjen & Kimia':'🧴','Pewangi & Softener':'🌸','Plastik & Kemasan':'📦','Peralatan Cuci':'🪣','Peralatan Setrika':'🔌','Kebersihan Outlet':'🧹','ATK & Administrasi':'📋'};
+const CAT_COLORS = {'Deterjen & Kimia':'#6366F1','Pewangi & Softener':'#EC4899','Plastik & Kemasan':'#3B82F6','Peralatan Cuci':'#10B981','Peralatan Setrika':'#F59E0B','Kebersihan Outlet':'#14B8A6','ATK & Administrasi':'#F97316'};
+
+const RAW_ITEMS = [
+    /* Deterjen */
+    {name:'Deterjen Attack Cair',brand:'PT Kao Indonesia',price:45000,minS:20,maxS:100,unit:'liter'},
+    {name:'Deterjen Rinso Ultra',brand:'PT Unilever',price:38000,minS:15,maxS:80,unit:'kg'},
+    {name:'Deterjen Bubuk Wings',brand:'PT Wings Surya',price:28000,minS:10,maxS:60,unit:'kg'},
+    {name:'Pemutih Bayclin',brand:'PT Clorox',price:15000,minS:12,maxS:50,unit:'botol'},
+    {name:'Cairan Antinoda Pro',brand:'CV Kimia Prima',price:55000,minS:8,maxS:40,unit:'liter'},
+    /* Pewangi */
+    {name:'Pewangi Molto Ultra',brand:'PT Unilever',price:32000,minS:15,maxS:60,unit:'liter'},
+    {name:'Softener Downy',brand:'P&G Indonesia',price:42000,minS:10,maxS:50,unit:'liter'},
+    {name:'Pengharum Baju Fresh',brand:'CV Aroma Nusantara',price:18000,minS:20,maxS:80,unit:'botol'},
+    /* Kemasan */
+    {name:'Plastik PP 40x60 cm',brand:'CV Plastik Jaya',price:85000,minS:10,maxS:50,unit:'pack'},
+    {name:'Plastik Gantung Jas',brand:'CV Plastik Jaya',price:65000,minS:5,maxS:30,unit:'pack'},
+    {name:'Kantong Laundry Medium',brand:'UD Kemasan Prima',price:95000,minS:8,maxS:40,unit:'pack'},
+    {name:'Label Stiker Pelanggan',brand:'CV Print Express',price:25000,minS:20,maxS:100,unit:'roll'},
+    /* Peralatan Cuci */
+    {name:'Sikat Noda Pakaian',brand:'Merk Lokal',price:12000,minS:10,maxS:40,unit:'pcs'},
+    {name:'Ember Cuci 25L',brand:'Shinpo',price:35000,minS:5,maxS:20,unit:'pcs'},
+    {name:'Keranjang Cucian Besar',brand:'Olax',price:55000,minS:5,maxS:20,unit:'pcs'},
+    {name:'Selang Air 10m',brand:'Wavin',price:75000,minS:3,maxS:15,unit:'pcs'},
+    /* Peralatan Setrika */
+    {name:'Setrika Uap Philips GC',brand:'Philips',price:450000,minS:2,maxS:10,unit:'pcs'},
+    {name:'Papan Setrika Besar',brand:'Toyama',price:180000,minS:3,maxS:12,unit:'pcs'},
+    {name:'Spray Pelicin Pakaian',brand:'Robin',price:22000,minS:10,maxS:40,unit:'botol'},
+    {name:'Kain Lap Setrika',brand:'Merk Lokal',price:8000,minS:20,maxS:80,unit:'lembar'},
+    /* Kebersihan */
+    {name:'Sabun Cuci Tangan Dettol',brand:'RB Health',price:28000,minS:10,maxS:50,unit:'botol'},
+    {name:'Wipol Pembersih Lantai',brand:'Unilever',price:18000,minS:8,maxS:40,unit:'botol'},
+    {name:'Tisu Lap Serbaguna',brand:'Paseo',price:35000,minS:10,maxS:50,unit:'pack'},
+    {name:'Masker Kain Kasir',brand:'CV Sehat Jaya',price:5000,minS:30,maxS:100,unit:'pcs'},
+    /* ATK */
+    {name:'Nota Bon Rangkap',brand:'Sinar Dunia',price:8500,minS:20,maxS:80,unit:'dus'},
+    {name:'Bolpoin Pilot Hitam',brand:'Pilot',price:4500,minS:30,maxS:100,unit:'pcs'},
+    {name:'Buku Kas Laundry A4',brand:'Kiky',price:12000,minS:10,maxS:40,unit:'pcs'},
+    {name:'Stapler + Isi Staples',brand:'MAX',price:35000,minS:5,maxS:20,unit:'pcs'},
+    {name:'Selotip Besar',brand:'Nachi',price:9000,minS:10,maxS:40,unit:'pcs'},
+    {name:'Spidol Permanen',brand:'Snowman',price:6500,minS:15,maxS:50,unit:'pcs'},
+    {name:'Map Plastik Pelanggan',brand:'Bantex',price:3500,minS:50,maxS:200,unit:'pcs'},
+    {name:'Tinta Printer Epson',brand:'Epson',price:95000,minS:3,maxS:15,unit:'botol'},
+];
+
+const HISTORY_DATES = ['2024-12-01','2024-11-15','2024-11-01','2024-10-15','2024-10-01'];
+
+function buildStock(item, i) {
+    const cat   = CATEGORIES[i % CATEGORIES.length];
+    const outlet= OUTLETS[i % OUTLETS.length];
+    // vary stock levels to get interesting data
+    const stockLevels = [0, 3, 7, 14, 25, 40, 65, 90];
+    const rawStock = stockLevels[i % stockLevels.length];
+    const stock = Math.min(rawStock, item.maxS);
+    const pct   = stock / item.maxS;
+    let status;
+    if      (stock === 0)              status = 'habis';
+    else if (stock < item.minS * .5)   status = 'kritis';
+    else if (stock < item.minS)        status = 'rendah';
+    else if (pct > .8)                 status = 'lebih';
+    else                               status = 'cukup';
+
+    const history = HISTORY_DATES.slice(0,3).map((d,j)=>({
+        date: d,
+        qty: item.minS + j*5,
+        supplier: item.brand,
+        invoice: `INV-2024-${String(100+i*3+j).padStart(4,'0')}`,
+    }));
+
+    return {
+        id:   `INV-${String(1000+i).padStart(4,'0')}`,
+        name: item.name, brand: item.brand,
+        code: `${cat.slice(0,3).toUpperCase().replace(/ /g,'')}-${String(i+1).padStart(3,'0')}`,
+        category: cat, outlet,
+        emoji: CAT_ICONS[cat] || '📦',
+        color: CAT_COLORS[cat] || '#6366F1',
+        stock, minStock: item.minS, maxStock: item.maxS,
+        unit: item.unit, price: item.price,
+        value: stock * item.price,
+        status, desc: '',
+        lastRestock: HISTORY_DATES[i % HISTORY_DATES.length],
+        lastRestockQty: item.minS + 10,
+        history,
+    };
+}
+
+let allItems = RAW_ITEMS.map((item, i) => buildStock(item, i));
+
+/* =========================================================
+   STATE
+========================================================= */
+let filtered       = [...allItems];
+let currentPage    = 1;
+let perPage        = 10;
+let selectedIds    = new Set();
+let sortCol        = 'name';
+let sortDir        = 'asc';
+let activeStatFilter = 'all';
+let activeItem     = null;
+let editMode       = false;
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+const sidebar  = document.getElementById('sidebar');
+const topbar   = document.getElementById('topbar');
+const mainCont = document.getElementById('mainContent');
+let collapsed  = false;
+
+function toggleSidebar(){
+    collapsed = !collapsed;
+    sidebar.classList.toggle('collapsed', collapsed);
+    topbar.classList.toggle('sidebar-collapsed', collapsed);
+    mainCont.classList.toggle('sidebar-collapsed', collapsed);
+}
+function handleLogout(){ if(confirm('Yakin ingin keluar?')) window.location.href='laundry-landing-page.html'; }
+
+/* =========================================================
+   HELPERS
+========================================================= */
+function formatRp(n){ return 'Rp '+n.toLocaleString('id-ID'); }
+function formatRpK(n){
+    if(n>=1000000000) return 'Rp '+(n/1000000000).toFixed(1)+'M';
+    if(n>=1000000)    return 'Rp '+(n/1000000).toFixed(1)+'jt';
+    if(n>=1000)       return 'Rp '+(n/1000).toFixed(0)+'rb';
+    return formatRp(n);
+}
+function relDate(d){
+    const diff=Math.floor((new Date()-new Date(d))/86400000);
+    if(diff===0)return'Hari ini';if(diff===1)return'Kemarin';
+    if(diff<30)return diff+' hari lalu';return Math.floor(diff/30)+' bln lalu';
+}
+function getStockStatusClass(status){
+    const m={habis:'kritis',kritis:'kritis',rendah:'rendah',cukup:'cukup',lebih:'lebih'};
+    return m[status]||'cukup';
+}
+function stockStatusLabel(status){
+    const m={habis:'Habis',kritis:'Kritis',rendah:'Rendah',cukup:'Cukup',lebis:'Lebih',lebih:'Lebih'};
+    return m[status]||status;
+}
+function stockBarColor(status){
+    if(status==='habis'||status==='kritis') return 'var(--danger)';
+    if(status==='rendah') return 'var(--warning)';
+    if(status==='lebih')  return 'var(--primary)';
+    return 'var(--secondary)';
+}
+
+/* =========================================================
+   RENDER TABLE
+========================================================= */
+function renderTable(){
+    const tbody = document.getElementById('invTableBody');
+    const empty = document.getElementById('emptyState');
+    const start = (currentPage-1)*perPage;
+    const page  = filtered.slice(start, start+perPage);
+
+    document.getElementById('totalCount').textContent = filtered.length;
+    document.getElementById('showCount').textContent  = Math.min(perPage, filtered.length-start);
+
+    if(!filtered.length){ tbody.innerHTML=''; empty.style.display=''; return; }
+    empty.style.display = 'none';
+
+    tbody.innerHTML = page.map(item => {
+        const pct = item.maxStock > 0 ? Math.min(100, (item.stock/item.maxStock)*100) : 0;
+        const cls = getStockStatusClass(item.status);
+        return `
+        <tr>
+            <td class="cb-cell"><input type="checkbox" class="custom-cb row-cb" data-id="${item.id}" ${selectedIds.has(item.id)?'checked':''} onchange="toggleRowCheck(this)"></td>
+            <td>
+                <div style="display:flex;align-items:center;gap:.75rem">
+                    <div class="item-icon-cell" style="background:${item.color}22;font-size:1.25rem">${item.emoji}</div>
+                    <div>
+                        <div class="item-name">${item.name}</div>
+                        <div class="item-id">${item.code}</div>
+                        <div style="font-size:.72rem;color:var(--gray-light);margin-top:.1rem">${item.brand}</div>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <span class="item-category" style="background:${item.color}18;color:${item.color}">
+                    ${item.emoji} ${item.category}
+                </span>
+            </td>
+            <td style="font-size:.8rem;color:var(--gray)">${item.outlet}</td>
+            <td>
+                <div class="stock-val ${cls}">${item.stock} <span style="font-size:.72rem;font-weight:400;color:var(--gray-light)">${item.unit}</span></div>
+                <div class="stock-bar-wrap">
+                    <div class="stock-bar">
+                        <div class="stock-bar-fill" style="width:${pct}%;background:${stockBarColor(item.status)}"></div>
+                    </div>
+                </div>
+                <div style="font-size:.68rem;color:var(--gray-light);margin-top:.2rem">Min: ${item.minStock} | Max: ${item.maxStock}</div>
+            </td>
+            <td><span class="inv-status ${cls}">${stockStatusLabel(item.status)}</span></td>
+            <td style="font-size:.875rem;font-weight:600;color:var(--dark)">${formatRp(item.price)}<div style="font-size:.7rem;color:var(--gray-light)">per ${item.unit}</div></td>
+            <td style="font-weight:700;color:var(--primary)">${formatRpK(item.value)}</td>
+            <td>
+                <div style="font-size:.8rem;font-weight:600;color:var(--dark)">${item.lastRestock}</div>
+                <div style="font-size:.7rem;color:var(--gray-light)">${relDate(item.lastRestock)}</div>
+            </td>
+            <td>
+                <div class="act-cell">
+                    <button class="act-btn act-btn-view"    title="Detail"  onclick="openDetail('${item.id}')"><i class="fas fa-eye"></i></button>
+                    <button class="act-btn act-btn-edit"    title="Edit"    onclick="openEditModal('${item.id}')"><i class="fas fa-pen"></i></button>
+                    <button class="act-btn act-btn-restock" title="Restock" onclick="openRestock('${item.id}')"><i class="fas fa-redo-alt"></i></button>
+                    <button class="act-btn act-btn-delete"  title="Hapus"   onclick="deleteById('${item.id}')"><i class="fas fa-trash-alt"></i></button>
+                </div>
+            </td>
+        </tr>`;
+    }).join('');
+
+    syncCheckAll();
+    renderPagination();
+}
+
+/* =========================================================
+   STATS
+========================================================= */
+function updateStats(){
+    const all    = allItems;
+    const habis  = all.filter(x=>x.status==='habis'||x.status==='kritis').length;
+    const rendah = all.filter(x=>x.status==='rendah').length;
+    const cukup  = all.filter(x=>x.status==='cukup'||x.status==='lebih').length;
+    const total  = all.reduce((s,x)=>s+x.value,0);
+
+    document.getElementById('sc-all').textContent    = all.length;
+    document.getElementById('sc-all-sub').textContent= all.length + ' jenis barang';
+    document.getElementById('sc-cukup').textContent  = cukup;
+    document.getElementById('sc-rendah').textContent = rendah;
+    document.getElementById('sc-kritis').textContent = habis;
+    document.getElementById('sc-nilai').textContent  = formatRpK(total);
+
+    // Alert list
+    const alerts = all.filter(x=>x.status==='habis'||x.status==='kritis'||x.status==='rendah')
+                       .sort((a,b)=> {
+                           const o={habis:0,kritis:1,rendah:2};
+                           return (o[a.status]||3)-(o[b.status]||3);
+                       });
+    document.getElementById('alertCount').textContent = alerts.length + ' item';
+    document.getElementById('alertList').innerHTML = alerts.length ? alerts.map(item=>{
+        const cls = item.status==='rendah' ? 'warning' : 'critical';
+        return `
+        <div class="low-stock-item ${cls}" onclick="openDetail('${item.id}')">
+            <div class="ls-icon ${cls}" style="font-size:1.1rem">${item.emoji}</div>
+            <div class="ls-info">
+                <div class="ls-name">${item.name}</div>
+                <div class="ls-outlet">${item.outlet} · ${item.category}</div>
+            </div>
+            <div class="ls-right">
+                <div class="ls-stock ${cls}">${item.stock} ${item.unit}</div>
+                <div class="ls-min">Min: ${item.minStock} ${item.unit}</div>
+                <button class="ls-reorder-btn ${item.status==='rendah'?'warning':''}" onclick="event.stopPropagation();openRestock('${item.id}')">Restock</button>
+            </div>
+        </div>`;
+    }).join('') : `<div style="text-align:center;padding:2rem;color:var(--gray-light)"><i class="fas fa-check-circle" style="font-size:2rem;color:var(--secondary);display:block;margin-bottom:.5rem"></i>Semua stok dalam kondisi aman</div>`;
+}
+
+/* =========================================================
+   CHART
+========================================================= */
+let stockChart;
+function renderChart(){
+    const ctx = document.getElementById('stockChart').getContext('2d');
+    const cats = CATEGORIES;
+    const data = cats.map(cat => {
+        const items = allItems.filter(x=>x.category===cat);
+        return items.reduce((s,x)=>s+x.stock,0);
+    });
+    const maxData = cats.map(cat => {
+        const items = allItems.filter(x=>x.category===cat);
+        return items.reduce((s,x)=>s+x.maxStock,0);
+    });
+    const colors = cats.map(cat => CAT_COLORS[cat]||'#6366F1');
+    const shortLabels = cats.map(c => c.length > 14 ? c.slice(0,14)+'…' : c);
+
+    if(stockChart) stockChart.destroy();
+    stockChart = new Chart(ctx,{
+        type:'bar',
+        data:{
+            labels: shortLabels,
+            datasets:[
+                {label:'Stok Saat Ini', data, backgroundColor: colors.map(c=>c+'CC'), borderRadius:8, borderSkipped:false},
+                {label:'Kapasitas Max',  data:maxData, backgroundColor: colors.map(c=>c+'22'), borderRadius:8, borderSkipped:false},
+            ]
+        },
+        options:{
+            responsive:true, maintainAspectRatio:false,
+            interaction:{mode:'index',intersect:false},
+            plugins:{
+                legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:12,padding:12}},
+                tooltip:{
+                    backgroundColor:'rgba(31,41,55,.95)',titleColor:'#fff',bodyColor:'rgba(255,255,255,.7)',
+                    padding:12,cornerRadius:10,
+                    callbacks:{label:ctx=>' '+ctx.dataset.label+': '+ctx.parsed.y.toLocaleString()}
+                }
+            },
+            scales:{
+                x:{grid:{display:false},border:{display:false},ticks:{color:'#9CA3AF',font:{size:10}}},
+                y:{grid:{color:'#F3F4F6'},border:{display:false},ticks:{color:'#9CA3AF',font:{size:11}}}
+            }
+        }
+    });
+}
+
+/* =========================================================
+   FILTER & SORT
+========================================================= */
+function handleSearch(v){ document.getElementById('searchInput').value=v; applyFilters(); }
+
+function applyFilters(){
+    const q      = document.getElementById('searchInput').value.toLowerCase();
+    const cat    = document.getElementById('filterCat').value;
+    const outlet = document.getElementById('filterOutlet').value;
+    const status = document.getElementById('filterStatus').value;
+
+    filtered = allItems.filter(item => {
+        const mq = !q || item.name.toLowerCase().includes(q) || item.code.toLowerCase().includes(q) || item.brand.toLowerCase().includes(q);
+        const mc = !cat || item.category === cat;
+        const mo = !outlet || item.outlet === outlet;
+        const ms = !status || item.status === status;
+        const mst= activeStatFilter==='all' || (activeStatFilter==='cukup'&&(item.status==='cukup'||item.status==='lebih')) || (activeStatFilter==='rendah'&&item.status==='rendah') || (activeStatFilter==='kritis'&&(item.status==='kritis'||item.status==='habis'));
+        return mq && mc && mo && ms && mst;
+    });
+
+    // sort
+    filtered.sort((a,b)=>{
+        let va=a[sortCol], vb=b[sortCol];
+        if(typeof va==='string') return sortDir==='asc'?va.localeCompare(vb):vb.localeCompare(va);
+        return sortDir==='asc'?va-vb:vb-va;
+    });
+
+    currentPage=1; selectedIds.clear(); updateBulkBar(); renderTable();
+}
+
+function filterByStat(stat, el){
+    activeStatFilter = stat;
+    document.querySelectorAll('.stat-card').forEach(c=>c.classList.remove('active-filter'));
+    el.classList.add('active-filter');
+    applyFilters();
+}
+
+function resetFilters(){
+    document.getElementById('searchInput').value='';
+    document.getElementById('filterCat').value='';
+    document.getElementById('filterOutlet').value='';
+    document.getElementById('filterStatus').value='';
+    activeStatFilter='all';
+    document.querySelectorAll('.stat-card').forEach(c=>c.classList.remove('active-filter'));
+    document.querySelector('.stat-card.c1').classList.add('active-filter');
+    filtered=[...allItems]; currentPage=1; selectedIds.clear(); updateBulkBar(); renderTable();
+}
+
+function sortBy(col){
+    if(sortCol===col) sortDir=sortDir==='asc'?'desc':'asc';
+    else{sortCol=col;sortDir='asc';}
+    document.querySelectorAll('.sort-icon').forEach(i=>i.classList.remove('active'));
+    const el=document.getElementById('si-'+col); if(el) el.classList.add('active');
+    applyFilters();
+}
+
+function changePerPage(v){ perPage=parseInt(v); currentPage=1; renderTable(); }
+
+/* =========================================================
+   PAGINATION
+========================================================= */
+function renderPagination(){
+    const total=Math.ceil(filtered.length/perPage)||1;
+    document.getElementById('currentPage').textContent=currentPage;
+    document.getElementById('totalPages').textContent=total;
+    const ctrl=document.getElementById('paginationControls');
+    let h=`<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage<=1?'disabled':''}><i class="fas fa-chevron-left"></i></button>`;
+    let s=Math.max(1,currentPage-2),e=Math.min(total,s+4);
+    if(e-s<4)s=Math.max(1,e-4);
+    if(s>1){h+=`<button class="page-btn" onclick="goPage(1)">1</button>`;if(s>2)h+=`<span style="padding:0 .2rem;color:var(--gray-light)">…</span>`;}
+    for(let i=s;i<=e;i++) h+=`<button class="page-btn ${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
+    if(e<total){if(e<total-1)h+=`<span style="padding:0 .2rem;color:var(--gray-light)">…</span>`;h+=`<button class="page-btn" onclick="goPage(${total})">${total}</button>`;}
+    h+=`<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage>=total?'disabled':''}><i class="fas fa-chevron-right"></i></button>`;
+    ctrl.innerHTML=h;
+}
+function goPage(p){
+    const total=Math.ceil(filtered.length/perPage)||1;
+    if(p<1||p>total)return; currentPage=p; renderTable(); window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* =========================================================
+   CHECKBOX / BULK
+========================================================= */
+function toggleAllCheck(){
+    const checked=document.getElementById('checkAll').checked;
+    const start=(currentPage-1)*perPage;
+    filtered.slice(start,start+perPage).forEach(x=>{checked?selectedIds.add(x.id):selectedIds.delete(x.id);});
+    renderTable(); updateBulkBar();
+}
+function toggleRowCheck(cb){ const id=cb.dataset.id; cb.checked?selectedIds.add(id):selectedIds.delete(id); syncCheckAll(); updateBulkBar(); }
+function syncCheckAll(){
+    const start=(currentPage-1)*perPage;
+    const page=filtered.slice(start,start+perPage);
+    const all=page.length>0&&page.every(x=>selectedIds.has(x.id));
+    const cb=document.getElementById('checkAll'); if(cb)cb.checked=all;
+}
+function clearSelection(){ selectedIds.clear(); renderTable(); updateBulkBar(); }
+function updateBulkBar(){
+    const n=selectedIds.size;
+    document.getElementById('bulkCountText').textContent=n;
+    document.getElementById('bulkBar').classList.toggle('show',n>0);
+}
+function bulkRestock(){ showToast('info','Restock Massal','Memproses restock untuk '+selectedIds.size+' barang'); }
+function bulkExport(){  showToast('info','Export','Mengekspor '+selectedIds.size+' data barang'); }
+function bulkDelete(){
+    if(!confirm('Hapus '+selectedIds.size+' barang yang dipilih?'))return;
+    selectedIds.forEach(id=>{const i=allItems.findIndex(x=>x.id===id);if(i>-1)allItems.splice(i,1);});
+    selectedIds.clear(); applyFilters(); updateStats(); showToast('success','Dihapus','Barang berhasil dihapus');
+}
+
+/* =========================================================
+   ADD / EDIT MODAL
+========================================================= */
+function openAddModal(){
+    editMode=false; activeItem=null;
+    document.getElementById('itemModalIcon').style.background='linear-gradient(135deg,var(--primary),var(--purple))';
+    document.getElementById('itemModalTitle').textContent='Tambah Barang';
+    document.getElementById('itemModalSub').textContent='Isi detail barang inventaris baru';
+    ['f-name','f-code','f-brand','f-desc'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('f-emoji').value='📦';
+    document.getElementById('f-stock').value='';
+    document.getElementById('f-minStock').value='';
+    document.getElementById('f-maxStock').value='';
+    document.getElementById('f-price').value='';
+    openModal('itemModal');
+}
+function openEditModal(id){
+    const item=allItems.find(x=>x.id===id); if(!item)return;
+    editMode=true; activeItem=item;
+    document.getElementById('itemModalIcon').style.background=`linear-gradient(135deg,${item.color},${item.color}99)`;
+    document.getElementById('itemModalTitle').textContent='Edit Barang';
+    document.getElementById('itemModalSub').textContent='Perbarui data barang '+item.name;
+    document.getElementById('f-name').value=item.name;
+    document.getElementById('f-code').value=item.code;
+    document.getElementById('f-brand').value=item.brand;
+    document.getElementById('f-desc').value=item.desc||'';
+    document.getElementById('f-emoji').value=item.emoji;
+    document.getElementById('f-category').value=item.category;
+    document.getElementById('f-outlet').value=item.outlet;
+    document.getElementById('f-unit').value=item.unit;
+    document.getElementById('f-stock').value=item.stock;
+    document.getElementById('f-minStock').value=item.minStock;
+    document.getElementById('f-maxStock').value=item.maxStock;
+    document.getElementById('f-price').value=item.price;
+    document.getElementById('f-color').value=item.color;
+    openModal('itemModal');
+}
+function saveItem(){
+    const name=document.getElementById('f-name').value.trim();
+    if(!name){showToast('error','Validasi','Nama barang wajib diisi');return;}
+    const stock=parseInt(document.getElementById('f-stock').value)||0;
+    const minS =parseInt(document.getElementById('f-minStock').value)||0;
+    const maxS =parseInt(document.getElementById('f-maxStock').value)||100;
+    const price=parseInt(document.getElementById('f-price').value)||0;
+    const cat  =document.getElementById('f-category').value;
+    let status;
+    if(stock===0)status='habis';
+    else if(stock<minS*.5)status='kritis';
+    else if(stock<minS)status='rendah';
+    else if(stock>maxS*.8)status='lebih';
+    else status='cukup';
+
+    if(editMode&&activeItem){
+        Object.assign(activeItem,{name,code:document.getElementById('f-code').value,brand:document.getElementById('f-brand').value,desc:document.getElementById('f-desc').value,emoji:document.getElementById('f-emoji').value,category:cat,outlet:document.getElementById('f-outlet').value,unit:document.getElementById('f-unit').value,stock,minStock:minS,maxStock:maxS,price,value:stock*price,status,color:document.getElementById('f-color').value});
+        showToast('success','Diperbarui',name+' berhasil diperbarui');
+    } else {
+        const newItem={
+            id:`INV-${String(2000+allItems.length).padStart(4,'0')}`,name,
+            code:document.getElementById('f-code').value||`${cat.slice(0,3).toUpperCase()}-${String(allItems.length).padStart(3,'0')}`,
+            brand:document.getElementById('f-brand').value,desc:document.getElementById('f-desc').value,
+            emoji:document.getElementById('f-emoji').value||CAT_ICONS[cat]||'📦',
+            color:document.getElementById('f-color').value||CAT_COLORS[cat]||'#6366F1',
+            category:cat,outlet:document.getElementById('f-outlet').value,
+            unit:document.getElementById('f-unit').value,stock,minStock:minS,maxStock:maxS,price,value:stock*price,status,
+            lastRestock:new Date().toISOString().slice(0,10),lastRestockQty:0,history:[],
+        };
+        allItems.unshift(newItem);
+        showToast('success','Ditambahkan',name+' berhasil ditambahkan');
+    }
+    closeModal('itemModal'); applyFilters(); updateStats(); renderChart();
+}
+
+/* =========================================================
+   DETAIL MODAL
+========================================================= */
+function openDetail(id){
+    const item=allItems.find(x=>x.id===id); if(!item)return;
+    activeItem=item;
+    document.getElementById('dm-icon').textContent=item.emoji;
+    document.getElementById('dm-icon').style.background=item.color+'22';
+    document.getElementById('dm-icon').style.fontSize='1.75rem';
+    document.getElementById('dm-name').textContent=item.name;
+    document.getElementById('dm-code').textContent=item.code+' · '+item.brand;
+    document.getElementById('dm-cat').textContent=item.category;
+    document.getElementById('dm-brand').textContent=item.brand;
+    document.getElementById('dm-outlet').textContent=item.outlet;
+    document.getElementById('dm-unit').textContent=item.unit;
+    document.getElementById('dm-desc').textContent=item.desc||'Tidak ada deskripsi.';
+    document.getElementById('dm-stock').textContent=item.stock+' '+item.unit;
+    document.getElementById('dm-stock').style.color=item.status==='kritis'||item.status==='habis'?'var(--danger)':item.status==='rendah'?'var(--warning)':'var(--primary)';
+    document.getElementById('dm-status').innerHTML=`<span class="inv-status ${getStockStatusClass(item.status)}">${stockStatusLabel(item.status)}</span>`;
+    document.getElementById('dm-min').textContent=item.minStock+' '+item.unit;
+    document.getElementById('dm-max').textContent=item.maxStock+' '+item.unit;
+    document.getElementById('dm-price').textContent=formatRp(item.price)+' / '+item.unit;
+    document.getElementById('dm-value').textContent=formatRp(item.value);
+    document.getElementById('dm-last-restock').textContent=item.lastRestock;
+    document.getElementById('dm-last-qty').textContent=item.lastRestockQty+' '+item.unit;
+    document.getElementById('dm-restock-history').innerHTML=item.history.map(h=>`
+        <div class="restock-item">
+            <div class="restock-icon"><i class="fas fa-redo-alt"></i></div>
+            <div class="restock-info"><div class="restock-title">${h.invoice} · ${h.supplier}</div><div class="restock-date">${h.date}</div></div>
+            <div class="restock-qty">+${h.qty} ${item.unit}</div>
+        </div>`).join('')||'<div style="color:var(--gray-light);font-size:.875rem">Belum ada riwayat restock.</div>';
+    openModal('detailModal');
+}
+function deleteCurrentItem(){ if(!activeItem)return; deleteById(activeItem.id); closeModal('detailModal'); }
+function editCurrentItem(){   if(!activeItem)return; closeModal('detailModal'); openEditModal(activeItem.id); }
+function restockCurrentItem(){ if(!activeItem)return; openRestock(activeItem.id); }
+
+function deleteById(id){
+    const item=allItems.find(x=>x.id===id); if(!item)return;
+    if(!confirm('Hapus '+item.name+' dari inventaris?'))return;
+    allItems=allItems.filter(x=>x.id!==id); applyFilters(); updateStats(); renderChart();
+    showToast('success','Dihapus',item.name+' berhasil dihapus');
+}
+
+/* =========================================================
+   RESTOCK MODAL
+========================================================= */
+function openRestock(id){
+    const item=allItems.find(x=>x.id===id); if(!item)return;
+    activeItem=item;
+    document.getElementById('rs-icon').textContent=item.emoji;
+    document.getElementById('rs-name').textContent=item.name;
+    document.getElementById('rs-stock').textContent=item.stock+' '+item.unit;
+    document.getElementById('rs-stock').className=item.status==='kritis'||item.status==='habis'?'critical':'';
+    document.getElementById('rs-min').textContent=item.minStock+' '+item.unit;
+    document.getElementById('rs-unit').value=item.unit;
+    document.getElementById('rs-price').value=item.price;
+    document.getElementById('rs-qty').value='';
+    document.getElementById('rs-supplier').value=item.brand;
+    document.getElementById('rs-invoice').value='';
+    document.getElementById('rs-notes').value='';
+    document.getElementById('rs-preview').textContent='—';
+    document.getElementById('rs-qty').addEventListener('input', function(){
+        const newStock=item.stock+(parseInt(this.value)||0);
+        document.getElementById('rs-preview').textContent=newStock+' '+item.unit;
+    });
+    openModal('restockModal');
+}
+function confirmRestock(){
+    const qty=parseInt(document.getElementById('rs-qty').value)||0;
+    if(qty<=0){showToast('error','Validasi','Jumlah restock harus lebih dari 0');return;}
+    if(!activeItem)return;
+    activeItem.stock+=qty;
+    activeItem.value=activeItem.stock*activeItem.price;
+    activeItem.lastRestock=new Date().toISOString().slice(0,10);
+    activeItem.lastRestockQty=qty;
+    activeItem.history.unshift({date:activeItem.lastRestock,qty,supplier:document.getElementById('rs-supplier').value,invoice:document.getElementById('rs-invoice').value||'—'});
+    // recalculate status
+    if(activeItem.stock===0)activeItem.status='habis';
+    else if(activeItem.stock<activeItem.minStock*.5)activeItem.status='kritis';
+    else if(activeItem.stock<activeItem.minStock)activeItem.status='rendah';
+    else if(activeItem.stock>activeItem.maxStock*.8)activeItem.status='lebih';
+    else activeItem.status='cukup';
+    closeModal('restockModal');
+    applyFilters(); updateStats(); renderChart();
+    showToast('success','Restock Berhasil',`${activeItem.name} berhasil di-restock +${qty} ${activeItem.unit}`);
+}
+function openRestockAllModal(){ showToast('info','Restock Otomatis','Memproses restock otomatis untuk semua stok kritis...'); }
+
+/* =========================================================
+   MODAL UTILS
+========================================================= */
+function openModal(id){ document.getElementById(id).classList.add('show'); }
+function closeModal(id){ document.getElementById(id).classList.remove('show'); }
+function closeModalOut(e,id){ if(e.target===e.currentTarget)closeModal(id); }
+function exportData(){ showToast('info','Export','Mengekspor data inventaris ke Excel...'); }
+
+/* =========================================================
+   TOAST
+========================================================= */
+function showToast(type,title,msg){
+    const wrap=document.getElementById('toastWrap');
+    const t=document.createElement('div'); t.className='toast';
+    t.innerHTML=`<div class="toast-icon ${type}"><i class="fas fa-${type==='success'?'check':type==='error'?'times':type==='warning'?'exclamation-triangle':'info-circle'}"></i></div><div style="flex:1"><div class="toast-title">${title}</div><div class="toast-msg">${msg}</div></div><button class="toast-x" onclick="this.closest('.toast').remove()"><i class="fas fa-times"></i></button>`;
+    wrap.appendChild(t);
+    setTimeout(()=>t.classList.add('show'),10);
+    setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),400);},4500);
+}
+
+/* =========================================================
+   FLOAT BUTTON
+========================================================= */
+window.addEventListener('scroll',()=>{ document.getElementById('scrollTopBtn').classList.toggle('visible',window.scrollY>300); });
+function scrollToTop(event){
+    const btn=document.getElementById('scrollTopBtn');
+    const r=document.createElement('span');
+    r.style.cssText='position:absolute;border-radius:50%;background:rgba(255,255,255,.4);width:52px;height:52px;left:0;top:0;transform:scale(0);animation:pulseBig .6s ease-out';
+    btn.appendChild(r); setTimeout(()=>r.remove(),600);
+    const start=window.scrollY,t0=performance.now();
+    function bounce(t){
+        const p=Math.min((t-t0)/800,1),n=7.5625,d=2.75;
+        let e;
+        if(p<1/d)e=n*p*p;
+        else if(p<2/d)e=n*(p-=1.5/d)*p+.75;
+        else if(p<2.5/d)e=n*(p-=2.25/d)*p+.9375;
+        else e=n*(p-=2.625/d)*p+.984375;
+        window.scrollTo(0,start*(1-e));
+        if(p<1)requestAnimationFrame(bounce);
+    }
+    requestAnimationFrame(bounce);
+}
+
+/* =========================================================
+   INIT
+========================================================= */
+updateStats();
+applyFilters();
+renderChart();
+</script>
+</body>
+</html>
