@@ -3,36 +3,36 @@
 namespace App\Models\Operasional;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use App\Models\Master\Outlet;
 
+#[Fillable([
+    'name',
+    'code',
+    'brand',
+    'category',
+    'emoji',
+    'color',
+    'stock',
+    'min_stock',
+    'max_stock',
+    'unit',
+    'price',
+    'outlet_id',
+    'desc',
+    'last_restock',
+    'last_restock_qty',
+    'history',
+])]
 class Inventory extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
 
     protected $table = 'inventories';
-
-    protected $fillable = [
-        'name',
-        'code',
-        'brand',
-        'category',
-        'emoji',
-        'color',
-        'stock',
-        'min_stock',
-        'max_stock',
-        'unit',
-        'price',
-        'outlet_id',
-        'desc',
-        'last_restock',
-        'last_restock_qty',
-        'history',
-    ];
 
     /**
      * Get the modern class-based casts array.

@@ -26,9 +26,12 @@ class Business extends Model
 
     protected $table = 'businesses';
 
-    protected $casts = [
-        'is_active' => 'boolean',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'is_active' => 'boolean',
+        ];
+    }
 
     /**
      * Bisnis memiliki banyak outlet.

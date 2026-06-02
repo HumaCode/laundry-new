@@ -3,6 +3,7 @@
 namespace App\Models\Operasional;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,6 +12,26 @@ use App\Models\User;
 use App\Models\Master\Outlet;
 use App\Models\Master\Employee;
 
+#[Fillable([
+    'trip_code',
+    'customer_name',
+    'customer_phone',
+    'customer_id',
+    'outlet_id',
+    'order_code',
+    'address_from',
+    'address_to',
+    'service_type',
+    'employee_id',
+    'distance',
+    'eta',
+    'fee',
+    'scheduled_at',
+    'weight',
+    'notes',
+    'status',
+    'avatar_color',
+])]
 class Pickup extends Model
 {
     use HasFactory, HasUuids, SoftDeletes;
@@ -26,32 +47,14 @@ class Pickup extends Model
         });
     }
 
-    protected $fillable = [
-        'trip_code',
-        'customer_name',
-        'customer_phone',
-        'customer_id',
-        'outlet_id',
-        'order_code',
-        'address_from',
-        'address_to',
-        'service_type',
-        'employee_id',
-        'distance',
-        'eta',
-        'fee',
-        'scheduled_at',
-        'weight',
-        'notes',
-        'status',
-        'avatar_color',
-    ];
-
-    protected $casts = [
-        'distance' => 'decimal:2',
-        'fee' => 'integer',
-        'scheduled_at' => 'datetime',
-    ];
+    protected function casts(): array
+    {
+        return [
+            'distance' => 'decimal:2',
+            'fee' => 'integer',
+            'scheduled_at' => 'datetime',
+        ];
+    }
 
     /**
      * Get the customer associated with the pickup.
