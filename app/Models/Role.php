@@ -11,6 +11,7 @@ use Spatie\Permission\Models\Role as SpatieRole;
     'slug',
     'type_role',
     'color',
+    'icon',
     'priority',
     'is_active',
     'description',

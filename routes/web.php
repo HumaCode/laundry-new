@@ -89,6 +89,15 @@ Route::middleware('auth')->group(function () {
     Route::get('/payments', [PembayaranController::class, 'index'])->name('payments');
     Route::get('/payments/{id}', [PembayaranController::class, 'show'])->name('payments.show');
     Route::put('/payments/{id}', [PembayaranController::class, 'update'])->name('payments.update');
+
+    // Role & Permission
+    Route::get('/roles', [\App\Http\Controllers\RolePermission\RoleController::class, 'index'])->name('roles');
+    Route::post('/roles', [\App\Http\Controllers\RolePermission\RoleController::class, 'store'])->name('roles.store');
+    Route::put('/roles/{id}', [\App\Http\Controllers\RolePermission\RoleController::class, 'update'])->name('roles.update');
+    Route::delete('/roles/{id}', [\App\Http\Controllers\RolePermission\RoleController::class, 'destroy'])->name('roles.destroy');
+    Route::post('/roles/{id}/permissions', [\App\Http\Controllers\RolePermission\RoleController::class, 'updatePermissions'])->name('roles.permissions.update');
+    Route::post('/roles/{id}/users', [\App\Http\Controllers\RolePermission\RoleController::class, 'assignUsers'])->name('roles.users.assign');
+    Route::delete('/roles/{id}/users/{userId}', [\App\Http\Controllers\RolePermission\RoleController::class, 'removeUser'])->name('roles.users.remove');
 });
 
 require __DIR__.'/auth.php';

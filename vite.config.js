@@ -35,7 +35,9 @@ export default defineConfig({
                 'resources/css/admin/laporan.css',
                 'resources/js/admin/laporan.js',
                 'resources/css/admin/pembayaran.css',
-                'resources/js/admin/pembayaran.js'
+                'resources/js/admin/pembayaran.js',
+                'resources/css/admin/role-permission.css',
+                'resources/js/admin/role-permission.js'
             ],
             refresh: true,
         }),
